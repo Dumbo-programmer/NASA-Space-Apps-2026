@@ -227,7 +227,7 @@ NASA-Space-Apps-2026/
 | Mahib Al Mamun | Hardware & Embedded Lead |
 | Tawhid Bin Omar | UI & Software Lead |
 | Prachya Biswas | Data Science Lead |
-| Samyo Pramanik | AI/ML Lead |
+| Samyo Pramanik | AI Lead |
 
 ---
 

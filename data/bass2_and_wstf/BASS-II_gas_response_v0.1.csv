@@ -1,0 +1,130 @@
+record_id,psi_id,source_row,pi_group,test_id,sample_no,material_family,material_inferred,geometry,thickness_mm,diameter_mm,width_cm,rod_color,burning_sides,flow_restrictor,o2_initial_pct,co2_background_pct,co_background_ppm,air_setting_initial,air_setting_steps,flow_reduced_to_extinction,frames_shot_duration_proxy,delta_o2_pct,delta_co2_pct,delta_co_ppm,co_censored,co2_per_o2_ratio,co2_per_o2_theoretical,co_to_co2_ratio,delta_co2_per_frame,use_for_o2_co2,use_for_co,small_material_group
+BASS2-B1,PSI-25,2,Bhattacharjee,B1,147,PMMA,False,film,0.1,,2.0,,,2,22.2,0.44,0.0,5.0,1,False,57.0,0.0,0.0,6.0,False,,0.83,,0.0,True,True,False
+BASS2-B2,PSI-25,3,Bhattacharjee,B2,155,PMMA,False,film,0.2,,2.0,,,2,22.2,0.44,6.0,5.0,1,False,,20.6,,,False,,0.83,,,False,False,False
+BASS2-B3,PSI-25,4,Bhattacharjee,B3,148,PMMA,True,film,0.1,,2.0,,,2,22.2,0.43,12.0,2.0,1,False,253.0,0.4,0.06,7.0,False,0.15,0.83,0.0117,0.00024,True,True,False
+BASS2-B4,PSI-25,5,Bhattacharjee,B4,159,PMMA,False,film,0.3,,2.0,,,2,22.2,0.44,-1.0,5.0,1,False,137.0,0.0,0.07,11.0,False,,0.83,0.0157,0.00051,True,True,False
+BASS2-B5,PSI-25,6,Bhattacharjee,B5,156,PMMA,True,film,0.2,,2.0,,,2,22.2,0.43,0.0,5.0,1,False,206.0,0.3,0.0,12.0,False,0.0,0.83,,0.0,True,True,False
+BASS2-B6,PSI-25,7,Bhattacharjee,B6,153m,PMMA,False,film,0.1,,2.0,,,2,21.0,0.33,0.0,3.0,3,False,80.0,0.1,0.08,0.3,False,0.8,0.83,0.0004,0.001,True,True,False
+BASS2-B7,PSI-25,8,Bhattacharjee,B7,161,PMMA,True,film,0.4,,2.0,,,2,22.2,0.45,1.0,2.0,1,False,84.0,0.1,0.06,16.0,False,0.6,0.83,0.0267,0.00071,True,True,False
+BASS2-B8,PSI-25,9,Bhattacharjee,B8,157m,PMMA,False,film,0.2,,2.0,,,0,21.0,0.33,0.0,10.0,1,False,226.0,0.5,0.25,131.0,False,0.5,0.83,0.0524,0.00111,True,True,False
+BASS2-B9,PSI-25,10,Bhattacharjee,B9,154m,PMMA,False,film,0.1,,2.0,,,2,21.0,0.33,0.0,2.0,2,False,45.0,0.1,0.02,10.0,False,0.2,0.83,,0.00044,True,True,False
+BASS2-B10,PSI-25,11,Bhattacharjee,B10,173m,PMMA,False,film,0.2,,1.0,,,2,21.0,0.33,0.0,5.0,5,False,123.0,0.2,0.11,23.0,False,0.55,0.83,0.0209,0.00089,True,True,False
+BASS2-B11,PSI-25,12,Bhattacharjee,B11,158m,PMMA,False,film,0.2,,2.0,,,2,21.0,0.33,0.0,5.0,4,False,131.0,0.3,0.14,46.0,False,0.47,0.83,0.0329,0.00107,True,True,False
+BASS2-B12,PSI-25,13,Bhattacharjee,B12,160,PMMA,True,film,0.3,,2.0,,,2,22.2,0.51,17.0,2.0,1,False,160.0,0.1,0.05,16.0,False,0.5,0.83,0.032,0.00031,True,True,False
+BASS2-B13,PSI-25,14,Bhattacharjee,B13,162m,PMMA,True,slab,0.4,,2.0,,,2,21.0,0.33,0.0,10.0,6,False,311.0,0.5,0.32,61.0,False,0.64,0.83,0.0191,0.00103,True,True,False
+BASS2-B14,PSI-25,15,Bhattacharjee,B14,174m,PMMA,False,film,0.2,,1.0,,,2,15.0,0.0,0.2,5.0,3,True,44.0,,,,False,,0.83,,,False,False,False
+BASS2-B15,PSI-25,16,Bhattacharjee,B15,149m,PMMA,False,film,0.1,,2.0,,,0,21.0,0.33,0.0,10.0,1,False,122.0,0.2,0.1,22.0,False,0.5,0.83,0.022,0.00082,True,True,False
+BASS2-B16,PSI-25,17,Bhattacharjee,B16,150m,PMMA,False,film,0.1,,2.0,,,2,17.3,0.47,103.0,3.0,3,False,94.0,0.1,0.04,16.0,False,0.4,0.83,0.04,0.00043,True,True,False
+BASS2-B17,PSI-25,18,Bhattacharjee,B17,175m,PMMA,False,film,0.2,,1.0,,,2,17.5,0.2,0.0,5.0,3,False,190.0,0.1,0.14,47.0,False,1.4,0.83,0.0336,0.00074,True,True,False
+BASS2-B18,PSI-25,19,Bhattacharjee,B18,176m,PMMA,False,film,0.2,,1.0,,,0,17.4,0.34,47.0,10.0,1,False,152.0,0.0,0.08,31.0,False,,0.83,0.0388,0.00053,True,True,False
+BASS2-B19,PSI-25,20,Bhattacharjee,B19,151m,PMMA,False,film,0.1,,2.0,,,0,17.3,0.51,119.0,10.0,1,False,95.0,0.1,0.06,12.0,False,0.6,0.83,0.02,0.00063,True,True,False
+BASS2-B20,PSI-25,21,Bhattacharjee,B20,152m,PMMA,False,film,0.1,,2.0,,,2,17.4,0.42,78.0,5.0,3,False,111.0,0.0,0.05,25.0,False,,0.83,0.05,0.00045,True,True,False
+BASS2-B21,PSI-25,22,Bhattacharjee,B21,174m,PMMA,False,film,0.2,,1.0,,,1,20.8,0.36,-1.0,5.0,1,True,88.0,0.2,0.08,19.0,False,0.4,0.83,0.0238,0.00091,True,True,False
+BASS2-B22,PSI-25,23,Bhattacharjee,B22,176m,PMMA,False,film,0.2,,1.0,,,1,20.7,0.41,-1.0,5.0,3,False,77.0,0.2,0.06,11.0,False,0.3,0.83,0.0183,0.00078,True,True,False
+BASS2-F1,PSI-25,24,Ferkul,F1,227,Nomex,False,fabric,,,,,,2,22.2,0.46,0.0,9.5,1,False,208.0,0.0,-0.01,2.0,False,,,,-5e-05,True,True,True
+BASS2-F2,PSI-25,25,Ferkul,F2,228m,Nomex,False,fabric,,,,,,2,21.0,0.37,105.0,15.0,1,False,72.0,0.0,0.02,-23.0,False,,,,0.00028,True,True,True
+BASS2-F3,PSI-25,26,Ferkul,F3,229m,Nomex,False,fabric,,,,,,1,21.7,0.36,2.0,8.0,1,False,46.0,,,,False,,,,,False,False,True
+BASS2-F4,PSI-25,27,Ferkul,F4,39M,Japan wax,False,candle,,,,,,2,17.4,0.38,22.0,3.0,1,False,270.0,0.0,0.1,34.0,False,,,0.034,0.00037,True,True,True
+BASS2-M1,PSI-25,28,Miller,M1,222,PMMA,False,slab,1.0,,2.0,,1.0,2,22.2,0.45,0.0,10.0,2,False,304.0,0.3,0.16,60.0,False,0.53,0.83,0.0375,0.00053,True,True,False
+BASS2-M2,PSI-25,29,Miller,M2,224,PMMA,False,slab,3.0,,2.0,,1.0,0,22.2,0.46,12.0,20.0,4,False,262.0,1.0,0.87,313.0,False,0.87,0.83,0.036,0.00332,True,True,False
+BASS2-M3,PSI-25,30,Miller,M3,226m,PMMA,False,slab,5.0,,2.0,,1.0,2,20.8,0.33,11.0,10.0,3,False,223.0,1.1,0.85,289.0,False,0.77,0.83,0.034,0.00381,True,True,False
+BASS2-M4,PSI-25,31,Miller,M4,171m,PMMA,False,slab,5.0,,2.0,,,1,21.8,0.42,2.0,5.0,3,False,262.0,2.0,1.73,559.0,False,0.86,0.83,0.0323,0.0066,True,True,False
+BASS2-M5,PSI-25,32,Miller,M5,167,PMMA,False,slab,3.0,,2.0,,2.0,0,22.2,0.44,9.0,20.0,5,False,,3.2,2.78,,True,0.87,0.83,,,True,False,False
+BASS2-M6,PSI-25,33,Miller,M6,163m,PMMA,False,slab,1.0,,2.0,,,1,21.8,0.38,1.0,10.0,4,False,269.0,1.1,0.89,344.0,False,0.81,0.83,0.0387,0.00331,True,True,False
+BASS2-M7,PSI-25,34,Miller,M7,177m,PMMA,False,slab,1.0,,1.0,,,2,18.9,1.42,398.0,10.0,6,False,217.0,0.5,0.42,214.0,False,0.84,0.83,0.051,0.00194,True,True,False
+BASS2-M8,PSI-25,35,Miller,M8,178m,PMMA,False,slab,2.0,,1.0,,,2,19.1,0.44,52.0,10.0,4,False,292.0,0.9,0.84,415.0,False,0.93,0.83,0.0494,0.00288,True,True,False
+BASS2-M9,PSI-25,36,Miller,M9,179m,PMMA,False,slab,3.0,,1.0,,,2,18.0,0.26,0.0,10.0,2,False,156.0,0.4,0.28,191.0,False,0.7,0.83,0.0682,0.00179,True,True,False
+BASS2-M10,PSI-25,37,Miller,M10,180m,PMMA,False,slab,4.0,,1.0,,,2,20.1,0.36,-1.0,10.0,5,False,209.0,1.5,1.23,537.0,False,0.82,0.83,0.0437,0.00589,True,True,False
+BASS2-M11,PSI-25,38,Miller,M11,181m,PMMA,False,slab,5.0,,1.0,,,2,20.0,0.58,46.0,10.0,4,False,247.0,1.5,1.1,531.0,False,0.73,0.83,0.0483,0.00445,True,True,False
+BASS2-M12,PSI-25,39,Miller,M12,165m,PMMA,False,slab,2.0,,2.0,,,1,21.7,0.42,15.0,1.0,1,False,271.0,1.3,1.0,428.0,False,0.77,0.83,0.0428,0.00369,True,True,False
+BASS2-M13,PSI-25,40,Miller,M13,169m,PMMA,False,slab,4.0,,2.0,,,1,20.8,0.36,0.0,6.0,3,False,258.0,1.8,1.39,487.0,False,0.77,0.83,0.035,0.00539,True,True,False
+BASS2-M14,PSI-25,41,Miller,M14,223,PMMA,False,slab,2.0,,2.0,,1.0,2,22.2,0.45,0.0,10.0,2,False,259.0,0.6,0.53,198.0,False,0.88,0.83,0.0374,0.00205,True,True,False
+BASS2-M15,PSI-25,42,Miller,M15,225m,PMMA,False,slab,4.0,,2.0,,1.0,2,21.0,0.37,1.0,10.0,9,False,153.0,1.0,0.73,219.0,False,0.73,0.83,0.03,0.00477,True,True,False
+BASS2-M16,PSI-25,43,Miller,M16,164m,PMMA,False,slab,1.0,,2.0,,,2,19.2,0.95,118.0,10.0,6,False,299.0,0.5,0.8,303.0,False,1.6,0.83,0.0379,0.00268,True,True,False
+BASS2-M17,PSI-25,44,Miller,M17,166m,PMMA,False,slab,2.0,,2.0,,,2,18.8,0.35,4.0,10.0,4,True,309.0,1.7,1.35,481.0,False,0.79,0.83,0.0356,0.00437,True,True,False
+BASS2-M18,PSI-25,45,Miller,M18,168m,PMMA,False,slab,3.0,,2.0,,,2,17.9,0.32,0.0,10.0,4,False,178.0,1.1,0.99,335.0,False,0.9,0.83,0.0338,0.00556,True,True,False
+BASS2-M19,PSI-25,46,Miller,M19,170m,PMMA,False,slab,4.0,,2.0,,,2,19.0,0.35,3.0,10.0,6,False,201.0,1.6,1.25,354.0,False,0.78,0.83,0.0283,0.00622,True,True,False
+BASS2-M20,PSI-25,47,Miller,M20,172m,PMMA,False,slab,5.0,,2.0,,,1,18.0,0.3,0.0,10.0,2,False,168.0,0.6,0.45,157.0,False,0.75,0.83,0.0349,0.00268,True,True,False
+BASS2-O1,PSI-25,48,Olson,O1,207,PMMA,True,rod,,6.35,,clear,,2,22.2,0.44,-1.0,20.0,5,False,62.0,0.5,0.41,52.0,False,0.82,0.83,0.0127,0.00661,True,True,False
+BASS2-O2,PSI-25,49,Olson,O2,204,PMMA,True,rod,,6.35,,clear,,2,22.2,0.44,-1.0,0.0,1,False,287.0,0.3,0.15,24.0,False,0.5,0.83,0.016,0.00052,True,True,False
+BASS2-O3a,PSI-25,50,Olson,O3a,205M,PMMA,True,rod,,6.35,,clear,,2,18.0,0.25,16.0,5.0,2,False,85.0,0.0,0.03,6.0,False,,0.83,0.02,0.00035,True,True,False
+BASS2-O3b,PSI-25,51,Olson,O3b,205M,PMMA,True,rod,,6.35,,clear,,2,18.0,0.28,22.0,5.0,4,False,306.0,0.3,0.25,94.0,False,0.83,0.83,0.0376,0.00082,True,True,False
+BASS2-O4,PSI-25,52,Olson,O4,216m,PMMA,True,rod,,9.525,,clear,,2,14.8,0.72,290.0,5.0,1,True,249.0,1.2,1.0,,True,0.83,0.83,,0.00402,True,False,False
+BASS2-O5a,PSI-25,53,Olson,O5a,220m,PMMA,False,rod,,12.7,,clear,,2,15.1,0.25,-2.0,5.0,10,False,164.0,0.9,0.8,498.0,False,0.89,0.83,0.0622,0.00488,True,True,False
+BASS2-O5b,PSI-25,54,Olson,O5b,220m,PMMA,False,rod,,12.7,,clear,,2,14.2,1.05,496.0,49.0,2,False,2.0,0.1,0.09,94.0,False,0.9,0.83,0.1044,0.045,True,True,False
+BASS2-O6,PSI-25,55,Olson,O6,206M,PMMA,True,rod,,6.35,,clear,,2,16.7,0.32,1.0,,0,False,241.0,0.7,0.42,231.0,False,0.6,0.83,0.055,0.00174,True,True,False
+BASS2-O7,PSI-25,56,Olson,O7,214m,PMMA,True,rod,,6.35,,clear,,2,16.0,0.74,232.0,,0,False,254.0,0.5,0.53,280.0,False,1.06,0.83,0.0528,0.00209,True,True,False
+BASS2-O8a,PSI-25,57,Olson,O8a,208m,PMMA,True,rod,,6.35,,clear,,2,15.7,1.23,436.0,,0,False,133.0,0.4,0.21,100.0,False,0.52,0.83,0.0476,0.00158,True,True,False
+BASS2-O8b,PSI-25,58,Olson,O8b,208m,PMMA,True,rod,,6.35,,clear,,2,15.5,1.44,536.0,,0,False,152.0,0.3,0.3,124.0,False,1.0,0.83,0.0413,0.00197,True,True,False
+BASS2-O9,PSI-25,59,Olson,O9,209m,PMMA,True,rod,,6.35,,clear,,2,15.0,1.74,660.0,,0,False,154.0,0.2,0.22,134.0,False,1.1,0.83,0.0609,0.00143,True,True,False
+BASS2-O10,PSI-25,60,Olson,O10,210m,PMMA,True,rod,,6.35,,clear,,2,16.7,1.61,94.0,5.0,3,False,172.0,0.6,0.49,193.0,False,0.82,0.83,0.0394,0.00285,True,True,False
+BASS2-O11,PSI-25,61,Olson,O11,184m,PMMA,True,rod,,6.35,,black,,2,15.4,0.27,2.0,5.0,1,False,271.0,0.6,0.45,288.0,False,0.75,0.83,0.064,0.00166,True,True,False
+BASS2-O12,PSI-25,62,Olson,O12,217m,PMMA,True,rod,,9.525,,clear,,2,13.6,1.72,,,0,False,52.0,0.1,-0.01,,True,-0.1,0.83,,-0.00019,True,False,False
+BASS2-O13a,PSI-25,63,Olson,O13a,221m,PMMA,False,rod,,12.7,,clear,,2,15.9,0.91,389.0,49.0,9,False,199.0,1.3,0.94,561.0,False,0.72,0.83,0.0597,0.00472,True,True,False
+BASS2-O13b,PSI-25,64,Olson,O13b,221m,PMMA,False,rod,,12.7,,clear,,2,14.6,1.85,950.0,7.0,3,False,6.0,0.2,0.24,,True,1.2,0.83,,0.04,True,False,False
+BASS2-O14,PSI-25,65,Olson,O14,183m,PMMA,True,rod,,6.35,,black,,1,16.3,0.29,4.0,5.0,1,True,279.0,1.0,0.57,348.0,False,0.57,0.83,0.0611,0.00204,True,True,False
+BASS2-O15a,PSI-25,66,Olson,O15a,218m,PMMA,True,rod,,9.525,,clear,,2,17.1,0.27,0.0,5.0,2,False,124.0,0.4,0.35,176.0,False,0.87,0.83,0.0503,0.00282,True,True,False
+BASS2-O15b,PSI-25,67,Olson,O15b,218m,PMMA,True,rod,,9.525,,clear,,2,16.7,0.62,176.0,5.0,2,False,316.0,1.1,1.01,575.0,False,0.92,0.83,0.0569,0.0032,True,True,False
+BASS2-O16,PSI-25,68,Olson,O16,219m,PMMA,True,rod,,9.525,,clear,,2,14.5,0.27,2.0,5.0,1,False,,0.0,0.05,31.0,False,,0.83,0.062,,True,True,False
+BASS2-O17,PSI-25,69,Olson,O17,211m,PMMA,True,rod,,6.35,,clear,,2,15.1,0.31,2.0,3.0,3,False,174.0,0.8,0.59,375.0,False,0.74,0.83,0.0636,0.00339,True,True,False
+BASS2-O18,PSI-25,70,Olson,O18,212m,PMMA,True,rod,,6.35,,clear,,2,15.2,1.45,523.0,5.0,8,False,176.0,0.7,0.49,293.0,False,0.7,0.83,0.0598,0.00278,True,True,False
+BASS2-O19,PSI-25,71,Olson,O19,213m,PMMA,True,rod,,6.35,,clear,,1,15.3,0.86,352.0,5.0,1,True,266.0,0.7,0.65,334.0,False,0.93,0.83,0.0514,0.00244,True,True,False
+BASS2-O20,PSI-25,72,Olson,O20,204m,PMMA,True,rod,,6.35,,clear,,0,16.5,0.2,-3.0,5.0,3,False,,0.6,0.37,60.0,False,0.62,0.83,0.0162,,True,True,False
+BASS2-O21,PSI-25,73,Olson,O21,219m,PMMA,True,rod,,9.525,,clear,,0,15.9,0.53,52.0,28.0,1,False,,0.5,0.42,135.0,False,0.84,0.83,0.0321,,True,True,False
+BASS2-O22,PSI-25,74,Olson,O22,220m,PMMA,True,rod,,12.7,,clear,,0,15.4,0.92,185.0,4.0,2,False,,0.5,0.41,137.0,False,0.82,0.83,0.0334,,True,True,False
+BASS2-P1,PSI-25,75,Fernandez-Pello,P1,185M,PMMA,True,rod,,6.35,,black,,2,17.7,0.27,1.0,5.0,2,True,307.0,0.2,0.17,13.0,False,0.85,0.83,0.0076,0.00055,True,True,False
+BASS2-P2,PSI-25,76,Fernandez-Pello,P2,188M,PMMA,True,rod,,6.35,,black,,2,17.4,0.44,14.0,5.0,7,False,303.0,0.2,0.22,12.0,False,1.1,0.83,0.0055,0.00073,True,True,False
+BASS2-P3a,PSI-25,77,Fernandez-Pello,P3a,215M,PMMA,True,rod,,6.35,,clear,,2,17.7,0.27,2.0,5.0,10,False,304.0,0.3,0.24,31.0,False,0.8,0.83,0.0129,0.00079,True,True,False
+BASS2-P3b,PSI-25,78,Fernandez-Pello,P3b,215M,PMMA,True,rod,,6.35,,clear,,2,17.4,0.51,33.0,5.0,7,False,303.0,0.6,,46.0,False,,0.83,,,False,False,False
+BASS2-P4,PSI-25,79,Fernandez-Pello,P4,197m,PMMA,True,rod,,9.525,,black,,2,18.5,0.62,64.0,5.0,6,False,297.0,1.4,1.18,429.0,False,0.84,0.83,0.0364,0.00397,True,True,False
+BASS2-P5,PSI-25,80,Fernandez-Pello,P5,202m,PMMA,True,rod,,12.7,,black,,2,19.3,0.32,0.0,5.0,1,True,313.0,1.7,1.35,525.0,False,0.79,0.83,0.0389,0.00431,True,True,False
+BASS2-P6,PSI-25,81,Fernandez-Pello,P6,186m,PMMA,True,rod,,6.35,,black,,2,18.9,0.3,0.0,5.0,5,False,162.0,0.4,0.32,64.0,False,0.8,0.83,0.02,0.00198,True,True,False
+BASS2-P8,PSI-25,82,Fernandez-Pello,P8,197m,PMMA,True,rod,,9.525,,black,,2,16.4,0.72,44.0,5.0,3,False,66.0,0.1,0.09,25.0,False,0.9,0.83,0.0278,0.00136,True,True,False
+BASS2-P9,PSI-25,83,Fernandez-Pello,P9,202m,PMMA,True,rod,,12.7,,black,,2,17.6,1.67,525.0,5.0,1,True,148.0,0.5,0.43,10.0,False,0.86,0.83,0.0023,0.00291,True,True,False
+BASS2-P10,PSI-25,84,Fernandez-Pello,P10,187m,PMMA,True,rod,,6.35,,black,,2,17.0,0.29,2.0,5.0,6,True,221.0,0.6,0.43,42.0,False,0.72,0.83,0.0098,0.00195,True,True,False
+BASS2-P12,PSI-25,85,Fernandez-Pello,P12,199m,PMMA,True,rod,,9.525,,black,,2,17.5,0.29,2.0,5.0,5,False,273.0,0.7,0.66,55.0,False,0.94,0.83,0.0083,0.00242,True,True,False
+BASS2-P13a,PSI-25,86,Fernandez-Pello,P13a,203m,PMMA,True,rod,,12.7,,black,,2,20.7,0.36,38.0,5.0,1,True,255.0,1.6,1.27,412.0,False,0.79,0.83,0.0324,0.00498,True,True,False
+BASS2-P13b,PSI-25,87,Fernandez-Pello,P13b,203m,PMMA,True,rod,,12.7,,black,,2,20.6,0.41,5.0,5.0,1,True,94.0,0.4,0.21,67.0,False,0.52,0.83,0.0319,0.00223,True,True,False
+BASS2-P14,PSI-25,88,Fernandez-Pello,P14,189M,PMMA,True,rod,,6.35,,black,,2,18.4,0.34,3.0,5.0,4,False,162.0,0.4,0.28,87.0,False,0.7,0.83,0.0311,0.00173,True,True,False
+BASS2-P15,PSI-25,89,Fernandez-Pello,P15,190M,PMMA,True,rod,,6.35,,black,,2,18.0,0.62,90.0,5.0,2,False,170.0,0.5,0.49,18.0,False,0.98,0.83,0.0037,0.00288,True,True,False
+BASS2-P16,PSI-25,90,Fernandez-Pello,P16,191m,PMMA,True,rod,,6.35,,black,,2,18.2,0.3,0.0,5.0,3,False,129.0,0.8,0.62,56.0,False,0.77,0.83,0.009,0.00481,True,True,False
+BASS2-P17,PSI-25,91,Fernandez-Pello,P17,192m,PMMA,True,rod,,6.35,,black,,2,16.8,0.95,57.0,5.0,5,False,186.0,0.3,0.39,11.0,False,1.3,0.83,0.0028,0.0021,True,True,False
+BASS2-P18,PSI-25,92,Fernandez-Pello,P18,193m,PMMA,True,rod,,6.35,,black,,2,20.0,0.34,1.0,2.0,4,False,280.0,1.0,0.86,25.0,False,0.86,0.83,0.0029,0.00307,True,True,False
+BASS2-P19,PSI-25,93,Fernandez-Pello,P19,194m,PMMA,True,rod,,6.35,,black,,2,17.5,0.9,54.0,5.0,4,False,279.0,0.8,0.71,40.0,False,0.89,0.83,0.0056,0.00254,True,True,False
+BASS2-P20,PSI-25,94,Fernandez-Pello,P20,195m,PMMA,True,rod,,6.35,,black,,2,19.0,0.34,2.0,2.0,4,False,311.0,0.8,0.71,76.0,False,0.89,0.83,0.0107,0.00228,True,True,False
+BASS2-P21a,PSI-25,95,Fernandez-Pello,P21a,196M,PMMA,True,rod,,6.35,,black,,2,16.3,0.96,86.0,5.0,1,False,57.0,0.0,0.04,8.0,False,,0.83,0.02,0.0007,True,True,False
+BASS2-P21b,PSI-25,96,Fernandez-Pello,P21b,196M,PMMA,True,rod,,6.35,,black,,2,16.3,1.0,94.0,5.0,1,False,14.0,0.0,0.03,4.0,False,,0.83,0.0133,0.00214,True,True,False
+BASS2-P22a,PSI-25,97,Fernandez-Pello,P22a,200m,PMMA,True,rod,,9.525,,black,,2,20.8,0.32,4.0,5.0,1,True,83.0,20.2,,,False,,0.83,,,False,False,False
+BASS2-P22b,PSI-25,98,Fernandez-Pello,P22b,200m,PMMA,True,rod,,9.525,,black,,2,20.0,,,5.0,1,True,155.0,-19.1,,,False,,0.83,,,False,False,False
+BASS2-P23,PSI-25,99,Fernandez-Pello,P23,201m,PMMA,True,rod,,9.525,,black,,2,18.2,1.05,78.0,2.0,4,False,242.0,1.2,1.03,81.0,False,0.86,0.83,0.0079,0.00426,True,True,False
+BASS2-P24,PSI-25,100,Fernandez-Pello,P24,819L,PMMA,True,rod,,9.525,,black,,2,19.0,1.2,26.0,2.0,4,False,308.0,1.5,1.04,234.0,False,0.69,0.83,0.0225,0.00338,True,True,False
+BASS2-P25,PSI-25,101,Fernandez-Pello,P25,217m,PMMA,True,rod,,9.525,,clear,,2,20.9,0.38,43.0,5.0,1,True,246.0,0.7,0.62,162.0,False,0.89,0.83,0.0261,0.00252,True,True,False
+BASS2-T1,PSI-25,102,T'ien,T1,128,SIBAL,False,fabric strip,,,2.0,,,2,18.5,0.35,0.0,10.0,1,False,85.0,0.0,0.06,40.0,False,,1.0,0.0667,0.00071,True,True,False
+BASS2-T2,PSI-25,103,T'ien,T2,129,SIBAL,False,fabric strip,,,2.0,,,2,18.5,0.41,40.0,9.0,3,False,100.0,0.0,0.04,38.0,False,,1.0,0.095,0.0004,True,True,False
+BASS2-T3,PSI-25,104,T'ien,T3,182m,not stated,False,spherical section,,40.0,,,,2,17.2,0.42,45.0,10.0,1,False,166.0,0.4,0.28,68.0,False,0.7,,0.0243,0.00169,False,False,True
+BASS2-T4,PSI-25,105,T'ien,T4,130,SIBAL,False,fabric strip,,,2.0,,,2,18.7,0.44,59.0,9.0,2,False,97.0,0.0,0.01,13.0,False,,1.0,,0.0001,True,True,False
+BASS2-T5,PSI-25,106,T'ien,T5,131,SIBAL,False,fabric strip,,,2.0,,,2,18.8,0.2,2.0,10.0,3,False,100.0,-0.1,0.05,39.0,False,,1.0,0.078,0.0005,True,True,False
+BASS2-T6,PSI-25,107,T'ien,T6,132,SIBAL,False,fabric strip,,,2.0,,,2,18.8,0.24,39.0,5.0,4,False,117.0,0.0,0.04,38.0,False,,1.0,0.095,0.00034,True,True,False
+BASS2-T7,PSI-25,108,T'ien,T7,182m,not stated,False,spherical section,,40.0,,,,2,17.3,0.32,49.0,10.0,4,False,299.0,0.2,0.27,91.0,False,1.35,,0.0337,0.0009,False,False,True
+BASS2-T9,PSI-25,109,T'ien,T9,133M,SIBAL,False,fabric strip,,,2.0,,,2,16.4,0.3,0.0,10.0,1,False,48.0,0.0,0.01,9.0,False,,1.0,,0.00021,True,True,False
+BASS2-T10,PSI-25,110,T'ien,T10,134M,SIBAL,False,fabric strip,,,2.0,,,2,16.4,0.31,9.0,5.0,1,False,43.0,-0.1,0.02,5.0,False,,1.0,,0.00047,True,True,False
+BASS2-T11,PSI-25,111,T'ien,T11,135m,SIBAL,False,fabric strip,,,2.0,,,2,17.1,0.35,1.0,5.0,1,False,109.0,0.1,0.04,44.0,False,0.4,1.0,0.11,0.00037,True,True,False
+BASS2-T12,PSI-25,112,T'ien,T12,136m,SIBAL,False,fabric strip,,,2.0,,,2,16.8,0.7,113.0,5.0,1,False,39.0,-0.1,0.0,4.0,False,,1.0,,0.0,True,True,False
+BASS2-T13,PSI-25,113,T'ien,T13,137,SIBAL,False,fabric strip,,,2.0,,,2,17.5,0.19,2.0,5.0,2,False,55.0,-0.1,0.01,10.0,False,,1.0,,0.00018,True,True,False
+BASS2-T14,PSI-25,114,T'ien,T14,140m,SIBAL,False,fabric strip,,,2.0,,,2,16.9,0.7,117.0,5.0,2,False,119.0,0.0,0.02,35.0,False,,1.0,,0.00017,True,True,False
+BASS2-T15,PSI-25,115,T'ien,T15,138,SIBAL,False,fabric strip,,,2.0,,,0,18.7,0.45,72.0,9.0,2,False,46.0,0.0,0.06,30.0,False,,1.0,0.05,0.0013,True,True,False
+BASS2-T16,PSI-25,116,T'ien,T16,139,SIBAL,False,fabric strip,,,2.0,,,2,17.6,0.21,17.0,5.0,2,False,100.0,0.1,0.0,24.0,False,0.0,1.0,,0.0,True,True,False
+BASS2-T17,PSI-25,117,T'ien,T17,142m,SIBAL,False,fabric strip,,,2.0,,,0,16.9,0.72,152.0,6.0,2,False,83.0,0.0,0.03,38.0,False,,1.0,0.1267,0.00036,True,True,False
+BASS2-T18,PSI-25,118,T'ien,T18,141M,SIBAL,False,fabric strip,,,2.0,,,2,17.4,0.36,2.0,5.0,2,False,49.0,0.0,0.02,20.0,False,,1.0,,0.00041,True,True,False
+BASS2-T19,PSI-25,119,T'ien,T19,143m,SIBAL,False,fabric strip,,,1.0,,,2,17.2,0.29,1.0,11.0,1,False,73.0,0.0,0.02,19.0,False,,1.0,,0.00027,True,True,False
+BASS2-T20,PSI-25,120,T'ien,T20,144m,SIBAL,False,fabric strip,,,1.0,,,2,17.2,0.31,20.0,11.0,2,False,117.0,0.0,0.0,14.0,False,,1.0,,0.0,True,True,False
+BASS2-T21,PSI-25,121,T'ien,T21,145m,SIBAL,False,fabric strip,,,1.0,,,0,17.2,0.31,34.0,11.0,2,False,151.0,0.0,0.01,11.0,False,,1.0,,7e-05,True,True,False
+BASS2-T22,PSI-25,122,T'ien,T22,146m,SIBAL,False,fabric strip,,,1.0,,,2,17.1,0.59,140.0,10.0,2,False,38.0,0.1,0.03,22.0,False,0.3,1.0,0.0733,0.00079,True,True,False
+BASS2-T23,PSI-25,123,T'ien,T23,133m,SIBAL,False,fabric strip,,,2.0,,,2,17.2,0.32,45.0,10.0,1,False,203.0,-0.1,0.0,4.0,False,,1.0,,0.0,True,True,False
+BASS2-T24,PSI-25,124,T'ien,T24,133m,SIBAL,False,fabric strip,,,1.0,,,2,18.2,0.51,85.0,10.0,1,False,130.0,0.0,0.02,22.0,False,,1.0,,0.00015,True,True,False
+BASS2-T25,PSI-25,125,T'ien,T25,138m,SIBAL,False,fabric strip,,,2.0,,,1,20.8,0.36,-1.0,5.0,2,False,75.0,0.1,0.03,18.0,False,0.3,1.0,0.06,0.0004,True,True,False
+BASS2-T26,PSI-25,126,T'ien,T26,137m,SIBAL,False,fabric strip,,,2.0,,,1,20.8,0.36,-1.0,5.0,2,False,87.0,0.1,0.07,25.0,False,0.7,1.0,0.0357,0.0008,True,True,False
+BASS2-T27,PSI-25,127,T'ien,T27,146m,SIBAL,False,fabric strip,,,1.0,,,1,20.7,0.41,-1.0,5.0,2,False,58.0,0.1,0.01,10.0,False,0.1,1.0,,0.00017,True,True,False
+BASS2-T28a,PSI-25,128,T'ien,T28a,144m,SIBAL,False,fabric strip,,,1.0,,,1,20.7,0.41,-1.0,5.0,1,False,19.0,19.8,,,False,,1.0,,,False,False,False
+BASS2-T28b,PSI-25,129,T'ien,T28b,144m,SIBAL,False,fabric strip,,,1.0,,,1,20.7,,,5.0,1,False,27.0,-19.7,,,False,,1.0,,,False,False,False
+BASS2-T29,PSI-25,130,T'ien,T29,145m,SIBAL,False,fabric strip,,,1.0,,,1,20.7,0.41,-1.0,5.0,2,False,60.0,0.2,0.03,11.0,False,0.15,1.0,0.0367,0.0005,True,True,False

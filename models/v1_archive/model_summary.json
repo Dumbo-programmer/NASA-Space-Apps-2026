@@ -1,0 +1,52 @@
+{
+  "flex_extinction": {
+    "chosen": "Extra trees",
+    "validation": {
+      "ROC_AUC": 0.842,
+      "Brier": 0.092,
+      "balanced_accuracy_at_threshold": 0.702,
+      "threshold": 0.704,
+      "cv": "GroupKFold(5) by FLEX test series",
+      "baseline_AUC": 0.5,
+      "baseline_Brier": 0.115
+    },
+    "rows": 206,
+    "groups": 65
+  },
+  "flex_burning_rate": {
+    "chosen": "Linear",
+    "validation": {
+      "MAE": 0.0473,
+      "R2": 0.7202,
+      "MAE_pct_of_mean": 9.3795,
+      "cv": "GroupKFold(5) by FLEX test series",
+      "q90_abs_error": 0.099
+    },
+    "rows": 256,
+    "groups": 78
+  },
+  "spice_smoke_point": {
+    "chosen": "Power law (log-linear, physics form)",
+    "validation": {
+      "MAE_mm": 5.686,
+      "R2": 0.849,
+      "MAPE_pct": 16.124,
+      "cv": "leave-one-ISS-session-out (11 sessions)",
+      "q90_ratio": 1.392
+    },
+    "rows": 55,
+    "groups": 11
+  },
+  "same_particle_size": {
+    "chosen": "Extra trees",
+    "validation": {
+      "MAE_um": 0.0602,
+      "R2": 0.4977,
+      "MAPE_pct": 26.1458,
+      "cv": "GroupKFold(5), fresh+aged readings of a run kept together",
+      "q90_ratio": 1.741
+    },
+    "rows": 125,
+    "groups": 78
+  }
+}

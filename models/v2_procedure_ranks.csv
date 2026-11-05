@@ -1,0 +1,5 @@
+model,bass2_flame_spread,flex_extinction,flex_burning_rate,spice_smoke_point,same_particle_size,mean_rank
+[procedure] best inner score,1.0,4.0,3.0,4.0,3.0,3.0
+[procedure] 1-SE rule (simplest near-best),3.0,3.0,4.0,3.0,4.0,3.4
+[procedure] top-3 average,4.0,2.0,2.0,2.0,1.5,2.3
+[procedure] top-3 average + physics-form fallback outside tested domain,2.0,1.0,1.0,1.0,1.5,1.3

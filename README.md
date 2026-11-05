@@ -42,8 +42,8 @@ I'm the **Data Science Lead** on Team AgniShikha.
 - I cleaned and documented ten sources into one 850-row table.
 
 **Models.** I trained and validated the five machine-learning models in `models/`.
-- Each model is checked against a simple baseline.
-- Each model is scored on held-out experiments, never on rows it was trained on.
+- Each model is chosen with **nested grouped cross-validation**: 8 model families are tuned in an inner loop, and the whole selection procedure is scored on ISS tests it never saw.
+- Each model is checked against a simple baseline and a replicate-based noise ceiling.
 
 **Interface.** I wrote the single `predict()` interface that the backend and dashboard call.
 
@@ -90,23 +90,25 @@ Full documentation is in `data/README_dataset_v1.0.md` and the workbook `data/pr
 
 ## Models
 
-All scores are on **held-out experiments** (grouped cross-validation).
+All scores come from **nested grouped cross-validation**. Whole ISS tests or sessions are held out, and all tuning and model choice happens without them. Full method: [models/MODEL_SELECTION_v2.md](models/MODEL_SELECTION_v2.md).
 
-| # | Model | Question | Score | Baseline |
-|---|---|---|---|---|
-| 1 | `bass2_flame_spread` | How fast does flame spread over a PMMA rod? | R² 0.53 | R² −0.11 |
-| 2 | `flex_extinction` | Will a fuel-droplet flame go out before the fuel is used up? | ROC-AUC **0.84** | 0.50 |
-| 3 | `flex_burning_rate` | How fast does the droplet burn? | R² **0.72** | R² −0.01 |
-| 4 | `spice_smoke_point` | How sooty is a gas flame? | R² **0.85** | R² −0.14 |
-| 5 | `same_particle_size` | How large are smoke particles from an overheated material? | R² 0.50 | R² −0.07 |
+| # | Model | Question | Score (v2) | v1 on same splits | Baseline |
+|---|---|---|---|---|---|
+| 1 | `bass2_flame_spread` | How fast does flame spread over a PMMA rod? | R² **0.62** | R² 0.53 | R² −0.11 |
+| 2 | `flex_extinction` | Will a fuel-droplet flame go out before the fuel is used up? | ROC-AUC **0.83**, Brier **0.090** | AUC 0.82, Brier 0.095 | AUC 0.50, Brier 0.114 |
+| 3 | `flex_burning_rate` | How fast does the droplet burn? | R² **0.71**, MAE **0.045** | R² 0.71, MAE 0.048 | R² −0.01 |
+| 4 | `spice_smoke_point` | How sooty is a gas flame? | R² **0.89**, MAE **4.4 mm** | R² 0.85, MAE 5.7 mm | R² −0.14 |
+| 5 | `same_particle_size` | How large are smoke particles from an overheated material? | R² 0.43 | R² 0.43 | R² −0.07 |
 
-Two choices that kept the models honest:
+How I chose the models:
 
-- **Model 2.** Class-balanced classifiers scored slightly higher AUC but produced probabilities worse than the base rate, so I chose a model whose probabilities are calibrated.
-- **Model 4.** A simple physics power law beat the tree models. It recovered the published scaling of Dotson et al. (2011): smoke-point length ∝ burner diameter^−0.76 × coflow velocity^0.41.
+- **Nested selection.** v1 reported the same CV score it used to pick the winner, which flatters the winner. v2 scores the whole procedure on tests that played no part in the choice.
+- **One rule for all five models.** I compared four selection procedures and used the one with the best mean rank across all five datasets: average the top-3 tuned families, and fall back to the physics-form model (power law or logistic) outside the tested domain.
+- **Physics stays in.** Power laws and log targets kept winning. SPICE recovers the published scaling of Dotson et al. (2011): smoke-point length ∝ burner diameter^−0.76 × coflow velocity^0.41.
+- **Noise ceiling.** Near-identical runs from different ISS tests disagree. That limits the best possible R² to about 0.68 for flame spread and 0.72 for burning rate, and both models are now close to it.
 
 <p align="center">
-  <img src="docs/fig_models_overview.png" alt="Model validation overview" width="760" />
+  <img src="docs/fig_v1_vs_v2.png" alt="v1 vs v2 held-out scores and noise ceilings" width="760" />
 </p>
 
 ---
@@ -198,10 +200,13 @@ NASA-Space-Apps-2026/
 │   ├── scripts/              # Build and verification scripts
 │   └── README_dataset_v1.0.md
 ├── models/
-│   ├── ignis_models.py       # predict() entry point, Shapley, domain checks
-│   ├── train_all.py          # Trains models 2-5
+│   ├── ignis_models.py       # predict() entry point, Shapley, domain checks, physics fallback
+│   ├── ml_selection.py       # Model families, tuning grids, nested grouped CV
+│   ├── train_v2.py           # Trains all five models
 │   ├── *.joblib              # Trained models
-│   ├── *_cv_results.csv      # Every candidate model compared
+│   ├── *_v2_nested_cv.csv    # Every family and selection procedure, scored on held-out tests
+│   ├── MODEL_SELECTION_v2.md # How the models were selected, v1 vs v2
+│   ├── v1_archive/           # v1 models kept for comparison
 │   └── README.md             # Model cards
 ├── notebooks/                # Beginner notebook: build the flame-spread model step by step
 └── docs/                     # Figures, ML design notes, abstract draft, verification guide
@@ -212,7 +217,7 @@ NASA-Space-Apps-2026/
 ## Status and Limits
 
 - **Dashboard:** it still runs on a client-side placeholder model. Connecting it to the trained models through `/predict/{model_name}` is in progress.
-- **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide.
+- **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide (95 % CIs are in `models/model_summary.json`). For flame spread and burning rate the remaining error is mostly run-to-run noise, so more ISS experiments, not more modelling, would improve them.
 - **1g data:** the WSTF ground reference is a comparison layer and is never used to train microgravity models.
 - **Missing outcomes:** the FLEX-2 and Cool Flames Investigation tables list test conditions only, so they are not modelled.
 

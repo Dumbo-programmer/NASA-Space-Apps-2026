@@ -1,0 +1,8 @@
+model,inner_cv_score,paired_se_vs_best,complexity_rank,in_final_model,best_params
+Logistic + pairwise interactions,-0.260680796684951,0.0,2,True,"{""m__C"": ""0.25118864315095824""}"
+Support vector machine (RBF),-0.3062238075157809,0.01108164675015046,4,True,"{""m__C"": ""3"", ""m__gamma"": ""scale""}"
+Extra trees,-0.31131878692527815,0.015250357046287195,5,True,"{""max_features"": ""1.0"", ""min_samples_leaf"": ""3""}"
+Logistic regression,-0.316218782181834,0.02860429835474812,1,False,"{""m__C"": ""1.0""}"
+Random forest,-0.34112844477384174,0.021398130354476144,5,False,"{""max_features"": ""0.5"", ""min_samples_leaf"": ""3""}"
+Gradient boosting,-0.3438065977933818,0.02515882852802668,6,False,"{""learning_rate"": ""0.03"", ""max_depth"": ""2"", ""n_estimators"": ""100""}"
+k-nearest neighbours,-0.37519077097898174,0.06896414459917444,3,False,"{""m__n_neighbors"": ""25"", ""m__weights"": ""distance""}"

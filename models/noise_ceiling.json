@@ -1,0 +1,30 @@
+{
+  "bass2_flame_spread": {
+    "replicate_pairs": 32,
+    "noise_sd": 0.010701854395384009,
+    "total_sd": 0.01886267907753955,
+    "max_R2_possible": 0.6781071545456705,
+    "scale": "original"
+  },
+  "flex_burning_rate": {
+    "replicate_pairs": 27,
+    "noise_sd": 0.07114148656804349,
+    "total_sd": 0.13483114349385075,
+    "max_R2_possible": 0.7216024324691417,
+    "scale": "original"
+  },
+  "spice_smoke_point": {
+    "replicate_pairs": 16,
+    "noise_sd": 1.6030916852288895,
+    "total_sd": 21.620105573276536,
+    "max_R2_possible": 0.9945020459926952,
+    "scale": "original"
+  },
+  "same_particle_size": {
+    "replicate_pairs": 156,
+    "noise_sd": 0.059313318540008576,
+    "total_sd": 0.14961248242344738,
+    "max_R2_possible": 0.8428303129356298,
+    "scale": "original"
+  }
+}

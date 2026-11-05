@@ -5,6 +5,8 @@ Ignis mu / AgniShikha - shared model utilities + one prediction entry point for 
     predict("flex_extinction", fuel="Methanol", pressure_kpa=101.3, o2_pct=18, co2_pct=0, he_pct=0, d0_mm=3.0)
     predict("bass2_flame_spread", o2_pct=18.2, opposed_flow_cm_s=1.67, diameter_cm=0.64)
 
+v2: every bundle is built by train_v2.py (nested grouped model selection, see MODEL_SELECTION_v2.md).
+
 Every answer carries: prediction, uncertainty band, in_domain + warnings, exact Shapley contributions,
 value_type = "ML-predicted", the NASA source and the model's validation scores.
 """
@@ -44,7 +46,33 @@ def same_features(df):
         X[f"mat_{m}"] = (df["material"] == m).astype(float)
     return X
 
-FEATURE_FNS = {"flex": flex_features, "spice": spice_features, "same": same_features}
+
+# ---- v2 feature sets (same raw inputs as v1, plus physics-informed terms) ----
+def flex2_features(df):
+    p, o2 = df["pressure_kpa"].astype(float), df["o2_pct"].astype(float)
+    return pd.DataFrame({
+        "is_heptane": (df["fuel"].str.lower() == "heptane").astype(float),
+        "log_pressure": np.log(p),
+        "o2_pct": o2,
+        "o2_partial_kpa": o2 / 100 * p,                       # oxygen actually available to the flame
+        "co2_pct": df["co2_pct"].astype(float),
+        "he_pct": df["he_pct"].astype(float),
+        "d0_mm": df["d0_mm"].astype(float)})
+
+def same2_features(df):
+    X = same_features(df)
+    X.insert(2, "no_flow", (df["air_velocity_cm_s"].astype(float) == 0).astype(float))
+    return X
+
+def bass2_features(df):
+    flow = df["opposed_flow_cm_s"].astype(float)
+    return pd.DataFrame({"o2_pct": df["o2_pct"].astype(float),
+                         "opposed_flow_cm_s": flow,
+                         "log_flow": np.log(flow),
+                         "inv_diameter_per_cm": 1.0 / df["diameter_cm"].astype(float)})   # thin-rod spread ~ 1/d
+
+FEATURE_FNS = {"flex": flex_features, "spice": spice_features, "same": same_features,
+               "flex2": flex2_features, "spice2": spice_features, "same2": same2_features, "bass2": bass2_features}
 
 def inverse(kind, y):
     return np.exp(y) if kind == "log" else np.asarray(y, dtype=float)
@@ -54,6 +82,9 @@ def band(spec, y):
     return (max(0.0, y - q), y + q) if kind == "additive" else (y / q, y * q)
 
 def load(name):
+    import sys
+    if HERE not in sys.path:
+        sys.path.insert(0, HERE)        # bundles reference ml_selection / sklearn objects
     if name not in _CACHE:
         _CACHE[name] = joblib.load(os.path.join(HERE, f"{name}.joblib"))
     return _CACHE[name]
@@ -103,35 +134,27 @@ def domain_check(bundle, raw, X):
 
 # ---------- the single entry point ----------
 def predict(model_name, explain=True, **raw):
-    if model_name == "bass2_flame_spread":                       # Model 1 (trained earlier, own bundle format)
-        import sys; sys.path.insert(0, HERE)
-        from predict_flame_spread import predict as p1
-        r = p1(raw["o2_pct"], raw["opposed_flow_cm_s"], raw["diameter_cm"], explain=explain)
-        out = {"model": model_name, "task": "regression", "target": "flame spread rate over a PMMA rod (opposed flow)",
-               "prediction": r["flame_spread_mm_s"], "unit": "mm/s", "interval_90": r["interval_90_mm_s"],
-               "in_domain": r["in_domain"], "confidence": r["confidence"], "warnings": r["warnings"],
-               "value_type": r["value_type"], "valid_for": r["valid_for"],
-               "validation": {"MAE": 0.0094, "R2": 0.53, "cv": "leave-one-ISS-test-out (19 tests)"},
-               "source": r["source"], "version": "1.0"}
-        if explain:
-            out.update(base_value=r["base_value_mm_s"], contributions=r["contributions_mm_s"])
-        return out
     b = load(model_name)
+    raw = {**b.get("defaults", {}), **raw}
     X = FEATURE_FNS[b["feature_fn"]](pd.DataFrame([raw]))
     in_domain, warnings = domain_check(b, raw, X)
     out = {"model": model_name, "task": b["task"], "target": b["target_label"]}
+    model = b["model"]
+    if not in_domain and b.get("fallback_model") is not None:
+        model = b["fallback_model"]                     # physics-form model extrapolates more safely than the ensemble
+        warnings = warnings + [f"outside the tested domain: answer comes from the physics-form model ({b['fallback_label']}), not the ensemble"]
     if b["task"] == "classification":
-        p = float(b["model"].predict_proba(X[b["features"]])[0, 1])
+        p = float(model.predict_proba(X[b["features"]])[0, 1])
         out.update(probability=round(p, 3), predicted_class=b["classes"][int(p >= b.get("threshold", 0.5))],
                    base_rate=round(b.get("base_rate", 0.5), 3), note=b["prob_note"])
-        f = lambda B: b["model"].predict_proba(B[b["features"]])[:, 1]
+        f = lambda B: model.predict_proba(B[b["features"]])[:, 1]
     else:
-        y = float(inverse(b["target_transform"], b["model"].predict(X[b["features"]]))[0])
+        y = float(inverse(b["target_transform"], model.predict(X[b["features"]]))[0])
         lo, hi = band(b["band"], y)
         out.update(prediction=round(y, 4), unit=b["unit"], interval_90=[round(lo, 4), round(hi, 4)])
-        f = lambda B: inverse(b["target_transform"], b["model"].predict(B[b["features"]]))
+        f = lambda B: inverse(b["target_transform"], model.predict(B[b["features"]]))
     out.update(in_domain=in_domain, confidence="Moderate" if in_domain else "Limited (extrapolation)",
-               warnings=warnings, value_type="ML-predicted", valid_for=b["valid_for"],
+               warnings=warnings, value_type="ML-predicted", model_used=(b.get("fallback_label") if model is not b["model"] else b["model_label"]), valid_for=b["valid_for"],
                validation=b["validation"], source=b["source"], version=b["version"])
     if explain:
         contrib, base = shapley(f, X.iloc[0], b["background"], b["groups"])

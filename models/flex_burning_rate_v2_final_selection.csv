@@ -1,0 +1,9 @@
+model,inner_cv_score,paired_se_vs_best,complexity_rank,in_final_model,best_params
+Support vector regression (RBF),-0.04496214108165582,0.0,4,True,"{""func"": ""None"", ""inverse_func"": ""None"", ""regressor__regressor__m__C"": ""1"", ""regressor__regressor__m__epsilon"": ""0.05"", ""regressor__regressor__m__gamma"": ""scale""}"
+Gaussian process (ARD),-0.047589937211439774,0.001322740009855685,4,True,"{""func"": ""log"", ""inverse_func"": ""exp""}"
+Ridge (linear),-0.04848239571716138,0.0017151187487905379,1,True,"{""func"": ""None"", ""inverse_func"": ""None"", ""regressor__m__alpha"": ""10.0""}"
+Extra trees,-0.050517030940404536,0.001218401201061912,5,False,"{""func"": ""log"", ""inverse_func"": ""exp"", ""regressor__max_features"": ""1.0"", ""regressor__min_samples_leaf"": ""5""}"
+k-nearest neighbours,-0.05450564830706406,0.0022409241368558496,3,False,"{""func"": ""log"", ""inverse_func"": ""exp"", ""regressor__m__n_neighbors"": ""12"", ""regressor__m__weights"": ""distance""}"
+Random forest,-0.05525699385914862,0.0028840555326654425,5,False,"{""func"": ""None"", ""inverse_func"": ""None"", ""regressor__max_features"": ""1.0"", ""regressor__min_samples_leaf"": ""3""}"
+Gradient boosting,-0.05554640093537545,0.003526345582542204,6,False,"{""func"": ""log"", ""inverse_func"": ""exp"", ""regressor__learning_rate"": ""0.1"", ""regressor__max_depth"": ""2"", ""regressor__n_estimators"": ""100""}"
+Ridge + pairwise interactions,-0.0680462075344601,0.012791409462876475,2,False,"{""func"": ""None"", ""inverse_func"": ""None"", ""regressor__m__alpha"": ""10.0""}"

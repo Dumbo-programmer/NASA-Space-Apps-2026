@@ -1,0 +1,13 @@
+model,metric,v1_reported_in_v1,v1_on_same_outer_splits,v2_nested,v2_better
+bass2_flame_spread,MAE,0.0094,0.0094,0.0092,True
+bass2_flame_spread,R2,0.53,0.5347,0.6157,True
+flex_extinction,ROC_AUC,0.842,0.8225,0.8326,True
+flex_extinction,Brier,0.092,0.095,0.0903,True
+flex_extinction,log_loss,,0.3088,0.2985,True
+flex_extinction,balanced_accuracy,,0.6519,0.6661,True
+flex_burning_rate,MAE,0.0473,0.0476,0.0449,True
+flex_burning_rate,R2,0.7202,0.7104,0.7122,True
+spice_smoke_point,MAE,5.686,5.6858,4.3941,True
+spice_smoke_point,R2,0.849,0.8493,0.8856,True
+same_particle_size,MAE,0.0602,0.0635,0.0632,True
+same_particle_size,R2,0.4977,0.4327,0.4286,False

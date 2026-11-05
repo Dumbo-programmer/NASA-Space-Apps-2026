@@ -95,7 +95,12 @@ def threshold_fn(y):
 
 # ============================================================ phase 1: nested CV
 S = load_specs()
-NEST = joblib.load("v2_nested_cache.joblib") if REUSE and os.path.exists("v2_nested_cache.joblib") else {}
+NEST = {}
+if REUSE and os.path.exists("v2_nested_cache.joblib"):
+    try:
+        NEST = joblib.load("v2_nested_cache.joblib")
+    except Exception as e:                       # e.g. a different scikit-learn version
+        print(f"cache could not be loaded ({type(e).__name__}); running the full nested CV instead")
 if True:
     for name, sp in S.items():
         if name in NEST:
@@ -158,7 +163,8 @@ for name, sp in S.items():
     t = NEST[name]["table"]; t = t[t.model != row["model"]]
     NEST[name]["table"] = pd.concat([t.iloc[:3], pd.DataFrame([row]), t.iloc[3:]], ignore_index=True)
     NEST[name]["fallback_share_pct"] = round(100 * sum(share) / (len(y) * res["reps"]), 1)
-    print(f"{name}: {NEST[name]['fallback_share_pct']}% of held-out rows were outside the training domain -> physics fallback")
+    print(f"{name}: " + (f"{NEST[name]['fallback_share_pct']}% of held-out rows were outside the training domain -> physics fallback"
+                         if sp.get("physics_form", True) else "no physics-form law -> ensemble used everywhere (out-of-domain inputs are still flagged)"))
 
 # ============================================================ phase 2: one global procedure
 ranks = []

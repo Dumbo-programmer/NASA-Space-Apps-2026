@@ -170,6 +170,15 @@ predict("flex_extinction", fuel="Methanol", pressure_kpa=101.3, o2_pct=18, co2_p
 predict("spice_smoke_point", fuel="Propylene", burner_diameter_mm=1.6, coflow_air_velocity_cm_s=30)
 ```
 
+### Or run everything in Google Colab
+
+Open [`notebooks/Ignis_mu_Model_Selection_v2.ipynb`](notebooks/Ignis_mu_Model_Selection_v2.ipynb) in Colab ([open in Colab](https://colab.research.google.com/github/prachyabiswas/NASA-Space-Apps-2026/blob/main/notebooks/Ignis_mu_Model_Selection_v2.ipynb)) and choose `Runtime → Run all`. The notebook then:
+- rebuilds all five models from the NASA data
+- shows the leakage demo, the noise ceilings and the nested selection
+- runs the physics checks
+
+It needs no login and takes about 15 minutes.
+
 ### 3. Run the dashboard
 
 ```bash
@@ -208,7 +217,7 @@ NASA-Space-Apps-2026/
 │   ├── MODEL_SELECTION_v2.md # How the models were selected, v1 vs v2
 │   ├── v1_archive/           # v1 models kept for comparison
 │   └── README.md             # Model cards
-├── notebooks/                # Beginner notebook: build the flame-spread model step by step
+├── notebooks/                # Colab notebook for model selection v2 + beginner flame-spread notebook
 └── docs/                     # Figures, ML design notes, abstract draft, verification guide
 ```
 
@@ -233,6 +242,15 @@ NASA-Space-Apps-2026/
 | Tawhid Bin Omar | UI & Software Lead |
 | Prachya Biswas | Data Science Lead |
 | Samyo Pramanik | AI Lead |
+
+---
+
+## Use of AI
+
+As the NASA Space Apps Project Submission Guide requires, AI assistance is disclosed here:
+- **Claude (Anthropic)** assisted in writing parts of the code and documentation for the dataset pipeline, the models and the notebooks (`data/`, `models/`, `notebooks/`).
+- The team directed the work and checked every result. Each data value is traced to its NASA source, and each reported score can be reproduced with `models/train_v2.py` or the Colab notebook.
+- No AI-generated images are used. All figures are plotted directly from NASA data.
 
 ---
 

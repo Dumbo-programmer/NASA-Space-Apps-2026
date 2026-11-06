@@ -1,0 +1,49 @@
+model_task,model,MAE,R2,coverage90_pct,mean_width,uncertainty_tracks_error_spearman,ROC_AUC,Brier,log_loss
+bass2_flame_spread,PI-GP (proposed),0.0096,0.5679,86.5385,0.9385,-0.1168,,,
+bass2_flame_spread,Physics law only (PI-GP mean),0.01,0.5783,86.5385,0.9105,0.0,,,
+bass2_flame_spread,v2: top-3 average + fallback,0.0092,0.6157,88.4615,0.755,0.0,,,
+bass2_flame_spread,"Ridge (linear) (tuned, v2)",0.0093,0.6203,86.5385,0.8102,0.0,,,
+bass2_flame_spread,"k-nearest neighbours (tuned, v2)",0.0116,0.4227,88.4615,0.8902,0.0,,,
+bass2_flame_spread,"Support vector regression (RBF) (tuned, v2)",0.0102,0.5292,88.4615,0.8249,0.0,,,
+bass2_flame_spread,"Gaussian process (ARD) (tuned, v2)",0.0125,0.3205,88.4615,1.2029,0.0,,,
+bass2_flame_spread,"Random forest (tuned, v2)",0.0117,0.3238,88.4615,0.9153,0.0,,,
+bass2_flame_spread,"Extra trees (tuned, v2)",0.0093,0.5,86.5385,0.8844,0.0,,,
+bass2_flame_spread,"Gradient boosting (tuned, v2)",0.0113,0.3698,86.5385,1.0321,0.0,,,
+flex_extinction,PI-GP (proposed),,,,,,0.8674,0.082,0.2705
+flex_extinction,v2: top-3 average + fallback,,,,,,0.8326,0.0903,0.2985
+flex_extinction,"Logistic regression (tuned, v2)",,,,,,0.8034,0.0878,0.316
+flex_extinction,"k-nearest neighbours (tuned, v2)",,,,,,0.8287,0.0958,0.3077
+flex_extinction,"Support vector machine (RBF) (tuned, v2)",,,,,,0.7787,0.0959,0.3297
+flex_extinction,"Random forest (tuned, v2)",,,,,,0.7512,0.1019,0.347
+flex_extinction,"Extra trees (tuned, v2)",,,,,,0.8127,0.0967,0.316
+flex_extinction,"Gradient boosting (tuned, v2)",,,,,,0.6946,0.1066,0.3662
+flex_burning_rate,PI-GP (proposed),0.0474,0.7062,89.7135,0.2252,0.0198,,,
+flex_burning_rate,Physics law only (PI-GP mean),0.0488,0.6886,89.5833,0.2053,0.0,,,
+flex_burning_rate,v2: top-3 average + fallback,0.0449,0.7122,89.974,0.2036,0.0,,,
+flex_burning_rate,"Ridge (linear) (tuned, v2)",0.0482,0.6969,89.8438,0.2031,0.0,,,
+flex_burning_rate,"k-nearest neighbours (tuned, v2)",0.0576,0.6206,89.5833,0.2433,0.0,,,
+flex_burning_rate,"Support vector regression (RBF) (tuned, v2)",0.0449,0.6926,89.5833,0.1887,0.0,,,
+flex_burning_rate,"Gaussian process (ARD) (tuned, v2)",0.048,0.6857,89.1927,0.2187,0.0,,,
+flex_burning_rate,"Random forest (tuned, v2)",0.056,0.5952,89.4531,0.2411,0.0,,,
+flex_burning_rate,"Extra trees (tuned, v2)",0.0522,0.6295,89.4531,0.2139,0.0,,,
+flex_burning_rate,"Gradient boosting (tuned, v2)",0.0551,0.6412,89.7135,0.2438,0.0,,,
+spice_smoke_point,PI-GP (proposed),6.2493,0.7873,78.1818,0.5866,-0.1849,,,
+spice_smoke_point,Physics law only (PI-GP mean),5.6829,0.8485,89.0909,0.6616,0.0,,,
+spice_smoke_point,v2: top-3 average + fallback,4.3941,0.8856,87.2727,0.6248,0.0,,,
+spice_smoke_point,"Ridge (linear) (tuned, v2)",5.6669,0.8498,90.9091,0.6605,0.0,,,
+spice_smoke_point,"k-nearest neighbours (tuned, v2)",8.368,0.4264,87.2727,1.0062,0.0,,,
+spice_smoke_point,"Support vector regression (RBF) (tuned, v2)",6.3197,0.5788,90.9091,0.7051,0.0,,,
+spice_smoke_point,"Gaussian process (ARD) (tuned, v2)",6.9239,0.5577,89.0909,0.7272,0.0,,,
+spice_smoke_point,"Random forest (tuned, v2)",8.3654,0.4616,90.9091,1.0101,0.0,,,
+spice_smoke_point,"Extra trees (tuned, v2)",8.326,0.4191,90.9091,0.9988,0.0,,,
+spice_smoke_point,"Gradient boosting (tuned, v2)",6.6131,0.5925,89.0909,0.7453,0.0,,,
+same_particle_size,PI-GP (proposed),0.068,0.3164,89.6,1.298,0.128,,,
+same_particle_size,Physics law only (PI-GP mean),0.0701,0.3193,89.6,1.3757,0.0,,,
+same_particle_size,v2: top-3 average + fallback,0.0632,0.4286,89.0667,1.071,0.0,,,
+same_particle_size,"Ridge (linear) (tuned, v2)",0.0714,0.3015,89.3333,1.3843,0.0,,,
+same_particle_size,"k-nearest neighbours (tuned, v2)",0.066,0.3898,88.5333,1.3497,0.0,,,
+same_particle_size,"Support vector regression (RBF) (tuned, v2)",0.0664,0.3962,89.6,1.1157,0.0,,,
+same_particle_size,"Gaussian process (ARD) (tuned, v2)",0.0697,0.3849,88.8,1.3358,0.0,,,
+same_particle_size,"Random forest (tuned, v2)",0.0607,0.4468,89.6,1.1495,0.0,,,
+same_particle_size,"Extra trees (tuned, v2)",0.0662,0.4001,89.8667,1.1356,0.0,,,
+same_particle_size,"Gradient boosting (tuned, v2)",0.0725,0.356,89.0667,1.31,0.0,,,

@@ -1,0 +1,45 @@
+model_task,model,key_input,expected,rows_violating_pct
+bass2_flame_spread,PI-GP (proposed),o2_pct,up,0.0
+bass2_flame_spread,"Ridge (linear) (tuned, v2)",o2_pct,up,0.0
+bass2_flame_spread,"k-nearest neighbours (tuned, v2)",o2_pct,up,86.5
+bass2_flame_spread,"Support vector regression (RBF) (tuned, v2)",o2_pct,up,90.4
+bass2_flame_spread,"Gaussian process (ARD) (tuned, v2)",o2_pct,up,100.0
+bass2_flame_spread,"Random forest (tuned, v2)",o2_pct,up,42.3
+bass2_flame_spread,"Extra trees (tuned, v2)",o2_pct,up,0.0
+bass2_flame_spread,"Gradient boosting (tuned, v2)",o2_pct,up,50.0
+bass2_flame_spread,v2: top-3 average + fallback,o2_pct,up,0.0
+flex_extinction,PI-GP (proposed),o2_pct,down,2.4
+flex_extinction,"Logistic regression (tuned, v2)",o2_pct,down,0.0
+flex_extinction,"k-nearest neighbours (tuned, v2)",o2_pct,down,62.6
+flex_extinction,"Support vector machine (RBF) (tuned, v2)",o2_pct,down,36.4
+flex_extinction,"Random forest (tuned, v2)",o2_pct,down,78.6
+flex_extinction,"Extra trees (tuned, v2)",o2_pct,down,35.0
+flex_extinction,"Gradient boosting (tuned, v2)",o2_pct,down,62.6
+flex_extinction,v2: top-3 average + fallback,o2_pct,down,22.3
+flex_burning_rate,PI-GP (proposed),o2_pct,up,0.0
+flex_burning_rate,"Ridge (linear) (tuned, v2)",o2_pct,up,0.0
+flex_burning_rate,"k-nearest neighbours (tuned, v2)",o2_pct,up,35.9
+flex_burning_rate,"Support vector regression (RBF) (tuned, v2)",o2_pct,up,42.6
+flex_burning_rate,"Gaussian process (ARD) (tuned, v2)",o2_pct,up,8.2
+flex_burning_rate,"Random forest (tuned, v2)",o2_pct,up,12.1
+flex_burning_rate,"Extra trees (tuned, v2)",o2_pct,up,0.0
+flex_burning_rate,"Gradient boosting (tuned, v2)",o2_pct,up,4.3
+flex_burning_rate,v2: top-3 average + fallback,o2_pct,up,0.0
+spice_smoke_point,PI-GP (proposed),coflow_air_velocity_cm_s,up,0.0
+spice_smoke_point,"Ridge (linear) (tuned, v2)",coflow_air_velocity_cm_s,up,0.0
+spice_smoke_point,"k-nearest neighbours (tuned, v2)",coflow_air_velocity_cm_s,up,54.5
+spice_smoke_point,"Support vector regression (RBF) (tuned, v2)",coflow_air_velocity_cm_s,up,36.4
+spice_smoke_point,"Gaussian process (ARD) (tuned, v2)",coflow_air_velocity_cm_s,up,18.2
+spice_smoke_point,"Random forest (tuned, v2)",coflow_air_velocity_cm_s,up,52.7
+spice_smoke_point,"Extra trees (tuned, v2)",coflow_air_velocity_cm_s,up,25.5
+spice_smoke_point,"Gradient boosting (tuned, v2)",coflow_air_velocity_cm_s,up,65.5
+spice_smoke_point,v2: top-3 average + fallback,coflow_air_velocity_cm_s,up,0.0
+same_particle_size,PI-GP (proposed),aging_time_s,up,0.0
+same_particle_size,"Ridge (linear) (tuned, v2)",aging_time_s,up,0.0
+same_particle_size,"k-nearest neighbours (tuned, v2)",aging_time_s,up,77.6
+same_particle_size,"Support vector regression (RBF) (tuned, v2)",aging_time_s,up,27.2
+same_particle_size,"Gaussian process (ARD) (tuned, v2)",aging_time_s,up,1.6
+same_particle_size,"Random forest (tuned, v2)",aging_time_s,up,27.2
+same_particle_size,"Extra trees (tuned, v2)",aging_time_s,up,38.4
+same_particle_size,"Gradient boosting (tuned, v2)",aging_time_s,up,56.0
+same_particle_size,v2: top-3 average + fallback,aging_time_s,up,43.2

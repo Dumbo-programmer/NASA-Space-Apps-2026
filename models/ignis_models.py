@@ -71,7 +71,15 @@ def bass2_features(df):
                          "log_flow": np.log(flow),
                          "inv_diameter_per_cm": 1.0 / df["diameter_cm"].astype(float)})   # thin-rod spread ~ 1/d
 
-FEATURE_FNS = {"flex": flex_features, "spice": spice_features, "same": same_features,
+def v3_bass_features(df):
+    import preprocess_v3 as P
+    return P.bass2_X(df)
+
+def v3_flex_features(df):
+    import preprocess_v3 as P
+    return P.flex_features(df)
+
+FEATURE_FNS = {"v3_bass": v3_bass_features, "v3_flex": v3_flex_features, "flex": flex_features, "spice": spice_features, "same": same_features,
                "flex2": flex2_features, "spice2": spice_features, "same2": same2_features, "bass2": bass2_features}
 
 def inverse(kind, y):
@@ -150,7 +158,10 @@ def predict(model_name, explain=True, **raw):
         f = lambda B: model.predict_proba(B[b["features"]])[:, 1]
     else:
         y = float(inverse(b["target_transform"], model.predict(X[b["features"]]))[0])
-        lo, hi = band(b["band"], y)
+        if hasattr(model, "predict_interval"):                  # v3 PI-GP: its own input-dependent 90 % interval
+            lo, hi = (float(v[0]) for v in model.predict_interval(X[b["features"]]))
+        else:
+            lo, hi = band(b["band"], y)
         out.update(prediction=round(y, 4), unit=b["unit"], interval_90=[round(lo, 4), round(hi, 4)])
         f = lambda B: inverse(b["target_transform"], model.predict(B[b["features"]]))
     out.update(in_domain=in_domain, confidence="Moderate" if in_domain else "Limited (extrapolation)",

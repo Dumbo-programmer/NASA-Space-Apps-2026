@@ -166,6 +166,8 @@ for name, sp in S.items():
     print(f"{name}: " + (f"{NEST[name]['fallback_share_pct']}% of held-out rows were outside the training domain -> physics fallback"
                          if sp.get("physics_form", True) else "no physics-form law -> ensemble used everywhere (out-of-domain inputs are still flagged)"))
 
+joblib.dump(NEST, "v2_nested_cache.joblib")          # keep the hybrid procedure's honest predictions too
+
 # ============================================================ phase 2: one global procedure
 ranks = []
 for name, sp in S.items():
@@ -276,7 +278,7 @@ for name, sp in S.items():
         b["validation"]["q90_ratio"] = r4(q)
         oof = m0[["record_id", "material", "sample_temperature_c", "inlet_air_velocity_cm_s", "net_aging_time_s", "count_mean_diameter_um"]]
 
-    joblib.dump(b, f"{name}.joblib")
+    joblib.dump(b, f"{name}.joblib"); os.makedirs("v2_archive", exist_ok=True); joblib.dump(b, f"v2_archive/{name}.joblib")
     table.to_csv(f"{name}_v2_nested_cv.csv", index=False); inner.to_csv(f"{name}_v2_final_selection.csv", index=False)
     oof.assign(pred_nested=np.round(proc[0], 5), pred_v1_same_splits=np.round(NEST[name]["v1_pred"][0], 5)).to_csv(f"{name}_v2_oof.csv", index=False)
     summary[name] = {"chosen": label, "hyperparameters": params, "validation": b["validation"], "rows": b["n_rows"], "groups": b["n_groups"]}

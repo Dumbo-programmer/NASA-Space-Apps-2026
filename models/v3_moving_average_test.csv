@@ -1,0 +1,5 @@
+variant,R2,MAE_mm_s
+no smoothing (honest baseline),0.578,0.01
+"moving average over file rows, scored on smoothed values",0.532,0.0086
+"moving average over file rows, scored on real measurements",0.527,0.01
+"moving average within each test, scored on real measurements",0.58,0.0096

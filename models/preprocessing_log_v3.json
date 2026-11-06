@@ -1,0 +1,122 @@
+{
+ "bass2_flame_spread": [
+  {
+   "step": "load NASA PSI-25 / Link et al. 2018 Table S1",
+   "why": "verified extract of measured spread rates",
+   "rows_after": 52
+  },
+  {
+   "step": "keep flow steps as separate rows, group = ISS test",
+   "why": "flow changes within a test; rows of one test share hardware and are not independent",
+   "rows_after": 52
+  },
+  {
+   "step": "physics space: log O2, log(1/diameter), log flow + flow; target log(spread)",
+   "why": "spread follows power laws in O2 and rod size (thin-rod spread ~ 1/d); in microgravity spread first rises with opposed flow (more O2 delivered) then falls (flame cooled/blown off), so flow enters as u^a * exp(b*u)",
+   "rows_after": 52
+  },
+  {
+   "step": "noise prior from 39 near-replicate pairs (log scale)",
+   "why": "the GP starts from measured run-to-run noise instead of guessing it",
+   "rows_after": 52
+  }
+ ],
+ "flex_extinction": [
+  {
+   "step": "load NASA PSI-69 FLEX table",
+   "why": "274 ISS droplet tests",
+   "rows_after": 274
+  },
+  {
+   "step": "drop 68 tests: 61 'Disruption' (no clean outcome) + 7 with droplet size or pressure missing in the NASA file",
+   "why": "a droplet that broke up has neither extinguished nor burned out: its label is undefined",
+   "rows_after": 206
+  },
+  {
+   "step": "physics features: O2 partial pressure, log pressure, diluent %, droplet size, fuel",
+   "why": "extinction depends on how much O2 reaches the flame (partial pressure), heat loss (size, diluent) and fuel",
+   "rows_after": 206
+  },
+  {
+   "step": "group = FLEX test series (first 3 characters of the FLEX id)",
+   "why": "a series shares the same chamber fill; whole series are held out",
+   "rows_after": 206
+  }
+ ],
+ "flex_burning_rate": [
+  {
+   "step": "load NASA PSI-69 FLEX table",
+   "why": "274 ISS droplet tests",
+   "rows_after": 274
+  },
+  {
+   "step": "drop 16 tests without K, 1 with K <= 0.1 and those missing size or pressure",
+   "why": "K is the slope of the d^2-law; it must be measured and physical",
+   "rows_after": 256
+  },
+  {
+   "step": "physics features (same as extinction); target K in mm^2/s",
+   "why": "d^2-law: K = (8k / rho c_p) ln(1+B); B grows with available O2, falls with diluent",
+   "rows_after": 256
+  },
+  {
+   "step": "noise prior from 27 near-replicate pairs",
+   "why": "measured run-to-run noise for the GP",
+   "rows_after": 256
+  }
+ ],
+ "spice_smoke_point": [
+  {
+   "step": "load NASA PSI-107 SmokePointReview-0g-3.xlsx rows 5-59",
+   "why": "the sheet that holds measured smoke points (not test settings)",
+   "rows_after": 55
+  },
+  {
+   "step": "physics space: log burner diameter, log coflow, fuel; target log(smoke-point length)",
+   "why": "smoke-point length follows a power law in burner size and coflow (Dotson et al. 2011)",
+   "rows_after": 55
+  },
+  {
+   "step": "group = ISS session (GMT day)",
+   "why": "a session shares hardware state and calibration",
+   "rows_after": 55
+  },
+  {
+   "step": "noise prior from 16 near-replicate pairs (log scale)",
+   "why": "measured run-to-run noise for the GP",
+   "rows_after": 55
+  }
+ ],
+ "same_particle_size": [
+  {
+   "step": "load NASA PSI-101/102 results workbook",
+   "why": "154 smoke readings",
+   "rows_after": 154
+  },
+  {
+   "step": "drop 24 readings with all particle moments = 0 or '#NUM!'",
+   "why": "an instrument/reduction failure, not a real zero-size smoke",
+   "rows_after": 130
+  },
+  {
+   "step": "drop readings with '??' temperature or missing aging time",
+   "why": "the input is unknown, so the row cannot teach the model",
+   "rows_after": 125
+  },
+  {
+   "step": "features: temperature, airflow, log aging time, material, campaign; target log(diameter)",
+   "why": "particle size spans a factor ~20, so errors are relative; aging coagulates particles roughly logarithmically in time",
+   "rows_after": 125
+  },
+  {
+   "step": "group = run (fresh + aged reading of the same run kept together)",
+   "why": "the aged reading is the same smoke measured later",
+   "rows_after": 125
+  },
+  {
+   "step": "noise prior from 164 near-replicate pairs (log scale)",
+   "why": "measured run-to-run noise for the GP",
+   "rows_after": 125
+  }
+ ]
+}

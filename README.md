@@ -42,7 +42,9 @@ I'm the **Data Science Lead** on Team AgniShikha.
 - I cleaned and documented ten sources into one 850-row table.
 
 **Models.** I trained and validated the five machine-learning models in `models/`.
-- Each model is chosen with **nested grouped cross-validation**: 8 model families are tuned in an inner loop, and the whole selection procedure is scored on ISS tests it never saw.
+- I chose each model from the project's objective (a fire-risk envelope with honest uncertainty), not by score alone.
+- I designed the preprocessing for the chosen model: physics space, logged cleaning, test groups and measured noise.
+- Every candidate was scored with **nested grouped cross-validation** on ISS tests it never saw.
 - Each model is checked against a simple baseline and a replicate-based noise ceiling.
 
 **Interface.** I wrote the single `predict()` interface that the backend and dashboard call.
@@ -90,22 +92,34 @@ Full documentation is in `data/README_dataset_v1.0.md` and the workbook `data/pr
 
 ## Models
 
-All scores come from **nested grouped cross-validation**. Whole ISS tests or sessions are held out, and all tuning and model choice happens without them. Full method: [models/MODEL_SELECTION_v2.md](models/MODEL_SELECTION_v2.md).
+The models were chosen from the objective. The fire-risk envelope asks three things: will a flame survive, how fast does it spread or burn, and how sure is the answer. For the three outputs that feed the safe-cabin map, I use a **physics-informed Gaussian process (PI-GP)**. The two smoke outputs keep the most accurate v2 ensemble. All scores come from nested grouped cross-validation on identical held-out ISS tests. Full method: [models/MODEL_SELECTION_v3.md](models/MODEL_SELECTION_v3.md).
 
-| # | Model | Question | Score (v2) | v1 on same splits | Baseline |
-|---|---|---|---|---|---|
-| 1 | `bass2_flame_spread` | How fast does flame spread over a PMMA rod? | R² **0.62** | R² 0.53 | R² −0.11 |
-| 2 | `flex_extinction` | Will a fuel-droplet flame go out before the fuel is used up? | ROC-AUC **0.83**, Brier **0.090** | AUC 0.82, Brier 0.095 | AUC 0.50, Brier 0.114 |
-| 3 | `flex_burning_rate` | How fast does the droplet burn? | R² **0.71**, MAE **0.045** | R² 0.71, MAE 0.048 | R² −0.01 |
-| 4 | `spice_smoke_point` | How sooty is a gas flame? | R² **0.89**, MAE **4.4 mm** | R² 0.85, MAE 5.7 mm | R² −0.14 |
-| 5 | `same_particle_size` | How large are smoke particles from an overheated material? | R² 0.43 | R² 0.43 | R² −0.07 |
+| # | Model | Question | Final model | Score | Physics violations | v2 on same tests |
+|---|---|---|---|---|---|---|
+| 1 | `bass2_flame_spread` | How fast does flame spread over a PMMA rod? | PI-GP | R² 0.57, 90 % coverage 86.5 % | 0 % | R² 0.62 |
+| 2 | `flex_extinction` | Will a fuel-droplet flame go out? | PI-GP classifier | ROC-AUC **0.87**, Brier **0.082** | 2.4 % | AUC 0.83, Brier 0.090, 22 % violations |
+| 3 | `flex_burning_rate` | How fast does the droplet burn? | PI-GP | R² **0.71** (ceiling ≈ 0.72), coverage 89.7 % | 0 % | R² 0.71 |
+| 4 | `spice_smoke_point` | How sooty is a gas flame? | v2 ensemble | R² **0.89**, MAE 4.4 mm | 0 % | — |
+| 5 | `same_particle_size` | How large are smoke particles? | v2 ensemble | R² 0.43 | 43 % | — |
 
 How I chose the models:
 
-- **Nested selection.** v1 reported the same CV score it used to pick the winner, which flatters the winner. v2 scores the whole procedure on tests that played no part in the choice.
-- **One rule for all five models.** I compared four selection procedures and used the one with the best mean rank across all five datasets: average the top-3 tuned families, and fall back to the physics-form model (power law or logistic) outside the tested domain.
-- **Physics stays in.** Power laws and log targets kept winning. SPICE recovers the published scaling of Dotson et al. (2011): smoke-point length ∝ burner diameter^−0.76 × coflow velocity^0.41.
-- **Noise ceiling.** Near-identical runs from different ISS tests disagree. That limits the best possible R² to about 0.68 for flame spread and 0.72 for burning rate, and both models are now close to it.
+- **Objective first.** Map outputs must be accurate, follow physics and give uncertainty that grows outside NASA's data. Smoke outputs are read inside the tested range, so accuracy decides there. This rule was set before the comparison.
+- **PI-GP = physics law + GP correction + ISS-test offset.**
+  - The correction is kept only when grouped inner CV shows it beats the physics law alone. For flame spread it was dropped.
+  - Far from data the model returns to physics by itself.
+  - Its uncertainty points to the next most useful ISS experiment.
+- **Preprocessing designed for the model.**
+  - Physics space: log transforms, O₂ partial pressure, 1/diameter.
+  - Unclear outcomes removed, with every reason logged.
+  - ISS-test groups kept.
+  - Replicate-measured noise used as the prior.
+- **Physics stays in.** SPICE recovers the published scaling of Dotson et al. (2011): smoke-point length ∝ burner diameter^−0.76 × coflow velocity^0.41.
+- **Honest limits.** v2 is slightly more accurate on flame spread (0.62 vs 0.57, overlapping CIs). Flame spread and burning rate sit near their replicate noise ceilings (≈ 0.68 and 0.72), so new experiments, not new models, would improve them.
+
+<p align="center">
+  <img src="docs/fig_v3_safe_map_next_experiment.png" alt="Safe-cabin map and next experiment" width="760" />
+</p>
 
 <p align="center">
   <img src="docs/fig_v1_vs_v2.png" alt="v1 vs v2 held-out scores and noise ceilings" width="760" />
@@ -173,11 +187,11 @@ predict("spice_smoke_point", fuel="Propylene", burner_diameter_mm=1.6, coflow_ai
 ### Or run everything in Google Colab
 
 Open [`notebooks/Ignis_mu_Model_Selection_v2.ipynb`](notebooks/Ignis_mu_Model_Selection_v2.ipynb) in Colab ([open in Colab](https://colab.research.google.com/github/prachyabiswas/NASA-Space-Apps-2026/blob/main/notebooks/Ignis_mu_Model_Selection_v2.ipynb)) and choose `Runtime → Run all`. The notebook then:
-- rebuilds all five models from the NASA data
+- rebuilds all five models from the NASA data, including the objective-driven v3 (PI-GP) models
 - shows the leakage demo, the noise ceilings and the nested selection
 - runs the physics checks
 
-It needs no login and takes about 15 minutes.
+It needs no login and takes about 30 minutes.
 
 ### 3. Run the dashboard
 
@@ -210,12 +224,17 @@ NASA-Space-Apps-2026/
 │   └── README_dataset_v1.0.md
 ├── models/
 │   ├── ignis_models.py       # predict() entry point, Shapley, domain checks, physics fallback
+│   ├── preprocess_v3.py      # Preprocessing designed for the PI-GP (logged)
+│   ├── pigp.py               # Physics-informed Gaussian process
+│   ├── compare_v3.py         # PI-GP vs every tuned family on identical splits
+│   ├── v3_final.py           # Final v3 models, safe-cabin map, side experiments
 │   ├── ml_selection.py       # Model families, tuning grids, nested grouped CV
 │   ├── train_v2.py           # Trains all five models
 │   ├── *.joblib              # Trained models
 │   ├── *_v2_nested_cv.csv    # Every family and selection procedure, scored on held-out tests
-│   ├── MODEL_SELECTION_v2.md # How the models were selected, v1 vs v2
-│   ├── v1_archive/           # v1 models kept for comparison
+│   ├── MODEL_SELECTION_v3.md # Objective-driven selection (v3)
+│   ├── MODEL_SELECTION_v2.md # Nested selection, v1 vs v2
+│   ├── v1_archive/, v2_archive/  # earlier models kept for comparison
 │   └── README.md             # Model cards
 ├── notebooks/                # Colab notebook for model selection v2 + beginner flame-spread notebook
 └── docs/                     # Figures, ML design notes, abstract draft, verification guide

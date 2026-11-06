@@ -1,31 +1,26 @@
-# Ignis μ / AgniShikha — ML models v2.0 (trained on NASA ISS data)
+# Ignis μ / AgniShikha — ML models v3.0 (trained on NASA ISS data)
 
 **Data Science / ML:** Prachya Biswas · **Data:** NASA PSI, CC0 (see `Ignis_mu_NASA_dataset_v1.0`)
 
-**How the models were chosen and scored (v2):**
-- **Nested grouped cross-validation.** Whole ISS test series or sessions are held out in the outer loop. All tuning and model choice happens only in the inner loop, so the scores below were never used to pick the model.
-- **8 model families** (7 for the classifier) were tuned and compared for every model.
-- **One selection procedure for all five models:** the average of the top-3 tuned families, with a physics-form fallback when an input is outside the tested domain.
-- The full story, with v1 vs v2 on the same splits and the noise ceilings, is in **[MODEL_SELECTION_v2.md](MODEL_SELECTION_v2.md)**.
+**How the models were chosen (v3):**
+1. **Objective.** The fire-risk envelope: will a flame survive, how fast does it spread or burn, and how sure is the answer. It feeds a safe-cabin map and a next-experiment pick.
+2. **Model chosen for that objective.** For the three map outputs this is a **physics-informed Gaussian process (PI-GP)**: a physics law, plus a GP correction kept only when the data supports it, plus an ISS-test offset. Far from the data it falls back to physics, and its uncertainty grows there.
+3. **Preprocessing designed for the PI-GP.** Inputs are moved into physics space, unclear outcomes are dropped with logged reasons, ISS-test groups are kept, and measured replicate noise is used as the starting noise.
+4. **Scoring.** Every model, on the same nested grouped splits, on accuracy, 90 % coverage and physics violations.
+
+Full story: **[MODEL_SELECTION_v3.md](MODEL_SELECTION_v3.md)** (v3) and [MODEL_SELECTION_v2.md](MODEL_SELECTION_v2.md) (v2 nested selection).
 
 ## The five models
 
-| # | Model name (`predict(...)`) | Question it answers | Inputs | Output | Held-out score (nested CV) | Rows |
+| # | Model name (`predict(...)`) | Question | Inputs | Final model | Held-out score (nested CV) | Rows |
 |---|---|---|---|---|---|---|
-| 1 | `bass2_flame_spread` | How fast does flame spread over a plastic (PMMA) rod? | `o2_pct`, `opposed_flow_cm_s`, `diameter_cm` | mm/s | R² **0.62**, MAE 0.009 mm/s (v1: 0.53; noise ceiling ≈ 0.68) | 52 |
-| 2 | `flex_extinction` | Will a fuel-droplet flame go out before the fuel is used up? | `fuel` (Methanol/Heptane), `pressure_kpa`, `o2_pct`, `co2_pct`, `he_pct`, `d0_mm` | probability + class | ROC-AUC **0.83**, Brier **0.090** (base rate 0.114), log-loss 0.299 | 206 |
-| 3 | `flex_burning_rate` | How fast does the droplet burn? | same as model 2 | K, mm²/s | R² **0.71**, MAE 0.045 (9 % of mean; noise ceiling ≈ 0.72) | 256 |
-| 4 | `spice_smoke_point` | How sooty / smoky is a gas flame? (shorter smoke point = more smoke) | `fuel`, `burner_diameter_mm`, `coflow_air_velocity_cm_s` | mm | R² **0.89**, MAE 4.4 mm, MAPE 11 % | 55 |
-| 5 | `same_particle_size` | How big are the smoke particles from an overheated material? (smoke-detector design) | `material`, `sample_temperature_c`, `air_velocity_cm_s`, `aging_time_s`, `campaign` | µm | R² 0.43, MAPE 26 % | 125 |
+| 1 | `bass2_flame_spread` | How fast does flame spread over a PMMA rod? | `o2_pct`, `opposed_flow_cm_s`, `diameter_cm` | PI-GP (power law + test offset) | R² 0.57, 90 % coverage 86.5 %, 0 % physics violations | 52 |
+| 2 | `flex_extinction` | Will a fuel-droplet flame go out before the fuel is used up? | `fuel`, `pressure_kpa`, `o2_pct`, `co2_pct`, `he_pct`, `d0_mm` | PI-GP classifier | **ROC-AUC 0.87, Brier 0.082** (base rate 0.114) | 206 |
+| 3 | `flex_burning_rate` | How fast does the droplet burn? | same as model 2 | PI-GP | R² 0.71 (noise ceiling ≈ 0.72), coverage 89.7 % | 256 |
+| 4 | `spice_smoke_point` | How sooty is a gas flame? | `fuel`, `burner_diameter_mm`, `coflow_air_velocity_cm_s` | v2 ensemble + power-law fallback | R² 0.89, MAE 4.4 mm | 55 |
+| 5 | `same_particle_size` | How big are smoke particles from an overheated material? | `material`, `sample_temperature_c`, `air_velocity_cm_s`, `aging_time_s`, `campaign` | v2 ensemble | R² 0.43 | 125 |
 
-95 % group-bootstrap confidence intervals, tuned hyper-parameters and the inner-CV ranking of every family are in `model_summary.json` and `*_v2_final_selection.csv`.
-
-### What each final model is
-- **Model 1:** average of a log-target ridge (a power law), SVR and ridge with interactions. Outside the tested domain the power law alone answers.
-- **Model 2:** average of logistic regression with interactions, an RBF SVM and extra trees. Outside the tested domain plain logistic regression answers.
-- **Model 3:** average of SVR, a Gaussian process and linear ridge. Linear ridge is the fallback.
-- **Model 4:** average of a Gaussian process, SVR and the physics power law. The power law alone, L_sp ∝ d^−0.76 · u_air^0.41 (matching Dotson et al. 2011), is the fallback.
-- **Model 5:** average of SVR, extra trees and random forest. No physics fallback, because no physical law links particle size to these inputs; out-of-domain inputs are still flagged.
+Models 1–3 give their own input-dependent 90 % interval. Models 4–5 use the band from the v2 nested residuals.
 
 ## What every answer contains
 - **The prediction:** `prediction` for regression models, or `probability` + `predicted_class` for the classifier.
@@ -76,7 +71,10 @@ predict("same_particle_size", material="Kapton", sample_temperature_c=420, air_v
 |---|---|
 | `ignis_models.py` | One entry point, `predict()`, plus feature definitions, Shapley explanations, domain checks and the physics fallback |
 | `ml_selection.py` | Model families, hyper-parameter grids, nested grouped CV, selection procedures, bootstrap CIs |
-| `train_v2.py` | Retrains all five models: `python train_v2.py data` (about 30 min on 2 cores; `--reuse` skips the nested CV) |
+| `train_v2.py` | v2: 8 families, nested CV, all five models (about 30 min; `--reuse` skips the nested CV) |
+| `preprocess_v3.py`, `pigp.py` | v3 preprocessing (physics space, logged) and the physics-informed GP |
+| `compare_v3.py`, `v3_final.py` | v3 comparison on identical splits + physics check; final v3 bundles, safe-cabin map, side experiments. Run after `train_v2.py` |
+| `MODEL_SELECTION_v3.md` | Objective-driven selection, v3 results |
 | `MODEL_SELECTION_v2.md` | How the models were selected, and v1 vs v2 |
 | `*.joblib` | Trained models. Built with scikit-learn 1.9.1, so pin the same version or retrain |
 | `*_v2_nested_cv.csv` | Every family and every selection procedure, scored on held-out tests |

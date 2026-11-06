@@ -1,0 +1,54 @@
+{
+ "next_experiment_flex": {
+  "o2_pct": 31.775280898876403,
+  "pressure_kpa": 144.04494382022472,
+  "p_survive": 0.500226568936269
+ },
+ "next_experiment_bass": {
+  "o2_pct": 21.0,
+  "flow_cm_s": 7.5,
+  "spread_mm_s": 0.09432141840073857,
+  "sd_log": 0.31307489225561924
+ },
+ "moving_average": [
+  {
+   "variant": "no smoothing (honest baseline)",
+   "R2": 0.578,
+   "MAE_mm_s": 0.01
+  },
+  {
+   "variant": "moving average over file rows, scored on smoothed values",
+   "R2": 0.532,
+   "MAE_mm_s": 0.0086
+  },
+  {
+   "variant": "moving average over file rows, scored on real measurements",
+   "R2": 0.527,
+   "MAE_mm_s": 0.01
+  },
+  {
+   "variant": "moving average within each test, scored on real measurements",
+   "R2": 0.58,
+   "MAE_mm_s": 0.0096
+  }
+ ],
+ "ma_windows_crossing_tests": 18,
+ "scaling": [
+  {
+   "rows": 250,
+   "fit_seconds": 0.9
+  },
+  {
+   "rows": 500,
+   "fit_seconds": 5.37
+  },
+  {
+   "rows": 1000,
+   "fit_seconds": 24.88
+  },
+  {
+   "rows": 2000,
+   "fit_seconds": 180.67
+  }
+ ]
+}

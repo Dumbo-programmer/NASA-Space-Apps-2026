@@ -1,5 +1,5 @@
 """
-Ignis mu / AgniShikha - model selection engine (v2)
+Agnishikha - model selection engine (v2)
 Data Science Lead: Prachya Biswas
 
 Why this exists

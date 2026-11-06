@@ -1,6 +1,6 @@
 # Model Selection v3: objective first, then model, then preprocessing
 
-**Author:** Prachya Biswas (Data Science Lead, Team AgniShikha)
+**Author:** Prachya Biswas (Data Science Lead, Team Agnishikha)
 
 Mentor feedback on v2 had three parts:
 - Choose the model from what we want to do.

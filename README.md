@@ -1,4 +1,4 @@
-<h1 align="center">Ignis μ — AI Fire-Safety Insights from NASA Microgravity Combustion Data</h1>
+<h1 align="center">Agnishikha — AI Fire-Safety Insights from NASA Microgravity Combustion Data</h1>
 
 <p align="center">
   <strong>850 real NASA experiments. Five trained models. Every number traceable to its NASA source.</strong>
@@ -19,11 +19,11 @@
 
 ## Overview
 
-**Ignis μ** is Team **AgniShikha**'s project for the **NASA Space Apps Challenge 2026** (Dhaka), challenge **"Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data"**.
+**Agnishikha** is our team's project, named after the team, for the **NASA Space Apps Challenge 2026** (Dhaka), challenge **"Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data"**.
 
 In microgravity, fire does not rise. It burns as a sphere, can survive at lower oxygen, and does not follow the rules we learn on Earth. NASA has run hundreds of fire experiments on the International Space Station and on unmanned Cygnus vehicles. That knowledge is spread across separate investigations, file formats and papers.
 
-Ignis μ brings those experiments together. You give it a condition: oxygen level, pressure, airflow and material. It answers with:
+Agnishikha brings those experiments together. You give it a condition: oxygen level, pressure, airflow and material. It answers with:
 
 - how fast a fire will spread,
 - whether a flame will go out,
@@ -34,7 +34,7 @@ Every answer comes with an error band, the NASA evidence behind it, and an hones
 
 ## My Role
 
-I'm the **Data Science Lead** on Team AgniShikha.
+I'm the **Data Science Lead** on Team Agnishikha.
 
 **Data.** I built the project's dataset from NASA's Physical Sciences Informatics (PSI) repository.
 - I found the files that hold the measured results, not just the test settings.
@@ -47,7 +47,7 @@ I'm the **Data Science Lead** on Team AgniShikha.
 - Every candidate was scored with **nested grouped cross-validation** on ISS tests it never saw.
 - Each model is checked against a simple baseline and a replicate-based noise ceiling.
 
-**Interface.** I wrote the single `predict()` interface that the backend and dashboard call.
+**Interface.** I wrote the single `predict()` interface, the model API in `api/` that serves it, and the dashboard's **NASA Models** tab that calls it.
 
 The dashboard UI in `agnishikha-ui/` was built by our UI & Software Lead, **Tawhid Bin Omar**.
 
@@ -65,7 +65,8 @@ This repo is my copy of the project, kept here alongside my other work.
 | **Explainability** | Exact Shapley values for every prediction: how much each input pushed the answer up or down |
 | **Domain check** | Warns when an input is outside what NASA tested, including per-fuel and per-material ranges and nearest-experiment distance |
 | **Traceability** | Every prediction carries `value_type`, the NASA source and the model's validation scores |
-| **Mission-control dashboard** | Next.js dashboard with a microgravity flame visualizer, telemetry, risk matrix, explainability and crew protocols |
+| **Model API** | `api/server.py`: JSON endpoints for every model (`/models`, `/predict/{model}`, `/sweep/{model}`), strict input validation, no extra dependencies |
+| **Mission-control dashboard** | Next.js dashboard with a microgravity flame visualizer, telemetry, risk matrix, explainability, crew protocols, and a **NASA Models** tab that shows the trained models' answers live |
 | **Beginner notebook** | A step-by-step notebook (with Bangla explanations) that rebuilds the flame-spread model from scratch |
 
 ---
@@ -140,10 +141,11 @@ How I chose the models:
           models/ (5 trained models)                          evidence retrieval
           predict(model_name, **inputs)                       (NASA record behind each answer)
                        |                                                    |
-                       +----------------------> FastAPI <-------------------+
+                       +-------------> model API (api/server.py) <----------+
                                                    |
                                                    v
-                                 agnishikha-ui (Next.js dashboard)
+                                 agnishikha-ui (Next.js dashboard, NASA Models tab)
+                                 offline fallback: agnishikha-ui/public/ignis/*.json
 ```
 
 ---
@@ -154,7 +156,7 @@ How I chose the models:
 |---|---|
 | **Data pipeline** | Python 3, pandas, NumPy, openpyxl |
 | **Machine learning** | scikit-learn 1.9.1: physics-informed Gaussian process, tuned ensembles, nested grouped CV, exact Shapley explanations; one-command pipeline with data contract and tests |
-| **Backend (planned)** | FastAPI calling `models/ignis_models.py` |
+| **Model API** | Python standard library HTTP server (`api/server.py`) calling `models/ignis_models.py`; precomputed JSON fallback for static hosting |
 | **Frontend** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, lucide-react |
 | **Hardware** | ESP32 with O2, pressure, temperature and airflow sensors |
 | **Data source** | NASA Physical Sciences Informatics (PSI) |
@@ -195,13 +197,18 @@ Open [`notebooks/Ignis_mu_Model_Selection_v2.ipynb`](notebooks/Ignis_mu_Model_Se
 
 It needs no login and takes about 30 minutes.
 
-### 3. Run the dashboard
+### 3. Run the model API and the dashboard
 
 ```bash
+python api/server.py                     # http://127.0.0.1:8000  (GET /models, POST /predict/{model})
+curl -X POST localhost:8000/predict/flex_extinction -d '{"fuel": "Heptane", "co2_pct": 20}'
+
 cd agnishikha-ui
 npm install
-npm run dev        # http://localhost:3000
+npm run dev                              # http://localhost:3000, open the "NASA Models" tab
 ```
+
+The tab calls the API at `NEXT_PUBLIC_IGNIS_API_URL` (default `http://127.0.0.1:8000`). Without the API, for example on a static deploy, it uses `public/ignis/*.json`: answers precomputed by `api/export_static.py` from the same trained models, one input at a time around NASA reference conditions, and labelled as precomputed.
 
 ### 4. Rebuild and check the dataset from NASA's files
 
@@ -216,7 +223,8 @@ python data/scripts/validate_processed.py     # strict data contract: schema, ph
 
 ```
 NASA-Space-Apps-2026/
-├── agnishikha-ui/            # Next.js mission-control dashboard (Tawhid Bin Omar)
+├── agnishikha-ui/            # Next.js mission-control dashboard (Tawhid Bin Omar); NASA Models tab (Prachya Biswas)
+├── api/                      # Model API: server.py, ignis_api.py (validation, sweeps), export_static.py
 ├── data/                     # see data/README.md
 │   ├── raw_from_NASA/        # Verbatim NASA PSI extracts (never edited)
 │   ├── processed/            # Single source of truth: clean datasets, master table, Excel workbook
@@ -231,8 +239,8 @@ NASA-Space-Apps-2026/
 │   ├── reports/              # Scores, comparisons, logs, pipeline manifest
 │   ├── figures/              # Figures
 │   └── MODEL_SELECTION_v3.md, MODEL_SELECTION_v2.md, README.md
-├── tests/                    # Data contract, reproducibility, leakage guards, prediction contract, physics behaviour
-├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> tests
+├── tests/                    # Data contract, reproducibility, leakage guards, prediction contract, physics behaviour, API
+├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> export -> tests
 ├── requirements.txt          # Pinned versions
 ├── notebooks/                # Colab notebook for model selection v2 + beginner flame-spread notebook
 └── docs/                     # ML design notes, abstract draft, verification guide
@@ -242,14 +250,15 @@ NASA-Space-Apps-2026/
 
 ## Status and Limits
 
-- **Dashboard:** it still runs on a client-side placeholder model. Connecting it to the trained models through `/predict/{model_name}` is in progress.
+- **Dashboard:** the NASA Models tab shows the trained models. The Simulation, Risk Matrix, Explainability and Protocols tabs still use a client-side surrogate for the live scenario and say so in the footer.
+- **Hosting the API:** it must run on a Python host for free input combinations; a static deploy gets the precomputed answers only.
 - **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide (95 % CIs are in `models/reports/model_summary.json`). For flame spread and burning rate the remaining error is mostly run-to-run noise, so more ISS experiments, not more modelling, would improve them.
 - **1g data:** the WSTF ground reference is a comparison layer and is never used to train microgravity models.
 - **Missing outcomes:** the FLEX-2 and Cool Flames Investigation tables list test conditions only, so they are not modelled.
 
 ---
 
-## Team AgniShikha
+## Team Agnishikha
 
 | Member | Role |
 |---|---|
@@ -263,10 +272,10 @@ NASA-Space-Apps-2026/
 
 ## License
 
-NASA source data is public domain (CC0-1.0) from NASA Physical Sciences Informatics. Code was written by Team AgniShikha for the NASA Space Apps Challenge 2026.
+NASA source data is public domain (CC0-1.0) from NASA Physical Sciences Informatics. Code was written by Team Agnishikha for the NASA Space Apps Challenge 2026.
 
 ---
 
 <p align="center">
-  Built by Team AgniShikha for NASA Space Apps Challenge 2026 — Data Science & ML: <a href="https://github.com/prachyabiswas">Prachya Biswas</a> · UI: <a href="https://github.com/Dumbo-programmer">Tawhid Bin Omar</a>
+  Built by Team Agnishikha for NASA Space Apps Challenge 2026 — Data Science & ML: <a href="https://github.com/prachyabiswas">Prachya Biswas</a> · UI: <a href="https://github.com/Dumbo-programmer">Tawhid Bin Omar</a>
 </p>

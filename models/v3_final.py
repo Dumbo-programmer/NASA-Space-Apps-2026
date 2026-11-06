@@ -1,5 +1,5 @@
 """
-Ignis mu / AgniShikha - v3 final: objective-driven model choice per output + side experiments
+Agnishikha - v3 final: objective-driven model choice per output + side experiments
 Data Science Lead: Prachya Biswas
 
 Decision rule (from the objective, decided before looking at which model "wins"):

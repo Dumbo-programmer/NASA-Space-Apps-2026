@@ -43,9 +43,9 @@ export function MissionHeader({
           </div>
           <div className="min-w-0">
             <h1 className="flex items-center gap-1.5 truncate text-sm font-bold leading-tight tracking-tight text-slate-50">
-              AstraFlame
+              Agnishikha
               <span className="rounded bg-slate-800/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-cyan-300 ring-1 ring-cyan-500/30">
-                Agnishikha
+                Space Apps 2026
               </span>
             </h1>
             <p className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-slate-400 sm:flex">

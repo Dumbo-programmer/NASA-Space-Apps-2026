@@ -1,5 +1,5 @@
 """
-Ignis mu / AgniShikha - the whole data-science pipeline in one command.
+Agnishikha - the whole data-science pipeline in one command.
 Data Science Lead: Prachya Biswas
 
     python run_pipeline.py              # fast (about 10 min): reuse the cached nested CV, keep the measured scaling timings
@@ -15,14 +15,15 @@ Stages (fail-fast; each one's time and outcome goes to models/reports/pipeline_m
     compare    PI-GP vs every tuned family on identical splits: accuracy, 90 % coverage, physics violations
     final      production v3 bundles, safe-cabin map, next-experiment pick, moving-average and scaling tests
     figures    v1 vs v2 figures
-    tests      data + model test suite (contract, leakage, artifacts, prediction contract, physics behaviour)
+    export     real-model answers to agnishikha-ui/public/ignis/ (the dashboard's offline fallback)
+    tests      data + model + API test suite (contract, leakage, artifacts, prediction contract, physics, HTTP)
 """
 import argparse, hashlib, json, platform, subprocess, sys, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 MODELS, DATA = ROOT / "models", ROOT / "data"
-STAGES = ["etl", "validate", "train_v2", "noise", "compare", "final", "figures", "tests"]
+STAGES = ["etl", "validate", "train_v2", "noise", "compare", "final", "figures", "export", "tests"]
 
 
 def commands(full, rebuild):
@@ -35,6 +36,7 @@ def commands(full, rebuild):
         "compare": ([py, "compare_v3.py"], MODELS),
         "final": ([py, "v3_final.py"] + ([] if full else ["--no-scaling"]), MODELS),
         "figures": ([py, "make_figures_v2.py"], MODELS),
+        "export": ([py, ROOT / "api" / "export_static.py"], ROOT),
         "tests": ([py, ROOT / "tests" / "run_tests.py"], ROOT),
     }
 

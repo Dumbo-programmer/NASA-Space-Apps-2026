@@ -1,7 +1,7 @@
 import type { HazardLevel, MaterialKey, MaterialRecord } from "./types";
 
 /**
- * Traceable flammability reference set for the AstraFlame risk scoreboard.
+ * Traceable flammability reference set for the Agnishikha risk scoreboard.
  * Values are representative of NASA PSI microgravity combustion campaigns
  * (BASS-II, FLEX, SAFFIRE-I, SAME, SPICE) and are used both as the offline
  * training envelope and as the seed coefficients of the runtime predictor.

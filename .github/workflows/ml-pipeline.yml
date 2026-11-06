@@ -1,10 +1,10 @@
-name: data-and-ml-pipeline
+name: data-ml-api-dashboard
 
 on:
   push:
-    paths: ["data/**", "models/**", "tests/**", "run_pipeline.py", "requirements*.txt", ".github/workflows/ml-pipeline.yml"]
+    paths: ["data/**", "models/**", "api/**", "tests/**", "agnishikha-ui/**", "run_pipeline.py", "requirements*.txt", ".github/workflows/ml-pipeline.yml"]
   pull_request:
-    paths: ["data/**", "models/**", "tests/**", "run_pipeline.py", "requirements*.txt"]
+    paths: ["data/**", "models/**", "api/**", "tests/**", "agnishikha-ui/**", "run_pipeline.py", "requirements*.txt"]
 
 jobs:
   pipeline:
@@ -16,5 +16,22 @@ jobs:
           python-version: "3.13"
           cache: pip
       - run: pip install -r requirements-dev.txt
-      - name: Reproducible ETL, data contract and tests
+      - name: Reproducible ETL, data contract and tests (data, models, API)
         run: python run_pipeline.py --only etl validate tests
+
+  dashboard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agnishikha-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: agnishikha-ui/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build

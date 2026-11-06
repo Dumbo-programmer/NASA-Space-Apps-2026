@@ -1,6 +1,6 @@
-# Ignis μ / AgniShikha — NASA microgravity fire dataset v1.0
+# Agnishikha — NASA microgravity fire dataset v1.0
 
-**Team:** AgniShikha · **Data Science Lead:** Prachya Biswas · **Built:** November 2026
+**Team:** Agnishikha · **Data Science Lead:** Prachya Biswas · **Built:** November 2026
 
 **Source and licence:** NASA Physical Sciences Informatics (PSI), CC0-1.0 (public domain).
 

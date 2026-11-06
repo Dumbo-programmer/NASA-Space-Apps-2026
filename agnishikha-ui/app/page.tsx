@@ -5,6 +5,7 @@ import {
   BrainCircuit,
   ExternalLink,
   Flame,
+  FlaskConical,
   Info,
   ShieldAlert,
   Siren,
@@ -22,6 +23,7 @@ import { ScenarioControls } from "@/components/ScenarioControls";
 import { TabBar, type TabKey } from "@/components/TabBar";
 import { PanelFrame, Pill } from "@/components/PanelFrame";
 import { RiskMatrix } from "@/components/RiskMatrix";
+import { NasaModelPanel } from "@/components/NasaModelPanel";
 import { getMaterial } from "@/lib/materials";
 import { getExperiment } from "@/lib/experiments";
 import { buildMitigationPlan } from "@/lib/protocols";
@@ -403,6 +405,21 @@ export default function MissionControlPage() {
               </PanelFrame>
             ) : null}
 
+            {tab === "models" ? (
+              <PanelFrame
+                index="P6"
+                title="NASA-trained models"
+                subtitle="Real predictions with 90% ranges, tested-range warnings and exact Shapley values"
+                icon={FlaskConical}
+                accent="cyan"
+                className="min-h-0 xl:col-span-12"
+                bodyClassName="min-h-0 overflow-hidden"
+                actions={<Pill tone="cyan">5 models · 4 ISS investigations</Pill>}
+              >
+                <NasaModelPanel />
+              </PanelFrame>
+            ) : null}
+
             {tab === "protocols" ? (
               <PanelFrame
                 index="P5"
@@ -428,8 +445,8 @@ export default function MissionControlPage() {
         <footer className="shrink-0 border-t border-slate-800/80 bg-slate-950/70 backdrop-blur-sm">
           <div className="mx-auto flex w-full max-w-[1800px] flex-wrap items-center justify-between gap-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400 sm:px-4">
             <p>
-              Agnishikha · AstraFlame · NASA Space Apps build · surrogate inference
-              runs client-side against the offline PSI training envelope
+              Agnishikha · NASA Space Apps 2026 · NASA Models tab: trained on NASA PSI
+              data · other tabs: client-side surrogate
             </p>
             <a
               href="https://psi.nasa.gov"

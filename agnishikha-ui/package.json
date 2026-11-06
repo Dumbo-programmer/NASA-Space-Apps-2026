@@ -2,7 +2,7 @@
   "name": "agnishikha",
   "version": "0.1.0",
   "private": true,
-  "description": "Agnishikha // AstraFlame - NASA Space Apps microgravity combustion visualizer and risk matrix",
+  "description": "Agnishikha - NASA Space Apps microgravity combustion visualizer and risk matrix",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

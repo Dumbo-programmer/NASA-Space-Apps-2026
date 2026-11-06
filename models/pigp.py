@@ -1,5 +1,5 @@
 """
-Ignis mu / AgniShikha - Physics-Informed Gaussian Process (PI-GP)
+Agnishikha - Physics-Informed Gaussian Process (PI-GP)
 Data Science Lead: Prachya Biswas
 
     y (physics space) = m(x)  +  f(x)  +  b_test  +  e

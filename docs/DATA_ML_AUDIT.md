@@ -31,6 +31,6 @@ Each finding below was checked by running the code. A one-command run (`python r
 ## Still open (not in this scope)
 
 - `data/bass2_and_wstf/BASS-II_PSI-25_clean_v0.1.csv` is a frozen intermediate. Its NASA PSI-25 workbook is not stored in the repository.
-- A REST API around `predict()` for the dashboard, which is still on a placeholder model, is the next step and is shared with the UI lead.
+- Done after the audit: `api/` serves `predict()` over HTTP with strict input validation (6 API tests), and the dashboard's NASA Models tab shows the trained models, live or from precomputed JSON. The other dashboard tabs still use the client-side surrogate.
 - The full mode (`--full`, about 50 min) was not re-run after the refactor. Fast mode reuses the cached nested CV, whose results are the ones committed.
 - CI has not run yet. The workflow is written for GitHub Actions, and the pinned versions are the ones tested locally (Python 3.13).

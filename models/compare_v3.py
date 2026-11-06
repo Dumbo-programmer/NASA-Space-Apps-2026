@@ -1,5 +1,5 @@
 """
-Ignis mu / AgniShikha - v3: does the objective-driven model (physics-informed GP) beat the alternatives?
+Agnishikha - v3: does the objective-driven model (physics-informed GP) beat the alternatives?
 Data Science Lead: Prachya Biswas
 
 Same rows and SAME outer grouped splits as v2 (so every model is scored on identical held-out ISS tests).

@@ -1,4 +1,4 @@
-# Agnishikha // AstraFlame
+# Agnishikha
 
 NASA Space Apps Challenge Mission Control dashboard for **microgravity flammability**.
 Single-page, dark-mode, fully interactive. All inference runs client-side against a
@@ -58,6 +58,21 @@ desktop (`xl`+) or a slide-over drawer below that.
 | `lib/telemetry.ts` | Input envelope, predictor, confidence banding, readiness verdict. |
 | `lib/shap.ts` | Global importances + exact ordered-ablation attribution. |
 | `lib/protocols.ts` | Mission directive builders. |
+
+## NASA Models tab (trained models)
+
+`components/NasaModelPanel.tsx` (Prachya Biswas, Data Science Lead) shows the five models trained on NASA ISS
+data: FLEX droplet extinction and burning rate, BASS-II flame spread, SPICE smoke point and SAME smoke particle size.
+Every answer has a 90 % range or probability, a warning when an input leaves what NASA tested, exact Shapley
+values, and the model card (training size, held-out scores, NASA source).
+
+- **Live:** `lib/ignisApi.ts` calls the model API (`python api/server.py` from the repo root) at
+  `NEXT_PUBLIC_IGNIS_API_URL`, default `http://127.0.0.1:8000`.
+- **Precomputed:** if the API cannot be reached, it reads `public/ignis/*.json`, written by
+  `api/export_static.py` from the same trained models. These hold one-input-at-a-time sweeps around NASA
+  reference conditions, so the panel resets the other inputs and labels the mode as precomputed.
+
+The other tabs still use the client-side surrogate described below.
 
 ## Model notes
 

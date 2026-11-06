@@ -1,5 +1,5 @@
 """
-Ignis mu / AgniShikha - one place for every path the ML pipeline reads or writes.
+Agnishikha - one place for every path the ML pipeline reads or writes.
 Data Science Lead: Prachya Biswas
 
 Layout

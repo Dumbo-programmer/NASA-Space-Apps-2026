@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AstraFlame // Microgravity Combustion Visualizer & Risk Matrix",
+  title: "Agnishikha // Microgravity Combustion Visualizer & Risk Matrix",
   description:
     "Agnishikha - NASA Space Apps Mission Control dashboard for microgravity flammability telemetry, flame visualization, AI SHAP explainability and fire mitigation protocols.",
   keywords: [
@@ -14,10 +14,9 @@ export const metadata: Metadata = {
     "PSI",
     "risk matrix",
     "SHAP explainability",
-    "AstraFlame",
     "Agnishikha",
   ],
-  authors: [{ name: "Agnishikha // AstraFlame" }],
+  authors: [{ name: "Team Agnishikha" }],
   robots: { index: true, follow: true },
 };
 

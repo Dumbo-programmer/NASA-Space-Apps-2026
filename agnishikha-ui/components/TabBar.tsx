@@ -5,12 +5,13 @@ import type { LucideIcon } from "lucide-react";
 import {
   BrainCircuit,
   Flame,
+  FlaskConical,
   ShieldAlert,
   Table2,
   SlidersHorizontal,
 } from "lucide-react";
 
-export type TabKey = "simulation" | "risk" | "explain" | "protocols";
+export type TabKey = "simulation" | "risk" | "explain" | "models" | "protocols";
 
 export const TABS: readonly {
   key: TabKey;
@@ -31,6 +32,7 @@ export const TABS: readonly {
     short: "Why",
     icon: BrainCircuit,
   },
+  { key: "models", label: "NASA Models", short: "Models", icon: FlaskConical },
   { key: "protocols", label: "Protocols", short: "Action", icon: ShieldAlert },
 ];
 

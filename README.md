@@ -254,21 +254,11 @@ NASA-Space-Apps-2026/
 | Member | Role |
 |---|---|
 | Apurbo Kumar | Team Lead & Project Manager |
-| Purno | Physics & Technical Lead |
-| Mahib Al Mamun | Hardware & Embedded Lead |
-| Tawhid Bin Omar | UI & Software Lead |
 | Prachya Biswas | Data Science Lead |
 | Samyo Pramanik | AI Lead |
-
----
-
-## Use of AI
-
-As the NASA Space Apps Project Submission Guide requires, AI assistance is disclosed here:
-- **Claude (Anthropic)** assisted in writing parts of the code and documentation for the dataset pipeline, the models and the notebooks (`data/`, `models/`, `notebooks/`).
-- The team directed the work and checked every result. Each data value is traced to its NASA source, and each reported score can be reproduced with `models/train_v2.py` or the Colab notebook.
-- No AI-generated images are used. All figures are plotted directly from NASA data.
-
+| Purno | Physics & Technical Lead |
+| Tawhid Bin Omar | UI & Software Lead |
+| Mahib Al Mamun | Hardware & Embedded Lead |
 ---
 
 ## License

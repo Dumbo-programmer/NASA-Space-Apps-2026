@@ -1,5 +1,5 @@
 /**
- * Agnishikha shared domain types.
+ * AstraFlame shared domain types.
  * Project: Agnishikha (NASA Space Apps Challenge).
  */
 

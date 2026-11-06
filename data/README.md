@@ -1,4 +1,4 @@
-# data/ — Agnishikha NASA microgravity fire dataset
+# data/ — AstraFlame NASA microgravity fire dataset
 
 **Owner:** Prachya Biswas (Data Science Lead) · **Licence:** NASA source data is CC0-1.0 (NASA Physical Sciences Informatics)
 

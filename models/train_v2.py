@@ -1,5 +1,5 @@
 """
-Agnishikha - train all five models with NESTED grouped model selection (v2)
+AstraFlame (Team Agnishikha) - train all five models with NESTED grouped model selection (v2)
 Data Science Lead: Prachya Biswas
 
   Model 1  bass2_flame_spread   : flame spread over a PMMA rod, opposed flow (mm/s)        regression

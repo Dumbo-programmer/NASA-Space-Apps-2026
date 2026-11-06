@@ -1,4 +1,4 @@
-<h1 align="center">Agnishikha — AI Fire-Safety Insights from NASA Microgravity Combustion Data</h1>
+<h1 align="center">AstraFlame — AI Fire-Safety Insights from NASA Microgravity Combustion Data</h1>
 
 <p align="center">
   <strong>850 real NASA experiments. Five trained models. Every number traceable to its NASA source.</strong>
@@ -19,11 +19,11 @@
 
 ## Overview
 
-**Agnishikha** is our team's project, named after the team, for the **NASA Space Apps Challenge 2026** (Dhaka), challenge **"Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data"**.
+**AstraFlame** is Team **Agnishikha**'s project for the **NASA Space Apps Challenge 2026** (Dhaka), challenge **"Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data"**.
 
 In microgravity, fire does not rise. It burns as a sphere, can survive at lower oxygen, and does not follow the rules we learn on Earth. NASA has run hundreds of fire experiments on the International Space Station and on unmanned Cygnus vehicles. That knowledge is spread across separate investigations, file formats and papers.
 
-Agnishikha brings those experiments together. You give it a condition: oxygen level, pressure, airflow and material. It answers with:
+AstraFlame brings those experiments together. You give it a condition: oxygen level, pressure, airflow and material. It answers with:
 
 - how fast a fire will spread,
 - whether a flame will go out,

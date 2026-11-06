@@ -1,5 +1,5 @@
 """
-Agnishikha prediction service: transport-independent core.
+AstraFlame prediction service: transport-independent core.
 
 server.py exposes these functions over HTTP; export_static.py writes them to JSON for a
 static deployment; tests/test_api.py calls them directly. Every answer comes from the

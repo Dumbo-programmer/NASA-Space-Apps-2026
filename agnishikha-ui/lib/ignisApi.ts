@@ -1,5 +1,5 @@
 /**
- * Client for the Agnishikha model API (api/server.py), with a static fallback.
+ * Client for the AstraFlame model API (api/server.py), with a static fallback.
  *
  * Live mode: POST {API}/predict/{model} gives a full answer from the trained bundles for any
  * combination of inputs. API defaults to http://127.0.0.1:8000 and is set with

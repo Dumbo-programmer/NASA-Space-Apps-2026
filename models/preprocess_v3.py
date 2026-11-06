@@ -1,5 +1,5 @@
 """
-Agnishikha - preprocessing v3, designed FOR the chosen model (physics-informed Gaussian process)
+AstraFlame (Team Agnishikha) - preprocessing v3, designed FOR the chosen model (physics-informed Gaussian process)
 Data Science Lead: Prachya Biswas
 
 Why preprocessing changes with the model

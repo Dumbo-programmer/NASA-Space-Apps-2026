@@ -445,8 +445,8 @@ export default function MissionControlPage() {
         <footer className="shrink-0 border-t border-slate-800/80 bg-slate-950/70 backdrop-blur-sm">
           <div className="mx-auto flex w-full max-w-[1800px] flex-wrap items-center justify-between gap-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400 sm:px-4">
             <p>
-              Agnishikha · NASA Space Apps 2026 · NASA Models tab: trained on NASA PSI
-              data · other tabs: client-side surrogate
+              Team Agnishikha · AstraFlame · NASA Space Apps 2026 · NASA Models tab:
+              trained on NASA PSI data · other tabs: client-side surrogate
             </p>
             <a
               href="https://psi.nasa.gov"

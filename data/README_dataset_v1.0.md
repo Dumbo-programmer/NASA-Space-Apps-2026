@@ -1,4 +1,4 @@
-# Agnishikha — NASA microgravity fire dataset v1.0
+# AstraFlame — NASA microgravity fire dataset v1.0
 
 **Team:** Agnishikha · **Data Science Lead:** Prachya Biswas · **Built:** November 2026
 

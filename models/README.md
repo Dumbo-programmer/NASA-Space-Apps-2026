@@ -1,4 +1,4 @@
-# Agnishikha — ML models v3.0 (trained on NASA ISS data)
+# AstraFlame — ML models v3.0 (trained on NASA ISS data)
 
 **Data Science / ML:** Prachya Biswas · **Data:** NASA PSI, CC0 (see `Ignis_mu_NASA_dataset_v1.0`)
 

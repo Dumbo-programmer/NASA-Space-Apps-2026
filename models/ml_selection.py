@@ -1,5 +1,5 @@
 """
-Agnishikha - model selection engine (v2)
+AstraFlame (Team Agnishikha) - model selection engine (v2)
 Data Science Lead: Prachya Biswas
 
 Why this exists

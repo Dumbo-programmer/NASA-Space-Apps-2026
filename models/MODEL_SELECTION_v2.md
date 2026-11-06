@@ -2,7 +2,7 @@
 
 **Author:** Prachya Biswas (Data Science Lead, Team Agnishikha)
 
-This note explains how I rebuilt model selection for the five Agnishikha models after mentor feedback that selection should be stronger and performance better.
+This note explains how I rebuilt model selection for the five AstraFlame models after mentor feedback that selection should be stronger and performance better.
 
 ## 1. What was wrong with v1
 

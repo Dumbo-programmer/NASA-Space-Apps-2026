@@ -1,5 +1,5 @@
 """
-Agnishikha - the whole data-science pipeline in one command.
+AstraFlame (Team Agnishikha) - the whole data-science pipeline in one command.
 Data Science Lead: Prachya Biswas
 
     python run_pipeline.py              # fast (about 10 min): reuse the cached nested CV, keep the measured scaling timings

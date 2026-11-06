@@ -1,4 +1,4 @@
-# Agnishikha
+# Agnishikha // AstraFlame
 
 NASA Space Apps Challenge Mission Control dashboard for **microgravity flammability**.
 Single-page, dark-mode, fully interactive. All inference runs client-side against a

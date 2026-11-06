@@ -1,5 +1,5 @@
 """
-Agnishikha prediction API. Standard library only, so it runs wherever the models run.
+AstraFlame prediction API. Standard library only, so it runs wherever the models run.
 
     python api/server.py                      # http://127.0.0.1:8000
     python api/server.py --host 0.0.0.0 --port 8000
@@ -33,7 +33,7 @@ ALLOWED = [o.strip() for o in os.environ.get("IGNIS_ALLOWED_ORIGINS", "*").split
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "Agnishikha/" + A.API_VERSION
+    server_version = "AstraFlame/" + A.API_VERSION
     quiet = False
 
     # ---------- plumbing ----------
@@ -136,7 +136,7 @@ def main():
     ap.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8000)))
     a = ap.parse_args()
     srv = make_server(a.host, a.port)
-    print(f"Agnishikha API {A.API_VERSION} on http://{a.host}:{a.port}  (models: {', '.join(A.MODEL_NAMES)})")
+    print(f"AstraFlame API {A.API_VERSION} on http://{a.host}:{a.port}  (models: {', '.join(A.MODEL_NAMES)})")
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

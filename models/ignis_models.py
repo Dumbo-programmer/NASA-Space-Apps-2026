@@ -1,5 +1,5 @@
 """
-Agnishikha - shared model utilities + one prediction entry point for the backend.
+AstraFlame (Team Agnishikha) - shared model utilities + one prediction entry point for the backend.
 
     from ignis_models import predict
     predict("flex_extinction", fuel="Methanol", pressure_kpa=101.3, o2_pct=18, co2_pct=0, he_pct=0, d0_mm=3.0)

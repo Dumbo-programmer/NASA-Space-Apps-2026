@@ -69,7 +69,7 @@ for each outer fold (whole ISS tests / sessions held out)        <- honest score
 | 4 | `spice_smoke_point` | avg(Gaussian process, SVR, power law) + power-law fallback | R² 0.85, MAE 5.69 mm | **R² 0.89, MAE 4.39 mm** | R² 0.81–0.92 | ~0.99 |
 | 5 | `same_particle_size` | avg(SVR, Extra trees, Random forest) | R² 0.43, MAE 0.0635 | R² 0.43, MAE 0.0632 | R² 0.29–0.61 | ~0.84 |
 
-![v1 vs v2](fig_v1_vs_v2.png)
+![v1 vs v2](figures/fig_v1_vs_v2.png)
 
 **Noise ceiling.** Pairs of runs from *different* ISS tests with almost identical inputs should give the same answer. Their disagreement is run-to-run noise that no model can explain.
 - Noise variance ≈ mean((yᵢ − yⱼ)²)/2 over those pairs, and the best possible R² ≈ 1 − noise/total variance (`noise_ceiling.py`).
@@ -77,7 +77,7 @@ for each outer fold (whole ISS tests / sessions held out)        <- honest score
 - BASS-II and FLEX K are now close to their ceilings, so more modelling cannot add much there. Only more experiments can.
 - SPICE and SAME still have room. For SAME the limits are the inputs: two campaigns used different instruments, and there are only five materials.
 
-![predicted vs measured](fig_v2_pred_vs_measured.png)
+![predicted vs measured](figures/fig_v2_pred_vs_measured.png)
 
 ## 4. What I learned
 
@@ -91,9 +91,9 @@ for each outer fold (whole ISS tests / sessions held out)        <- honest score
 | File | Content |
 |---|---|
 | `ml_selection.py` | families, grids, nested CV, selection procedures, metrics, bootstrap CI |
-| `train_v2.py` | trains all five models (`python train_v2.py data`; `--reuse` uses the cached nested CV) |
-| `*_v2_nested_cv.csv` | every family and procedure, scored in the outer loop |
-| `*_v2_final_selection.csv` | inner-CV ranking and tuned hyper-parameters of the final model |
-| `*_v2_oof.csv` | held-out prediction for every NASA row (v2 and v1) |
-| `v1_vs_v2.csv`, `v2_procedure_ranks.csv`, `noise_ceiling.json` | the tables above |
-| `v1_archive/` | the v1 models and scripts, kept for comparison |
+| `train_v2.py` | trains all five models (`python train_v2.py`; `--reuse` uses the cached nested CV in `artifacts/`) |
+| `reports/*_v2_nested_cv.csv` | every family and procedure, scored in the outer loop |
+| `reports/*_v2_final_selection.csv` | inner-CV ranking and tuned hyper-parameters of the final model |
+| `reports/*_v2_oof.csv` | held-out prediction for every NASA row (v2 and v1) |
+| `reports/v1_vs_v2.csv`, `reports/v2_procedure_ranks.csv`, `reports/noise_ceiling.json` | the tables above |
+| `artifacts/archive/v1/` | the v1 models and scripts, kept for comparison |

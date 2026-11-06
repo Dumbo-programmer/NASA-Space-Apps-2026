@@ -94,7 +94,7 @@ def load(name):
     if HERE not in sys.path:
         sys.path.insert(0, HERE)        # bundles reference ml_selection / sklearn objects
     if name not in _CACHE:
-        _CACHE[name] = joblib.load(os.path.join(HERE, f"{name}.joblib"))
+        _CACHE[name] = joblib.load(os.path.join(HERE, "artifacts", f"{name}.joblib"))
     return _CACHE[name]
 
 # ---------- exact interventional Shapley over feature GROUPS (one-hot columns count as one group) ----------

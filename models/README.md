@@ -67,21 +67,23 @@ predict("same_particle_size", material="Kapton", sample_temperature_c=420, air_v
 - **1 g data:** no model was trained on it. WSTF is a comparison layer only.
 
 ## Files
-| File | Purpose |
-|---|---|
-| `ignis_models.py` | One entry point, `predict()`, plus feature definitions, Shapley explanations, domain checks and the physics fallback |
-| `ml_selection.py` | Model families, hyper-parameter grids, nested grouped CV, selection procedures, bootstrap CIs |
-| `train_v2.py` | v2: 8 families, nested CV, all five models (about 30 min; `--reuse` skips the nested CV) |
-| `preprocess_v3.py`, `pigp.py` | v3 preprocessing (physics space, logged) and the physics-informed GP |
-| `compare_v3.py`, `v3_final.py` | v3 comparison on identical splits + physics check; final v3 bundles, safe-cabin map, side experiments. Run after `train_v2.py` |
-| `MODEL_SELECTION_v3.md` | Objective-driven selection, v3 results |
-| `MODEL_SELECTION_v2.md` | How the models were selected, and v1 vs v2 |
-| `*.joblib` | Trained models. Built with scikit-learn 1.9.1, so pin the same version or retrain |
-| `*_v2_nested_cv.csv` | Every family and every selection procedure, scored on held-out tests |
-| `*_v2_final_selection.csv` | Inner-CV ranking and tuned hyper-parameters of the final model |
-| `*_v2_oof.csv` | Held-out prediction for every row (v2 and v1) |
-| `model_summary.json`, `v1_vs_v2.csv`, `noise_ceiling.json` | Scores in one place |
-| `fig_v1_vs_v2.png`, `fig_v2_pred_vs_measured.png` | Slide-ready figures |
-| `noise_ceiling.py` | Replicate-based estimate of the best possible R² |
-| `v1_archive/` | v1 models, scores and scripts, kept for comparison |
-| `data/` | The exact training CSVs |
+
+```
+models/
+├── config.py               every path the pipeline reads or writes (data -> data/processed only)
+├── ignis_models.py         predict(): feature definitions, domain checks, exact Shapley, physics fallback
+├── preprocess_v3.py        preprocessing designed for the PI-GP; target-leakage guard; logged
+├── pigp.py                 physics-informed Gaussian process (regressor + classifier)
+├── ml_selection.py         8 model families, tuning grids, nested grouped CV, group-leakage guard on every split
+├── train_v2.py             v2 nested selection (all five outputs)
+├── compare_v3.py           PI-GP vs every tuned family on identical splits + physics-violation check
+├── v3_final.py             production v3 bundles, safe-cabin map, next experiment, moving-average + scaling tests
+├── noise_ceiling.py        replicate-run noise ceilings
+├── make_figures_v2.py      v1 vs v2 figures
+├── test_predict.py         human-readable demo of all five models
+├── artifacts/              production *.joblib (scikit-learn 1.9.1) + nested-CV cache; archive/v1, archive/v2
+├── reports/                every score, comparison, log and the pipeline manifest (csv / json)
+└── figures/                every figure (png)
+```
+
+Run everything from the repository root with `python run_pipeline.py` (about 10 min, reuses the cached nested CV) or `python run_pipeline.py --full` (about 50 min). Tests: `python tests/run_tests.py`.

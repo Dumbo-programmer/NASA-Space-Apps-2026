@@ -16,7 +16,8 @@ files = {
 }
 for f in files:
     src = f"{D}/{f}" if os.path.exists(f"{D}/{f}") else f"{E}/{f}"
-    shutil.copy(src, f"{OUT}/{f}")
+    if os.path.abspath(src) != os.path.abspath(f"{OUT}/{f}"):
+        shutil.copy(src, f"{OUT}/{f}")
 
 M = pd.read_csv(f"{D}/Ignis_mu_unified_master_v1.0.csv")
 counts = M.groupby(["source_investigation", "psi_id", "gravity_level"], dropna=False).size().reset_index(name="rows_in_master")
@@ -107,9 +108,11 @@ for ws in wb.worksheets:
             for c in row: c.alignment = Alignment(wrap_text=True, vertical="top")
 wb.save(xl)
 
-# raw extracts + scripts
-os.makedirs(f"{OUT}/raw_from_NASA", exist_ok=True); os.makedirs(f"{OUT}/scripts", exist_ok=True)
-for f in os.listdir(R): shutil.copy(f"{R}/{f}", f"{OUT}/raw_from_NASA/{f}")
-for f in ["build_flex.py", "build_spice.py", "build_same.py", "build_bass_saffire.py", "build_master.py", "verify_all.py", "package.py"]:
-    shutil.copy(f, f"{OUT}/scripts/{f}")
+# raw extracts + scripts: only when building a standalone bundle in a separate folder (never duplicated inside data/processed)
+if os.path.abspath(OUT) != os.path.abspath(D):
+    here = os.path.dirname(os.path.abspath(__file__))
+    os.makedirs(f"{OUT}/raw_from_NASA", exist_ok=True); os.makedirs(f"{OUT}/scripts", exist_ok=True)
+    for f in os.listdir(R): shutil.copy(f"{R}/{f}", f"{OUT}/raw_from_NASA/{f}")
+    for f in ["build_flex.py", "build_spice.py", "build_same.py", "build_bass_saffire.py", "build_master.py", "verify_all.py", "package.py"]:
+        shutil.copy(f"{here}/{f}", f"{OUT}/scripts/{f}")
 print(data_map[["file", "rows"]].to_string(index=False)); print(abstract.to_string(index=False))

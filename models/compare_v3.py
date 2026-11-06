@@ -10,17 +10,18 @@ Scored on what the objective needs, not only accuracy:
 Run: python compare_v3.py        -> v3_comparison.csv, v3_physics_check.csv, *_v3_oof.csv
 """
 import json, time, warnings
+import config as C
 import numpy as np, pandas as pd, joblib
 from scipy.stats import spearmanr, norm
 from sklearn.metrics import mean_absolute_error, r2_score, roc_auc_score, brier_score_loss, log_loss
-from ml_selection import make_cv, select, regression_families, classification_families, LOGLOSS
+from ml_selection import checked_splits, make_cv, select, regression_families, classification_families, LOGLOSS
 from pigp import PhysicsGPRegressor, PhysicsGPClassifier
 import preprocess_v3 as P
 from ignis_models import bass2_features, flex2_features, spice_features, same2_features
 warnings.filterwarnings("ignore")
 
-S = P.all_specs("data")
-NEST = joblib.load("v2_nested_cache.joblib")
+S = P.all_specs()
+NEST = joblib.load(C.artifact("v2_nested_cache.joblib"))
 OUTER = {"bass2_flame_spread": "logo", "flex_extinction": "kfold", "flex_burning_rate": "kfold", "spice_smoke_point": "logo", "same_particle_size": "kfold"}
 V2_TRANSFORM = {"bass2_flame_spread": "tune", "flex_extinction": None, "flex_burning_rate": "tune", "spice_smoke_point": "log", "same_particle_size": "log"}
 HYB = "top-3 average + physics-form fallback outside tested domain"
@@ -31,7 +32,7 @@ z90 = norm.ppf(0.95)
 
 def splits(name):
     sp = S[name]; reps = NEST[name]["res"]["reps"]
-    return [list(make_cv(OUTER[name], len(np.unique(sp["g"])), seed=r).split(sp["X"], sp["y"], sp["g"])) for r in range(reps)]
+    return [checked_splits(make_cv(OUTER[name], len(np.unique(sp["g"])), seed=r), sp["X"], sp["y"], sp["g"], f"{name} repeat {r}") for r in range(reps)]
 
 
 def fixed_band(y, p, folds, log):
@@ -81,10 +82,10 @@ for name, sp in S.items():
                            "mean_width": width, "uncertainty_tracks_error_spearman": sp_r})
         rows.append({"model_task": name, "model": c} | pd.DataFrame(ms).mean().round(4).to_dict())
     oofs[name] = pd.DataFrame({"y": y, "group": g, "pigp_pred": P1[0]} | ({} if cls else {"pigp_lo90": LO[0], "pigp_hi90": HI[0], "physics_only": PH[0]}))
-    oofs[name].to_csv(f"{name}_v3_oof.csv", index=False)
+    oofs[name].to_csv(C.report(f"{name}_v3_oof.csv"), index=False)
     print(f"{name}: {time.time()-t0:.0f}s"); print(pd.DataFrame([r for r in rows if r["model_task"] == name]).drop(columns="model_task").to_string(index=False), flush=True)
 
-T = pd.DataFrame(rows); T.to_csv("v3_comparison.csv", index=False)
+T = pd.DataFrame(rows); T.to_csv(C.report("v3_comparison.csv"), index=False)
 
 # ---------------- physics consistency: move the key input across its tested range, row by row ----------------
 KEY = {"bass2_flame_spread": ("o2_pct", +1), "flex_extinction": ("o2_pct", -1), "flex_burning_rate": ("o2_pct", +1),
@@ -120,7 +121,7 @@ for name, sp in S.items():
     sel = select(Xv2, yfit, sp["g"], {k: v for k, v in fams.items() if k in keep}, LOGLOSS if cls else "neg_mean_absolute_error", seed=999)
     for f in keep:
         models[f + " (tuned, v2)"] = (sel["table"][f]["est"], v2_X)
-    b = joblib.load(f"v2_archive/{name}.joblib"); models["v2: top-3 average + fallback"] = (b["model"], v2_X)
+    b = joblib.load(C.archived("v2", f"{name}.joblib")); models["v2: top-3 average + fallback"] = (b["model"], v2_X)
     for mname, (m, fx) in models.items():
         bad = 0
         for i in range(len(df)):
@@ -135,6 +136,6 @@ for name, sp in S.items():
         phys.append({"model_task": name, "model": mname, "key_input": col, "expected": "up" if sign > 0 else "down",
                      "rows_violating_pct": round(100 * bad / len(df), 1)})
     print(name, "physics check done", flush=True)
-PC = pd.DataFrame(phys); PC.to_csv("v3_physics_check.csv", index=False)
+PC = pd.DataFrame(phys); PC.to_csv(C.report("v3_physics_check.csv"), index=False)
 print(PC.pivot(index="model", columns="model_task", values="rows_violating_pct").to_string())
 print(f"total {time.time()-t_all:.0f}s")

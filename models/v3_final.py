@@ -11,6 +11,7 @@ Also: safe-cabin map + next experiment figure, moving-average experiment, large-
 Run: python v3_final.py   (needs compare_v3.py outputs)
 """
 import json, time, warnings
+import config as C
 import numpy as np, pandas as pd, joblib
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, r2_score, roc_auc_score, brier_score_loss
@@ -24,8 +25,8 @@ from pigp import PhysicsGPRegressor, PhysicsGPClassifier
 import preprocess_v3 as P
 warnings.filterwarnings("ignore")
 
-S = P.all_specs("data"); T = pd.read_csv("v3_comparison.csv"); PC = pd.read_csv("v3_physics_check.csv")
-summary = json.load(open("model_summary.json"))
+S = P.all_specs(); T = pd.read_csv(C.report("v3_comparison.csv")); PC = pd.read_csv(C.report("v3_physics_check.csv"))
+summary = json.loads(C.report("model_summary_v2.json").read_text())
 BLUE, ORANGE, INK, INK2, GRID, SURF = "#2a78d6", "#eb6834", "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 plt.rcParams.update({"font.size": 9, "axes.edgecolor": INK2, "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
                      "axes.spines.top": False, "axes.spines.right": False, "figure.facecolor": SURF, "axes.facecolor": SURF})
@@ -56,7 +57,7 @@ FLEX_GROUPS = {"fuel": ["is_heptane"], "pressure": ["log_p"], "oxygen": ["o2_pct
 SRC_FLEX = "NASA PSI-69 FLEX experimental table (CC0-1.0), DOI 10.60555/mbq8-0451"
 for name in ["bass2_flame_spread", "flex_burning_rate", "flex_extinction"]:
     sp = S[name]; X, y, g = sp["X"], sp["y"], sp["g"]; cls = sp["task"] == "classification"
-    oof = pd.read_csv(f"{name}_v3_oof.csv"); r = row(name, "PI-GP (proposed)")
+    oof = pd.read_csv(C.report(f"{name}_v3_oof.csv")); r = row(name, "PI-GP (proposed)")
     if cls:
         m = PhysicsGPClassifier(gp_cols=sp["gp_cols"]).fit(X, y)
         br = float(y.mean()); thr = float(np.quantile(oof.pigp_pred, 1 - br))
@@ -100,16 +101,16 @@ for name in ["bass2_flame_spread", "flex_burning_rate", "flex_extinction"]:
                                  "per_category_ranges": per_cat(df, "fuel", ["o2_pct", "pressure_kpa", "d0_mm"]), "nn_limit": lim, "z_mean": mu, "z_std": sd},
                       "valid_for": "isolated methanol or n-heptane droplets, quiescent microgravity (ISS CIR/MDCA), O2/N2 with CO2 or He diluent", "source": SRC_FLEX}
     if not cls and not m.use_correction_:
-        b["model_label"] = b["model_label"].replace("GP correction + ", "") + " (inner CV: GP correction not needed)"
-    joblib.dump(b, f"{name}.joblib")
+        b["model_label"] = "Physics-informed Gaussian process (power law + test offset; GP correction not needed)"
+    joblib.dump(b, C.artifact(f"{name}.joblib"))
     summary[name] = {"chosen": b["model_label"], "validation": val, "rows": b["n_rows"], "groups": b["n_groups"], "version": "3.0"}
     print(name, "->", b["model_label"], val, flush=True)
 
 summary["_selection"] = summary.get("_selection", {}) | {"v3_rule": "map outputs (spread, burning rate, survive?) -> PI-GP (physics-consistent + input-dependent uncertainty + near-best accuracy); smoke outputs (smoke point, particle size) -> v2 ensemble (most accurate inside the tested range)"}
-json.dump(summary, open("model_summary.json", "w"), indent=2, default=str)
+C.report("model_summary.json").write_text(json.dumps(summary, indent=2, default=str))
 
 # ======================= safe-cabin map + next experiment =======================
-fx = joblib.load("flex_extinction.joblib")["model"]; fb = joblib.load("bass2_flame_spread.joblib")["model"]
+fx = joblib.load(C.artifact("flex_extinction.joblib"))["model"]; fb = joblib.load(C.artifact("bass2_flame_spread.joblib"))["model"]
 flex = S["flex_extinction"]["df"]; bass = S["bass2_flame_spread"]["df"]
 O2 = np.linspace(12, 34, 90); PR = np.linspace(50, 320, 90); OO, PP = np.meshgrid(O2, PR)
 G = pd.DataFrame({"fuel": "Methanol", "pressure_kpa": PP.ravel(), "o2_pct": OO.ravel(), "co2_pct": 0.0, "he_pct": 0.0, "d0_mm": 3.0})
@@ -140,7 +141,7 @@ b2.scatter(bass.opposed_flow_cm_s, bass.o2_pct, s=14, c=np.where(bass.diameter_c
 b2.plot(nxt2[1], nxt2[0], marker="*", ms=16, color=BLUE, markeredgecolor=INK, clip_on=False, label=f"next experiment: {nxt2[0]:.1f}% O2, {nxt2[1]:.1f} cm/s")
 b2.set(xlabel="opposed airflow (cm/s)", ylabel="oxygen (%)", xlim=(0.2, 7.8), ylim=(16.6, 21.25)); b2.set_title("Flame spread over a 6.4 mm PMMA rod\nlines = spread (mm/s); shade = uncertainty (± %)", loc="left", fontsize=10, color=INK)
 plt.colorbar(cs2, ax=b2, fraction=0.046, pad=0.02).set_label("1-sd uncertainty (%)"); b2.legend(fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=2, frameon=False)
-fig.tight_layout(); fig.savefig("fig_v3_safe_map_next_experiment.png", dpi=170); plt.close()
+fig.tight_layout(); fig.savefig(C.figure("fig_v3_safe_map_next_experiment.png"), dpi=170); plt.close()
 print("next experiments:", nxt1, nxt2)
 
 # ======================= what if we used a moving average? (BASS-II) =======================
@@ -157,18 +158,22 @@ for label, ytrain, yscore in [("no smoothing (honest baseline)", y, y),
     p = cross_val_predict(law, Xb, ytrain, groups=g, cv=LeaveOneGroupOut())
     res_ma.append({"variant": label, "R2": round(r2_score(yscore, p), 3), "MAE_mm_s": round(mean_absolute_error(yscore, p), 4)})
 leak = int((pd.Series(g).shift(1) != pd.Series(g)).sum() - 1)
-pd.DataFrame(res_ma).to_csv("v3_moving_average_test.csv", index=False); print(pd.DataFrame(res_ma).to_string(index=False), "\nfile-order windows crossing a test boundary:", leak)
+pd.DataFrame(res_ma).to_csv(C.report("v3_moving_average_test.csv"), index=False); print(pd.DataFrame(res_ma).to_string(index=False), "\nfile-order windows crossing a test boundary:", leak)
 
 # ======================= large data: how does fitting time grow? =======================
-rng = np.random.default_rng(0); scal = []
-for n in [250, 500, 1000, 2000]:
-    o = rng.uniform(16, 21, n); f = rng.uniform(0.4, 7.5, n); dd = rng.choice([0.64, 0.95, 1.27], n)
-    Dn = pd.DataFrame({"o2_pct": o, "opposed_flow_cm_s": f, "diameter_cm": dd}); Xn = P.bass2_X(Dn)
-    yn = np.exp(-6.5 + 2.2 * np.log(o) + 0.25 * np.log(f) - 0.05 * f + 0.6 * np.log(1 / dd) + rng.normal(0, 0.15, n))
-    t0 = time.time(); PhysicsGPRegressor(mean_cols=["log_o2", "log_flow", "flow", "log_inv_d"], gp_cols=["o2_pct", "log_flow", "inv_d"], log_target=True,
-                                          correction=True).fit(Xn, yn, groups=np.arange(n) // 4)
-    scal.append({"rows": n, "fit_seconds": round(time.time() - t0, 2)}); print(scal[-1], flush=True)
-pd.DataFrame(scal).to_csv("v3_scaling_test.csv", index=False)
+import sys
+if "--no-scaling" in sys.argv and C.report("v3_scaling_test.csv").exists():          # fast mode: keep the measured timings
+    scal = pd.read_csv(C.report("v3_scaling_test.csv")).to_dict("records")
+else:
+    rng = np.random.default_rng(0); scal = []
+    for n in [250, 500, 1000, 2000]:
+        o = rng.uniform(16, 21, n); f = rng.uniform(0.4, 7.5, n); dd = rng.choice([0.64, 0.95, 1.27], n)
+        Dn = pd.DataFrame({"o2_pct": o, "opposed_flow_cm_s": f, "diameter_cm": dd}); Xn = P.bass2_X(Dn)
+        yn = np.exp(-6.5 + 2.2 * np.log(o) + 0.25 * np.log(f) - 0.05 * f + 0.6 * np.log(1 / dd) + rng.normal(0, 0.15, n))
+        t0 = time.time(); PhysicsGPRegressor(mean_cols=["log_o2", "log_flow", "flow", "log_inv_d"], gp_cols=["o2_pct", "log_flow", "inv_d"], log_target=True,
+                                              correction=True).fit(Xn, yn, groups=np.arange(n) // 4)
+        scal.append({"rows": n, "fit_seconds": round(time.time() - t0, 2)}); print(scal[-1], flush=True)
+pd.DataFrame(scal).to_csv(C.report("v3_scaling_test.csv"), index=False)
 json.dump({"next_experiment_flex": {"o2_pct": nxt1[0], "pressure_kpa": nxt1[1], "p_survive": nxt1[2]},
            "next_experiment_bass": {"o2_pct": nxt2[0], "flow_cm_s": nxt2[1], "spread_mm_s": nxt2[2], "sd_log": nxt2[3]},
-           "moving_average": res_ma, "ma_windows_crossing_tests": leak, "scaling": scal}, open("v3_side_experiments.json", "w"), indent=1)
+           "moving_average": res_ma, "ma_windows_crossing_tests": leak, "scaling": scal}, open(C.report("v3_side_experiments.json"), "w"), indent=1)

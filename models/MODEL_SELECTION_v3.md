@@ -39,7 +39,7 @@ y (physics space) = m(x) physics law  +  f(x) GP correction  +  b_test (ISS test
 - **Band calibration:** a split-conformal-style scale factor, estimated on training folds only.
 - Far from the data f(x) → 0, so the model falls back to the physics law by itself. v2 needed a hand-made switch for this.
 
-## 3. Preprocessing v3, designed for the PI-GP (`preprocess_v3.py` → `preprocessing_log_v3.json`)
+## 3. Preprocessing v3, designed for the PI-GP (`preprocess_v3.py` → `reports/preprocessing_log_v3.json`)
 
 | Basis | What was done |
 |---|---|
@@ -49,7 +49,7 @@ y (physics space) = m(x) physics law  +  f(x) GP correction  +  b_test (ISS test
 | Noise prior | replicate pairs from different tests: 39 BASS-II, 27 FLEX, 16 SPICE, 164 SAME |
 | Not done, on purpose | imputing outcomes; SMOTE or oversampling (breaks honest probabilities); moving average (see section 5); merging the five experiments into one table |
 
-## 4. Results: same rows, same outer splits as v2 (`compare_v3.py` → `v3_comparison.csv`, `v3_physics_check.csv`)
+## 4. Results: same rows, same outer splits as v2 (`compare_v3.py` → `reports/v3_comparison.csv`, `reports/v3_physics_check.csv`)
 
 | Output | Final model | Nested score | 90 % coverage | Physics violations | v2 on the same tests |
 |---|---|---|---|---|---|
@@ -71,7 +71,7 @@ y (physics space) = m(x) physics law  +  f(x) GP correction  +  b_test (ISS test
 - PI-GP's 90 % band on flame spread covers 86.5 % of held-out rows, slightly short of 90 %.
 - The PI-GP does not help SPICE or SAME. Those keep v2, as the rule says.
 
-## 5. Side experiments (`v3_final.py` → `v3_side_experiments.json`)
+## 5. Side experiments (`v3_final.py` → `reports/v3_side_experiments.json`)
 
 **Moving average** (BASS-II, physics law, leave-one-test-out):
 
@@ -88,15 +88,19 @@ y (physics space) = m(x) physics law  +  f(x) GP correction  +  b_test (ISS test
 
 **Scaling:** PI-GP fit time is 0.9 s for 250 rows, 5.4 s for 500, 25 s for 1,000 and 181 s for 2,000 (about n³). For more than a few thousand rows, use a sparse or variational GP (inducing points). For very large multi-experiment data or ESP32 time series, a TRACE-like deep multi-task model becomes reasonable.
 
-**Safe-cabin map and next experiment** (`fig_v3_safe_map_next_experiment.png`):
+**Safe-cabin map and next experiment** (`figures/fig_v3_safe_map_next_experiment.png`)
+
+![safe-cabin map](figures/fig_v3_safe_map_next_experiment.png):
 - 3 mm methanol droplet: the next test should be at about 32 % O2 and 144 kPa. There P(survive) ≈ 0.5, and no tested run is nearby.
 - 6.4 mm PMMA rod: uncertainty is highest at 21 % O2 and 7.5 cm/s.
 - No FLEX test was run below 70 kPa.
 
 ## Run order
 
+Everything below runs with one command from the repository root: `python run_pipeline.py` (fast) or `python run_pipeline.py --full`.
+
 ```bash
-python train_v2.py data      # v2 families, nested CV (about 30 min), v2 bundles also in v2_archive/
+python train_v2.py           # v2 families, nested CV (about 30 min), v2 bundles in artifacts/archive/v2/
 python compare_v3.py         # PI-GP vs every v2 family on identical splits + physics check (about 7 min)
 python v3_final.py           # final v3 bundles for the three map outputs, map figure, side experiments (about 5 min)
 python test_predict.py       # predict() smoke test + physics checks

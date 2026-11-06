@@ -1,0 +1,20 @@
+name: data-and-ml-pipeline
+
+on:
+  push:
+    paths: ["data/**", "models/**", "tests/**", "run_pipeline.py", "requirements*.txt", ".github/workflows/ml-pipeline.yml"]
+  pull_request:
+    paths: ["data/**", "models/**", "tests/**", "run_pipeline.py", "requirements*.txt"]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Reproducible ETL, data contract and tests
+        run: python run_pipeline.py --only etl validate tests

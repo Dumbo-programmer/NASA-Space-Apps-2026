@@ -108,6 +108,28 @@ def classification_families(n_features):
     }
 
 
+# ------------------------------------------------------------------ leakage guard
+class LeakageError(AssertionError):
+    pass
+
+
+def assert_group_disjoint(g, tr, te, where=""):
+    """Fail loudly if any ISS test / session / run appears on both sides of a split."""
+    shared = set(np.asarray(g)[tr]) & set(np.asarray(g)[te])
+    if shared:
+        raise LeakageError(f"group leakage {where}: {sorted(shared)[:5]} in both train and test")
+    if len(set(tr) & set(te)):
+        raise LeakageError(f"row leakage {where}: the same row is in train and test")
+
+
+def checked_splits(cv, X, y, g, where=""):
+    """Materialise a splitter's folds and check every one for group leakage."""
+    folds = list(cv.split(X, y, g))
+    for k, (tr, te) in enumerate(folds):
+        assert_group_disjoint(g, tr, te, f"{where} fold {k}")
+    return folds
+
+
 # ------------------------------------------------------------------ CV splitters
 def make_cv(kind, n_groups, seed=0):
     if kind == "logo":
@@ -122,10 +144,10 @@ def select(X, y, g, families, scoring, inner_splits=5, seed=0, n_jobs=2):
     among those, the simplest family wins. Few groups (<=12) -> inner leave-one-group-out (lower-variance choice)."""
     ng = len(np.unique(g))
     if ng <= 12:
-        inner = LeaveOneGroupOut()
+        inner = checked_splits(LeaveOneGroupOut(), X, y, g, "inner")
     else:                                   # 2 x repeated grouped 5-fold -> steadier choice on small data
-        inner = [sp for r in range(2) for sp in GroupKFold(n_splits=min(inner_splits, ng), shuffle=True,
-                 random_state=seed + 1000 + r).split(X, y, g)]
+        inner = [sp for r in range(2) for sp in checked_splits(GroupKFold(n_splits=min(inner_splits, ng), shuffle=True,
+                 random_state=seed + 1000 + r), X, y, g, "inner")]
     res = {}
     for name, (rank, est, grid) in families.items():
         gs = GridSearchCV(clone(est), grid or {}, scoring=scoring, cv=inner, n_jobs=n_jobs, refit=True, error_score=np.nan)
@@ -206,7 +228,7 @@ def nested_cv(X, y, g, task, outer="kfold", repeats=3, transform=None, verbose=T
     picks = {p: [] for p in PROCEDURES}
     for r in range(reps):
         cv = make_cv(outer, len(np.unique(g)), seed=r)
-        for fold, (tr, te) in enumerate(cv.split(X, y, g)):
+        for fold, (tr, te) in enumerate(checked_splits(cv, X, y, g, f"outer repeat {r}")):
             sel = select(X.iloc[tr], yfit[tr], g[tr], fams, scoring, seed=100 * r + fold)
             for n, info in sel["table"].items():
                 est = info["est"]

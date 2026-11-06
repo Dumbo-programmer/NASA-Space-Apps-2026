@@ -16,6 +16,7 @@ So the preprocessing has to deliver four things the PI-GP needs:
 Every step is logged with row counts (preprocessing_log_v3.json), so the presentation can show what was done and why.
 """
 import json
+import config as C
 import numpy as np, pandas as pd
 
 LOG = {}
@@ -40,7 +41,8 @@ def bass2_X(d):
                          "o2_pct": d.o2_pct, "flow": d.opposed_flow_cm_s, "inv_d": 1 / d.diameter_cm})
 
 
-def bass2(D="data"):
+def bass2(D=None):
+    D = D or C.DATA_DIR
     n = "bass2_flame_spread"
     d = pd.read_csv(f"{D}/BASS-II_flame_spread_microgravity_v1.0.csv")
     _log(n, "load NASA PSI-25 / Link et al. 2018 Table S1", "verified extract of measured spread rates", len(d))
@@ -67,7 +69,8 @@ def flex_features(df):
                          "d0_mm": df["d0_mm"].astype(float)})
 
 
-def flex_extinction(D="data"):
+def flex_extinction(D=None):
+    D = D or C.DATA_DIR
     n = "flex_extinction"
     x = _flex(D); _log(n, "load NASA PSI-69 FLEX table", "274 ISS droplet tests", len(x))
     u = x[x.use_for_extinction_model].reset_index(drop=True)
@@ -79,7 +82,8 @@ def flex_extinction(D="data"):
                 gp_cols=list(X.columns), key="o2_pct", key_sign=-1, raw_inputs=["fuel", "pressure_kpa", "o2_pct", "co2_pct", "he_pct", "d0_mm"])
 
 
-def flex_burning_rate(D="data"):
+def flex_burning_rate(D=None):
+    D = D or C.DATA_DIR
     n = "flex_burning_rate"
     x = _flex(D); _log(n, "load NASA PSI-69 FLEX table", "274 ISS droplet tests", len(x))
     k = x[x.burning_rate_K_mm2_s.notna() & x.d0_mm.notna() & x.pressure_kpa.notna() & (x.burning_rate_K_mm2_s > 0.1)].reset_index(drop=True)
@@ -103,7 +107,8 @@ def spice_features(df):
     return X
 
 
-def spice(D="data"):
+def spice(D=None):
+    D = D or C.DATA_DIR
     n = "spice_smoke_point"
     s = pd.read_csv(f"{D}/SPICE_PSI-107_smoke_points_v1.0.csv")
     _log(n, "load NASA PSI-107 SmokePointReview-0g-3.xlsx rows 5-59", "the sheet that holds measured smoke points (not test settings)", len(s))
@@ -128,7 +133,8 @@ def same_features(df):
     return X
 
 
-def same(D="data"):
+def same(D=None):
+    D = D or C.DATA_DIR
     n = "same_particle_size"
     m0 = pd.read_csv(f"{D}/SAME_PSI-101-102_smoke_particles_v1.0.csv"); _log(n, "load NASA PSI-101/102 results workbook", "154 smoke readings", len(m0))
     m0 = m0[m0.use_for_particle_size_model].reset_index(drop=True)
@@ -148,9 +154,25 @@ def same(D="data"):
                 raw_inputs=["material", "sample_temperature_c", "air_velocity_cm_s", "aging_time_s", "campaign"])
 
 
-def all_specs(D="data"):
+def check_no_target_leak(spec):
+    """No feature may be the target (or a copy of it); every row must carry a group id."""
+    X, y = spec["X"], np.asarray(spec["y"], float)
+    for c in X.columns:
+        v = X[c].to_numpy(float)
+        for t in (y, np.log(np.clip(y, 1e-12, None))):
+            if np.allclose(v, t, equal_nan=False) or (np.std(v) > 0 and np.std(t) > 0 and abs(np.corrcoef(v, t)[0, 1]) > 0.999):
+                raise AssertionError(f"{spec['name']}: feature '{c}' is (almost) the target - target leakage")
+    if pd.isna(pd.Series(spec["g"])).any():
+        raise AssertionError(f"{spec['name']}: rows without a group id")
+    if len(X) != len(y):
+        raise AssertionError(f"{spec['name']}: X and y lengths differ")
+
+
+def all_specs(D=None):
     LOG.clear()
     S = {f.__name__: f(D) for f in (bass2, flex_extinction, flex_burning_rate, spice, same)}
     out = {s["name"]: s for s in S.values()}
-    json.dump(LOG, open("preprocessing_log_v3.json", "w"), indent=1)
+    for s in out.values():
+        check_no_target_leak(s)
+    C.report("preprocessing_log_v3.json").write_text(json.dumps(LOG, indent=1))
     return out

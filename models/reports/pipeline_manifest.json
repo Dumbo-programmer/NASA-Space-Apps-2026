@@ -1,0 +1,71 @@
+{
+ "mode": "fast",
+ "python": "3.13.16",
+ "stages": [
+  {
+   "stage": "etl",
+   "ok": true,
+   "seconds": 2.9
+  },
+  {
+   "stage": "validate",
+   "ok": true,
+   "seconds": 0.4
+  },
+  {
+   "stage": "train_v2",
+   "ok": true,
+   "seconds": 106.7
+  },
+  {
+   "stage": "noise",
+   "ok": true,
+   "seconds": 0.5
+  },
+  {
+   "stage": "compare",
+   "ok": true,
+   "seconds": 415.2
+  },
+  {
+   "stage": "final",
+   "ok": true,
+   "seconds": 30.0
+  },
+  {
+   "stage": "figures",
+   "ok": true,
+   "seconds": 1.1
+  },
+  {
+   "stage": "tests",
+   "ok": true,
+   "seconds": 7.0
+  }
+ ],
+ "git_commit": "ea2106d",
+ "seconds_total": 563.7,
+ "data_sha256_16": {
+  "BASS-II_flame_spread_microgravity_v1.0.csv": "249142da0fdb8bc0",
+  "BASS_PSI-26_test_log_v1.0.csv": "762dd74a603745c2",
+  "FLEX_PSI-69_clean_v1.0.csv": "675ef214cb828f54",
+  "Ignis_mu_unified_master_v1.0.csv": "131e47d0485e161d",
+  "SAFFIRE_I-III_PSI-98-100_v1.0.csv": "ee8db48f2f7461c6",
+  "SAME_PSI-101-102_smoke_particles_v1.0.csv": "687b12f3ee69a2c6",
+  "SPICE_PSI-107_smoke_points_v1.0.csv": "b18024e20b3b4ca5"
+ },
+ "artifacts_sha256_16": {
+  "bass2_flame_spread.joblib": "4a083f0ecb349c19",
+  "flex_burning_rate.joblib": "994e5d92234d4f94",
+  "flex_extinction.joblib": "e1841667481a7f84",
+  "same_particle_size.joblib": "d6ed5a6e6d0f3a45",
+  "spice_smoke_point.joblib": "720fe562a649a9d4",
+  "v2_nested_cache.joblib": "ee034745c5196025"
+ },
+ "libraries": {
+  "numpy": "2.5.3",
+  "pandas": "3.0.5",
+  "scipy": "1.18.1",
+  "sklearn": "1.9.1"
+ }
+}

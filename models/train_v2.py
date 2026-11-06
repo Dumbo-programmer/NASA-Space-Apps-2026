@@ -18,6 +18,7 @@ Phase 3  that procedure is run on all rows of each dataset -> final model, bands
 Run: python train_v2.py data            (phase 1 cached in v2_nested_cache.joblib; add --reuse to skip it)
 """
 import sys, os, json, time
+import config as C
 import numpy as np, pandas as pd, joblib
 from sklearn.base import clone
 from sklearn.model_selection import cross_val_predict
@@ -30,8 +31,9 @@ from ml_selection import (nested_cv, summarise, select, regression_families, cla
                           reg_metrics, clf_metrics, group_bootstrap_ci, AveragedModel, PROCEDURES, LOGLOSS)
 from ignis_models import flex_features, same_features, flex2_features, spice_features, same2_features, bass2_features
 
-D = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else "data"
+D = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else C.DATA_DIR
 REUSE = "--reuse" in sys.argv
+V3_OUTPUTS = {"bass2_flame_spread", "flex_extinction", "flex_burning_rate"}   # production model comes from v3_final.py
 REPEATS, RS = 3, 42
 
 
@@ -96,9 +98,9 @@ def threshold_fn(y):
 # ============================================================ phase 1: nested CV
 S = load_specs()
 NEST = {}
-if REUSE and os.path.exists("v2_nested_cache.joblib"):
+if REUSE and C.artifact("v2_nested_cache.joblib").exists():
     try:
-        NEST = joblib.load("v2_nested_cache.joblib")
+        NEST = joblib.load(C.artifact("v2_nested_cache.joblib"))
     except Exception as e:                       # e.g. a different scikit-learn version
         print(f"cache could not be loaded ({type(e).__name__}); running the full nested CV instead")
 if True:
@@ -121,7 +123,7 @@ if True:
         table = pd.concat([table, pd.DataFrame([{"model": "[v1] model, same outer splits"} | ms.mean().to_dict()])], ignore_index=True)
         print(table.round(4).to_string(index=False), f"\n({time.time()-t0:.0f}s)", flush=True)
         NEST[name] = {"res": res, "table": table, "v1_pred": P}
-        joblib.dump(NEST, "v2_nested_cache.joblib")
+        joblib.dump(NEST, C.artifact("v2_nested_cache.joblib"))
 
 
 # ============================================================ phase 1b: ensemble + physics fallback outside the tested domain
@@ -166,7 +168,7 @@ for name, sp in S.items():
     print(f"{name}: " + (f"{NEST[name]['fallback_share_pct']}% of held-out rows were outside the training domain -> physics fallback"
                          if sp.get("physics_form", True) else "no physics-form law -> ensemble used everywhere (out-of-domain inputs are still flagged)"))
 
-joblib.dump(NEST, "v2_nested_cache.joblib")          # keep the hybrid procedure's honest predictions too
+joblib.dump(NEST, C.artifact("v2_nested_cache.joblib"))          # keep the hybrid procedure's honest predictions too
 
 # ============================================================ phase 2: one global procedure
 ranks = []
@@ -178,7 +180,7 @@ R = pd.concat(ranks, axis=1); R["mean_rank"] = R.mean(axis=1)
 tiebreak = {"[procedure] 1-SE rule (simplest near-best)": 0, "[procedure] best inner score": 1, "[procedure] top-3 average": 2, f"[procedure] {HYB}": 3}
 PROC = min(R.index, key=lambda i: (R.loc[i, "mean_rank"], tiebreak[i])).replace("[procedure] ", "")
 print("\nPROCEDURE RANKS (1 = best on that model's primary metric)\n", R.round(2).to_string(), f"\n=> global procedure: {PROC}")
-R.round(3).to_csv("v2_procedure_ranks.csv")
+R.round(3).to_csv(C.report("v2_procedure_ranks.csv"))
 
 # ============================================================ phase 3: final models
 summary, comparison = {}, []
@@ -278,9 +280,11 @@ for name, sp in S.items():
         b["validation"]["q90_ratio"] = r4(q)
         oof = m0[["record_id", "material", "sample_temperature_c", "inlet_air_velocity_cm_s", "net_aging_time_s", "count_mean_diameter_um"]]
 
-    joblib.dump(b, f"{name}.joblib"); os.makedirs("v2_archive", exist_ok=True); joblib.dump(b, f"v2_archive/{name}.joblib")
-    table.to_csv(f"{name}_v2_nested_cv.csv", index=False); inner.to_csv(f"{name}_v2_final_selection.csv", index=False)
-    oof.assign(pred_nested=np.round(proc[0], 5), pred_v1_same_splits=np.round(NEST[name]["v1_pred"][0], 5)).to_csv(f"{name}_v2_oof.csv", index=False)
+    joblib.dump(b, C.archived("v2", f"{name}.joblib"))
+    if name not in V3_OUTPUTS:                        # map outputs get their production (PI-GP) bundle from v3_final.py
+        joblib.dump(b, C.artifact(f"{name}.joblib"))
+    table.to_csv(C.report(f"{name}_v2_nested_cv.csv"), index=False); inner.to_csv(C.report(f"{name}_v2_final_selection.csv"), index=False)
+    oof.assign(pred_nested=np.round(proc[0], 5), pred_v1_same_splits=np.round(NEST[name]["v1_pred"][0], 5)).to_csv(C.report(f"{name}_v2_oof.csv"), index=False)
     summary[name] = {"chosen": label, "hyperparameters": params, "validation": b["validation"], "rows": b["n_rows"], "groups": b["n_groups"]}
     v1row = table[table.model == "[v1] model, same outer splits"].iloc[0]
     extra = {"log_loss": None, "balanced_accuracy": None} if task == "classification" else {}
@@ -291,6 +295,6 @@ for name, sp in S.items():
 
 summary["_selection"] = {"procedure": PROC, "procedure_ranks": R.round(3).to_dict(),
                          "note": "every score above is from nested grouped CV: the rows scored were never used to tune or choose the model"}
-json.dump(summary, open("model_summary.json", "w"), indent=2, default=str)
-cmp = pd.DataFrame(comparison); cmp.to_csv("v1_vs_v2.csv", index=False)
+C.report("model_summary_v2.json").write_text(json.dumps(summary, indent=2, default=str))
+cmp = pd.DataFrame(comparison); cmp.to_csv(C.report("v1_vs_v2.csv"), index=False)
 print("\nV1 vs V2\n", cmp.to_string(index=False))

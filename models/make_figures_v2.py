@@ -1,12 +1,13 @@
 """Figures for the v2 model-selection report: v1 vs v2 (same outer splits) + noise ceiling, and nested predicted-vs-measured."""
 import json
+import config as C
 import numpy as np, pandas as pd
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 
 BLUE, ORANGE, INK, INK2, GRID, SURF = "#2a78d6", "#eb6834", "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 plt.rcParams.update({"font.size": 9, "axes.edgecolor": INK2, "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
                      "axes.spines.top": False, "axes.spines.right": False, "figure.facecolor": SURF, "axes.facecolor": SURF})
-cmp = pd.read_csv("v1_vs_v2.csv"); ceil = json.load(open("noise_ceiling.json")); summ = json.load(open("model_summary.json"))
+cmp = pd.read_csv(C.report("v1_vs_v2.csv")); ceil = json.loads(C.report("noise_ceiling.json").read_text()); summ = json.loads(C.report("model_summary_v2.json").read_text())
 NAMES = {"bass2_flame_spread": "1 BASS-II\nflame spread", "flex_burning_rate": "3 FLEX\nburning rate K",
          "spice_smoke_point": "4 SPICE\nsmoke point", "same_particle_size": "5 SAME\nparticle size"}
 
@@ -37,7 +38,7 @@ b.set_xticks(xs2, ["Brier score", "Log-loss"]); b.set_ylabel("lower is better")
 b.yaxis.grid(True, color=GRID, lw=0.8); b.set_axisbelow(True)
 auc1, auc2 = f.loc["ROC_AUC", "v1_on_same_outer_splits"], f.loc["ROC_AUC", "v2_nested"]
 b.set_title(f"2 FLEX extinction (classifier)\nAUC v1 {auc1:.2f} -> v2 {auc2:.2f}", loc="left", fontsize=10, color=INK)
-fig.tight_layout(); fig.savefig("fig_v1_vs_v2.png", dpi=170); plt.close()
+fig.tight_layout(); fig.savefig(C.figure("fig_v1_vs_v2.png"), dpi=170); plt.close()
 
 # nested predicted vs measured, all four regressions
 fig, axs = plt.subplots(1, 4, figsize=(13, 3.4))
@@ -45,12 +46,12 @@ cols = {"bass2_flame_spread": "flame_spread_mm_s", "flex_burning_rate": "burning
         "spice_smoke_point": "smoke_point_length_mm", "same_particle_size": "count_mean_diameter_um"}
 units = {"bass2_flame_spread": "mm/s", "flex_burning_rate": "mm²/s", "spice_smoke_point": "mm", "same_particle_size": "µm"}
 for ax, (m, c) in zip(axs, cols.items()):
-    o = pd.read_csv(f"{m}_v2_oof.csv"); y, p = o[c], o.pred_nested
+    o = pd.read_csv(C.report(f"{m}_v2_oof.csv")); y, p = o[c], o.pred_nested
     lim = [0, max(y.max(), p.max()) * 1.08]
     ax.plot(lim, lim, color=INK2, lw=1, ls=(0, (3, 2)))
     ax.scatter(y, p, s=22, color=BLUE, edgecolor=SURF, linewidth=1)
     v = summ[m]["validation"]
     ax.set(xlim=lim, ylim=lim, xlabel=f"measured ({units[m]})", ylabel="predicted, test held out" if ax is axs[0] else "")
     ax.set_title(f"{NAMES[m].replace(chr(10), ' ')}\nR² {v['R2']:.2f} · MAE {v['MAE']:.3g}", loc="left", fontsize=9, color=INK)
-fig.tight_layout(); fig.savefig("fig_v2_pred_vs_measured.png", dpi=170); plt.close()
+fig.tight_layout(); fig.savefig(C.figure("fig_v2_pred_vs_measured.png"), dpi=170); plt.close()
 print("figures written")

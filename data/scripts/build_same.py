@@ -40,6 +40,11 @@ s["description"] = x.description
 s["inlet_air_velocity_cm_s"] = num(x.inlet_velocity_cm_s, "inlet velocity", flags)
 s["heater_resistance_ratio_rt_r0"] = num(x.rt_r0, "Rt/R0", flags)   # proxy for heater temperature setting
 s["sample_temperature_c"] = num(x.sample_temp_c, "sample temperature", flags)
+# a heated sample (Rt/R0 > 1) cannot be at 0 C: NASA's sheet uses 0 as a blank here (v1.1 fix, found by validate_processed.py)
+_zero_t = (s["sample_temperature_c"] == 0) & (s["heater_resistance_ratio_rt_r0"] > 1)
+for i in s.index[_zero_t]:
+    flags[i].append("sample temperature: 0 in NASA sheet while heater on (Rt/R0 > 1) -> missing")
+s.loc[_zero_t, "sample_temperature_c"] = np.nan
 s["net_aging_time_s"] = num(x.net_aging_s, "net aging time", flags)
 s["mass_loss_mg"] = num(x.mass_loss_mg, "mass loss", flags)
 # outputs (particle statistics from the moment method)

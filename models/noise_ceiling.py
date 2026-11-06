@@ -6,6 +6,7 @@ Their disagreement is measurement + run-to-run noise that no model can explain:
     best possible R2 ~ 1 - noise variance / total variance
 """
 import numpy as np, pandas as pd, json
+import config as C
 from ignis_models import flex2_features, spice_features, same2_features, bass2_features
 
 def ceiling(X, y, g, tol, log=False):
@@ -21,7 +22,7 @@ def ceiling(X, y, g, tol, log=False):
     return {"replicate_pairs": len(d2), "noise_sd": float(np.sqrt(noise)), "total_sd": float(y.std()),
             "max_R2_possible": float(1 - noise / y.var()), "scale": "log" if log else "original"}
 
-D = "data"; out = {}
+D = C.DATA_DIR; out = {}
 d = pd.read_csv(f"{D}/BASS-II_flame_spread_microgravity_v1.0.csv")
 out["bass2_flame_spread"] = ceiling(bass2_features(d), d.flame_spread_mm_s.values, d.test_id.values, 0.35)
 x = pd.read_csv(f"{D}/FLEX_PSI-69_clean_v1.0.csv"); x["co2_pct"] = x.x_CO2 * 100; x["he_pct"] = x.x_He * 100
@@ -36,4 +37,4 @@ raw = pd.DataFrame({"material": m0.material, "sample_temperature_c": m0.sample_t
 out["same_particle_size"] = ceiling(same2_features(raw), m0.count_mean_diameter_um.values, (m0.campaign.str[:6] + m0.same_run.str.rstrip("a")).values, 0.35, log=False)
 for kname, v in out.items():
     print(kname, {a: (round(b, 4) if isinstance(b, float) else b) for a, b in (v or {}).items()})
-json.dump(out, open("noise_ceiling.json", "w"), indent=2)
+C.report("noise_ceiling.json").write_text(json.dumps(out, indent=2))

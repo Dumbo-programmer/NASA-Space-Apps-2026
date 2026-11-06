@@ -86,7 +86,7 @@ All source data is public domain (**CC0-1.0**) from [NASA Physical Sciences Info
 
 **A finding worth seeing:** in Saffire-II, silicone burned completely in 1g but **did not spread at all in microgravity**. Earth-based fire rules do not transfer directly to space.
 
-Full documentation is in `data/README_dataset_v1.0.md` and the workbook `data/processed/Ignis_mu_NASA_dataset_v1.0.xlsx`. Start with its *Data_Map* sheet.
+Full documentation is in `data/README.md` (layout, lineage, data contract, changelog), `data/README_dataset_v1.0.md` and the workbook `data/processed/Ignis_mu_NASA_dataset_v1.0.xlsx`. Start with its *Data_Map* sheet.
 
 ---
 
@@ -118,11 +118,11 @@ How I chose the models:
 - **Honest limits.** v2 is slightly more accurate on flame spread (0.62 vs 0.57, overlapping CIs). Flame spread and burning rate sit near their replicate noise ceilings (≈ 0.68 and 0.72), so new experiments, not new models, would improve them.
 
 <p align="center">
-  <img src="docs/fig_v3_safe_map_next_experiment.png" alt="Safe-cabin map and next experiment" width="760" />
+  <img src="models/figures/fig_v3_safe_map_next_experiment.png" alt="Safe-cabin map and next experiment" width="760" />
 </p>
 
 <p align="center">
-  <img src="docs/fig_v1_vs_v2.png" alt="v1 vs v2 held-out scores and noise ceilings" width="760" />
+  <img src="models/figures/fig_v1_vs_v2.png" alt="v1 vs v2 held-out scores and noise ceilings" width="760" />
 </p>
 
 ---
@@ -153,7 +153,7 @@ How I chose the models:
 | Layer | Technology |
 |---|---|
 | **Data pipeline** | Python 3, pandas, NumPy, openpyxl |
-| **Machine learning** | scikit-learn 1.9 (Extra Trees, linear and power-law regression), exact Shapley explanations, joblib |
+| **Machine learning** | scikit-learn 1.9.1: physics-informed Gaussian process, tuned ensembles, nested grouped CV, exact Shapley explanations; one-command pipeline with data contract and tests |
 | **Backend (planned)** | FastAPI calling `models/ignis_models.py` |
 | **Frontend** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, lucide-react |
 | **Hardware** | ESP32 with O2, pressure, temperature and airflow sensors |
@@ -170,15 +170,17 @@ git clone https://github.com/prachyabiswas/NASA-Space-Apps-2026.git
 cd NASA-Space-Apps-2026
 ```
 
-### 2. Run the models
+### 2. Run the data-science pipeline
 
 ```bash
-cd models
-pip install pandas numpy scikit-learn==1.9.1 joblib matplotlib openpyxl
-python test_predict.py
+pip install -r requirements.txt          # pinned versions; scikit-learn 1.9.1 is required by the model files
+python run_pipeline.py                   # about 10 min: reproducible ETL -> data contract -> training -> evaluation -> tests
+python run_pipeline.py --full            # everything from scratch, about 50 min
+python tests/run_tests.py                # test suite only (or: pytest tests)
 ```
 
 ```python
+import sys; sys.path.insert(0, "models")
 from ignis_models import predict
 predict("flex_extinction", fuel="Methanol", pressure_kpa=101.3, o2_pct=18, co2_pct=0, he_pct=0, d0_mm=3.0)
 predict("spice_smoke_point", fuel="Propylene", burner_diameter_mm=1.6, coflow_air_velocity_cm_s=30)
@@ -201,12 +203,11 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-### 4. Rebuild the dataset from NASA's files
+### 4. Rebuild and check the dataset from NASA's files
 
 ```bash
-cd data
-python scripts/build_flex.py raw_from_NASA/PSI-69_Experimental_table_FLEX.csv processed
-python scripts/verify_all.py raw_from_NASA processed
+python data/scripts/build_all.py --check      # rebuild every processed file and prove it is byte-for-byte identical
+python data/scripts/validate_processed.py     # strict data contract: schema, physics bounds, consistency, lineage
 ```
 
 ---
@@ -216,28 +217,25 @@ python scripts/verify_all.py raw_from_NASA processed
 ```
 NASA-Space-Apps-2026/
 ├── agnishikha-ui/            # Next.js mission-control dashboard (Tawhid Bin Omar)
-├── data/
-│   ├── processed/            # Clean datasets, unified master table, Excel workbook
-│   ├── raw_from_NASA/        # Verbatim NASA PSI extracts (SHA-256 verified)
-│   ├── bass2_and_wstf/       # BASS-II flame-spread and gas data, WSTF 1g reference
-│   ├── scripts/              # Build and verification scripts
-│   └── README_dataset_v1.0.md
-├── models/
-│   ├── ignis_models.py       # predict() entry point, Shapley, domain checks, physics fallback
-│   ├── preprocess_v3.py      # Preprocessing designed for the PI-GP (logged)
-│   ├── pigp.py               # Physics-informed Gaussian process
-│   ├── compare_v3.py         # PI-GP vs every tuned family on identical splits
-│   ├── v3_final.py           # Final v3 models, safe-cabin map, side experiments
-│   ├── ml_selection.py       # Model families, tuning grids, nested grouped CV
-│   ├── train_v2.py           # Trains all five models
-│   ├── *.joblib              # Trained models
-│   ├── *_v2_nested_cv.csv    # Every family and selection procedure, scored on held-out tests
-│   ├── MODEL_SELECTION_v3.md # Objective-driven selection (v3)
-│   ├── MODEL_SELECTION_v2.md # Nested selection, v1 vs v2
-│   ├── v1_archive/, v2_archive/  # earlier models kept for comparison
-│   └── README.md             # Model cards
+├── data/                     # see data/README.md
+│   ├── raw_from_NASA/        # Verbatim NASA PSI extracts (never edited)
+│   ├── processed/            # Single source of truth: clean datasets, master table, Excel workbook
+│   ├── bass2_and_wstf/       # BASS-II intermediates, WSTF 1g reference
+│   └── scripts/              # build_all.py (one-command rebuild), builders, verify_all.py, validate_processed.py
+├── models/                   # see models/README.md
+│   ├── config.py             # Every path the pipeline uses
+│   ├── ignis_models.py       # predict(): domain checks, exact Shapley, physics fallback
+│   ├── preprocess_v3.py, pigp.py, ml_selection.py
+│   ├── train_v2.py, compare_v3.py, v3_final.py, noise_ceiling.py
+│   ├── artifacts/            # Production model bundles (+ archive/v1, archive/v2)
+│   ├── reports/              # Scores, comparisons, logs, pipeline manifest
+│   ├── figures/              # Figures
+│   └── MODEL_SELECTION_v3.md, MODEL_SELECTION_v2.md, README.md
+├── tests/                    # Data contract, reproducibility, leakage guards, prediction contract, physics behaviour
+├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> tests
+├── requirements.txt          # Pinned versions
 ├── notebooks/                # Colab notebook for model selection v2 + beginner flame-spread notebook
-└── docs/                     # Figures, ML design notes, abstract draft, verification guide
+└── docs/                     # ML design notes, abstract draft, verification guide
 ```
 
 ---
@@ -245,7 +243,7 @@ NASA-Space-Apps-2026/
 ## Status and Limits
 
 - **Dashboard:** it still runs on a client-side placeholder model. Connecting it to the trained models through `/predict/{model_name}` is in progress.
-- **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide (95 % CIs are in `models/model_summary.json`). For flame spread and burning rate the remaining error is mostly run-to-run noise, so more ISS experiments, not more modelling, would improve them.
+- **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide (95 % CIs are in `models/reports/model_summary.json`). For flame spread and burning rate the remaining error is mostly run-to-run noise, so more ISS experiments, not more modelling, would improve them.
 - **1g data:** the WSTF ground reference is a comparison layer and is never used to train microgravity models.
 - **Missing outcomes:** the FLEX-2 and Cool Flames Investigation tables list test conditions only, so they are not modelled.
 

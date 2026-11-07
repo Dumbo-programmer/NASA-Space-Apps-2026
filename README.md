@@ -188,6 +188,10 @@ predict("flex_extinction", fuel="Methanol", pressure_kpa=101.3, o2_pct=18, co2_p
 predict("spice_smoke_point", fuel="Propylene", burner_diameter_mm=1.6, coflow_air_velocity_cm_s=30)
 ```
 
+### Full results notebook
+
+[`notebooks/AstraFlame_Full_ML_Pipeline.ipynb`](notebooks/AstraFlame_Full_ML_Pipeline.ipynb) runs the whole data-science part in one place (about 10 minutes on a laptop): data checks, preprocessing, the grouped train/validation/test design, noise ceilings, every model on identical held-out ISS tests (R², MAE, coverage, ROC-AUC, Brier, accuracy, balanced accuracy, F1, confusion matrix), the improvements tried, the physics check and the final results. It is saved with its outputs, so the results can be read on GitHub without running it.
+
 ### Or run everything in Google Colab
 
 Open [`notebooks/Ignis_mu_Model_Selection_v2.ipynb`](notebooks/Ignis_mu_Model_Selection_v2.ipynb) in Colab ([open in Colab](https://colab.research.google.com/github/prachyabiswas/NASA-Space-Apps-2026/blob/main/notebooks/Ignis_mu_Model_Selection_v2.ipynb)) and choose `Runtime → Run all`. The notebook then:

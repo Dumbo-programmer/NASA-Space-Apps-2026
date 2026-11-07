@@ -33,7 +33,15 @@
         0.1117
       ],
       "baseline_Brier": 0.1139,
-      "threshold": 0.625,
+      "threshold": 0.67,
+      "threshold_rule": "maximise balanced accuracy on grouped out-of-fold predictions (chosen inside each training set when scored)",
+      "at_threshold_held_out": {
+        "accuracy": 0.8204,
+        "balanced_accuracy": 0.7761,
+        "macro_F1": 0.7006,
+        "F1_burns_to_completion": 0.5118,
+        "recall_burns_to_completion": 0.716
+      },
       "physics_violations_pct": 2.4,
       "method": "same outer grouped splits as v2 (leave-one-test-out or GroupKFold(5) x 3); PI-GP fitted on training folds only"
     },

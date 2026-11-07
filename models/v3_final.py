@@ -14,13 +14,13 @@ import json, time, warnings
 import config as C
 import numpy as np, pandas as pd, joblib
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
-from sklearn.metrics import mean_absolute_error, r2_score, roc_auc_score, brier_score_loss
+from sklearn.metrics import mean_absolute_error, r2_score, roc_auc_score, brier_score_loss, balanced_accuracy_score, f1_score, recall_score, accuracy_score
 from sklearn.model_selection import LeaveOneGroupOut, cross_val_predict
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.compose import TransformedTargetRegressor
-from ml_selection import group_bootstrap_ci
+from ml_selection import group_bootstrap_ci, make_cv, checked_splits
 from pigp import PhysicsGPRegressor, PhysicsGPClassifier
 import preprocess_v3 as P
 warnings.filterwarnings("ignore")
@@ -51,6 +51,32 @@ def row(name, model):
     return T[(T.model_task == name) & (T.model == model)].iloc[0]
 
 
+# ======================= decision threshold for the extinction classifier =======================
+THR_GRID = np.linspace(0.30, 0.97, 68)
+
+
+def choose_threshold(X, y, g, gp_cols):
+    """Threshold that maximises balanced accuracy on grouped out-of-fold predictions of these rows only.
+    With 87 % of tests ending in extinction, a 0.5 or base-rate cut almost never flags 'burns to completion'."""
+    oof = np.zeros(len(y))
+    for tr, te in make_cv("kfold", len(np.unique(g)), seed=11).split(X, y, g):
+        oof[te] = PhysicsGPClassifier(gp_cols=gp_cols).fit(X.iloc[tr], y[tr]).predict_proba(X.iloc[te])[:, 1]
+    return float(THR_GRID[np.argmax([balanced_accuracy_score(y, (oof >= t).astype(int)) for t in THR_GRID])])
+
+
+def threshold_validation(X, y, g, gp_cols, repeats=3):
+    """Honest score of the whole rule: the threshold is chosen inside each outer training set and applied to the held-out tests."""
+    ms = []
+    for r in range(repeats):
+        yh = np.zeros(len(y), int)
+        for tr, te in checked_splits(make_cv("kfold", len(np.unique(g)), seed=r), X, y, g, f"threshold repeat {r}"):
+            p = PhysicsGPClassifier(gp_cols=gp_cols).fit(X.iloc[tr], y[tr]).predict_proba(X.iloc[te])[:, 1]
+            yh[te] = (p >= choose_threshold(X.iloc[tr], y[tr], g[tr], gp_cols)).astype(int)
+        ms.append({"accuracy": accuracy_score(y, yh), "balanced_accuracy": balanced_accuracy_score(y, yh), "macro_F1": f1_score(y, yh, average="macro"),
+                   "F1_burns_to_completion": f1_score(1 - y, 1 - yh), "recall_burns_to_completion": recall_score(1 - y, 1 - yh)})
+    return {k: round(float(v), 4) for k, v in pd.DataFrame(ms).mean().items()}
+
+
 # ======================= final PI-GP bundles for the three map outputs =======================
 FLEX_GROUPS = {"fuel": ["is_heptane"], "pressure": ["log_p"], "oxygen": ["o2_pct", "o2_partial_kpa"], "CO2 diluent": ["co2_pct"],
                "helium diluent": ["he_pct"], "droplet size": ["d0_mm"]}
@@ -60,11 +86,14 @@ for name in ["bass2_flame_spread", "flex_burning_rate", "flex_extinction"]:
     oof = pd.read_csv(C.report(f"{name}_v3_oof.csv")); r = row(name, "PI-GP (proposed)")
     if cls:
         m = PhysicsGPClassifier(gp_cols=sp["gp_cols"]).fit(X, y)
-        br = float(y.mean()); thr = float(np.quantile(oof.pigp_pred, 1 - br))
+        br = float(y.mean()); thr = choose_threshold(X, y, g, sp["gp_cols"])
+        thr_val = threshold_validation(X, y, g, sp["gp_cols"])
         val = {"ROC_AUC": round(r.ROC_AUC, 4), "Brier": round(r.Brier, 4), "log_loss": round(r.log_loss, 4),
                "ROC_AUC_95CI": [round(v, 4) for v in group_bootstrap_ci(y, oof.pigp_pred.values, g, roc_auc_score)],
                "Brier_95CI": [round(v, 4) for v in group_bootstrap_ci(y, oof.pigp_pred.values, g, brier_score_loss)],
-               "baseline_Brier": round(float(brier_score_loss(y, np.full(len(y), br))), 4), "threshold": round(thr, 4)}
+               "baseline_Brier": round(float(brier_score_loss(y, np.full(len(y), br))), 4), "threshold": round(thr, 4),
+               "threshold_rule": "maximise balanced accuracy on grouped out-of-fold predictions (chosen inside each training set when scored)",
+               "at_threshold_held_out": thr_val}
     else:
         m = PhysicsGPRegressor(mean_cols=sp["mean_cols"], gp_cols=sp["gp_cols"], log_target=sp["log_target"], noise=sp["noise"]).fit(X, y, groups=g)
         val = {"MAE": round(r.MAE, 4), "R2": round(r.R2, 4), "coverage90_pct": round(r.coverage90_pct, 1),

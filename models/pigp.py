@@ -19,7 +19,7 @@ from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
 from sklearn.gaussian_process import GaussianProcessRegressor, GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import ConstantKernel, RBF, WhiteKernel
+from sklearn.gaussian_process.kernels import ConstantKernel, RBF, Matern, WhiteKernel
 
 
 class PhysicsGPRegressor(BaseEstimator, RegressorMixin):
@@ -30,8 +30,10 @@ class PhysicsGPRegressor(BaseEstimator, RegressorMixin):
     For a test never seen before the offset term contributes no mean but adds C2 to the variance."""
     NEW = -100.0          # code for a test never seen in training (codes are 10 apart: far for the test kernel, near-zero for the physics kernel)
 
-    def __init__(self, mean_cols=None, gp_cols=None, log_target=False, alpha=1e-2, noise=None, correction="auto", random_state=0):
+    def __init__(self, mean_cols=None, gp_cols=None, log_target=False, alpha=1e-2, noise=None, correction="auto", random_state=0,
+                 corr_kernel="rbf"):
         self.mean_cols, self.gp_cols, self.log_target, self.alpha, self.noise, self.correction, self.random_state = mean_cols, gp_cols, log_target, alpha, noise, correction, random_state
+        self.corr_kernel = corr_kernel          # shape of the GP correction: "rbf" (smooth, default), "matern52" or "matern32" (rougher)
 
     def _t(self, y):
         return np.log(y) if self.log_target else np.asarray(y, float)
@@ -62,7 +64,8 @@ class PhysicsGPRegressor(BaseEstimator, RegressorMixin):
         err = {True: [], False: []}; zs = {True: [], False: []}
         for tr, te in cv.split(X, y, groups):
             for flag in (True, False):
-                m = PhysicsGPRegressor(self.mean_cols, self.gp_cols, self.log_target, self.alpha, self.noise, flag, self.random_state)
+                m = PhysicsGPRegressor(self.mean_cols, self.gp_cols, self.log_target, self.alpha, self.noise, flag, self.random_state,
+                                       getattr(self, "corr_kernel", "rbf"))
                 m._fit(X.iloc[tr], np.asarray(y)[tr], groups[tr])
                 mu, sd = m.predict_t(X.iloc[te]); yt = self._t(np.asarray(y)[te])
                 err[flag].append(float(np.mean(0.5 * np.log(2 * np.pi * sd ** 2) + (yt - mu) ** 2 / (2 * sd ** 2))))
@@ -86,7 +89,9 @@ class PhysicsGPRegressor(BaseEstimator, RegressorMixin):
         rs2 = max(float(np.var(r)), 1e-12)
         n0 = min(max((self.noise or 0.1 * rs2) / rs2, 1e-4), 0.9)              # replicate-noise prior, normalised units
         big = [1e5, 1e5 + 1]
-        phys = RBF(np.r_[np.ones(d), 1e5], np.array([[0.5, 100.0]] * d + [big]))
+        ls, lb = np.r_[np.ones(d), 1e5], np.array([[0.5, 100.0]] * d + [big])
+        kind = getattr(self, "corr_kernel", "rbf")
+        phys = RBF(ls, lb) if kind == "rbf" else Matern(ls, lb, nu={"matern52": 2.5, "matern32": 1.5}[kind])
         test = RBF(np.r_[np.full(d, 1e5), 1.0], np.array([big] * d + [[1.0, 1.0 + 1e-6]]))
         k = ConstantKernel(0.2, (1e-4, 1e1)) * test + WhiteKernel(n0, (1e-4, 1.0))
         if getattr(self, "use_correction_", self.correction is True):

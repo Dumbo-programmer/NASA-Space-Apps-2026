@@ -252,7 +252,7 @@ NASA-Space-Apps-2026/
 ├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> export -> tests
 ├── requirements.txt          # Pinned versions
 ├── notebooks/                # Colab notebook for model selection v2 + beginner flame-spread notebook
-└── docs/                     # ML design notes, abstract draft, verification guide
+└── docs/                     # ML design notes, abstract draft, data and ML audit
 ```
 
 ---

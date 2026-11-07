@@ -59,7 +59,7 @@ This repo is my copy of the project, kept here alongside my other work.
 
 | Category | Details |
 |---|---|
-| **Verified NASA dataset** | 850 rows from 9 ISS/Cygnus investigations (798 microgravity runs) plus 52 rows of 1g ground reference. Every extract was checked against NASA's file, and 734 field-level checks found 0 errors |
+| **Verified NASA dataset** | 850 rows from 9 ISS/Cygnus investigations (798 microgravity runs) plus 52 rows of 1g ground reference. Every extract was checked against NASA's file, and 890 field-level checks found 0 errors |
 | **Five trained models** | Flame spread, flame extinction, droplet burning rate, smoke point and smoke particle size, all trained on NASA ISS data |
 | **Honest validation** | Grouped cross-validation holds out whole test series or sessions, and every model is compared against a baseline |
 | **Explainability** | Exact Shapley values for every prediction: how much each input pushed the answer up or down |

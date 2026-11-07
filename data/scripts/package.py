@@ -42,7 +42,7 @@ ver = pd.DataFrame([
  ["PSI-26_AsRunTestMatrix_extract_raw.csv (+ _O2_extract)", "NASA PSI-26 'Science Documents_As Run_Test Matrix.xlsx', sheet 'as run matrix'", "setup columns + observations (repeated spaces collapsed)", "extract SHA-256 identical"],
  ["PSI-98/99/100 SAFFIRE, PSI-101/102 SAME tables, PSI-68 FLEX-2", "NASA PSI experimental tables", "full files", "SHA-256 identical"],
  ["PSI-25 BASS-II table (your Oct upload)", "NASA PSI-25 experimental table", "full file", "identical to NASA's current version"],
- ["All clean files vs raw", "verify_all.py", "734 random field checks", "0 problems"],
+ ["All clean files vs raw", "verify_all.py", "890 field checks", "0 problems"],
 ], columns=["file", "NASA source", "what was taken", "verification"])
 ver["local_sha256_16"] = [h(f"{R}/{n.split(' ')[0]}") if os.path.exists(f"{R}/{n.split(' ')[0]}") else "" for n in ver.file]
 

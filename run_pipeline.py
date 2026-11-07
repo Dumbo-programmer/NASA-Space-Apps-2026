@@ -8,7 +8,7 @@ Data Science Lead: Prachya Biswas
 
 Stages (fail-fast; each one's time and outcome goes to models/reports/pipeline_manifest.json)
     etl        rebuild data/processed from the verbatim NASA extracts and prove it is byte-for-byte identical
-               (734 value checks against NASA inside); --rebuild-data overwrites data/processed instead
+               (890 value checks against NASA inside); --rebuild-data overwrites data/processed instead
     validate   strict data contract: schema, keys, row counts, categories, physics bounds, cross-field consistency, lineage
     train_v2   8 model families, nested grouped CV (group-leak guard on every split), v2 bundles
     noise      replicate-run noise ceilings

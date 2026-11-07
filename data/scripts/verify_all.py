@@ -47,6 +47,18 @@ for _, c in bs.sample(30, random_state=9).iterrows():
     if len(q) and q.o2_vol_frac.iloc[0] not in ("", '""'):
         checks += 1
         if not eq(c.o2_pct, round(float(q.o2_vol_frac.iloc[0]) * 100, 2)): problems.append(f"BASS {c.record_id} O2")
+# WSTF 1g ground reference: every row vs the transcription of Hirsch et al. 2011 (NTRS 20110008636), Tables 2-9
+ref = pd.read_csv(f"{R}/NTRS-20110008636_Hirsch2011_Tables2-9_transcribed.csv")
+Mw = pd.read_csv(f"{D}/Ignis_mu_unified_master_v1.0.csv", low_memory=False)
+Mw = Mw[Mw.source_investigation.str.startswith("WSTF")].set_index("experiment_id")
+if sorted(Mw.index) != sorted(ref.record_id): problems.append("WSTF: record ids differ from the Hirsch 2011 transcription")
+for _, r in ref.iterrows():
+    if r.record_id not in Mw.index: continue
+    c = Mw.loc[r.record_id]
+    uloi = float(str(c.flame_behavior_notes).split("ULOI ")[1].split("%")[0])
+    for a, b, what in [(c.outcome_value, r.MOC_pct_O2, "MOC"), (uloi, r.ULOI_pct_O2, "ULOI"), (c.pressure_kpa, round(r.test_pressure_psia * 6.89476, 1), "pressure")]:
+        checks += 1
+        if not eq(a, b): problems.append(f"WSTF {r.record_id} {what}: {a} vs {b}")
 # master: unique ids, ranges, microgravity rows physically sensible
 M = pd.read_csv(f"{D}/Ignis_mu_unified_master_v1.0.csv")
 checks += 1

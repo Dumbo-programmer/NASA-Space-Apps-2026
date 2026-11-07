@@ -6,7 +6,7 @@
 
 **Verification:**
 - Every file taken from NASA was checked with SHA-256 and is byte-identical to NASA's copy.
-- 734 random field checks compare the clean files back to the raw data, with 0 errors (`scripts/verify_all.py`).
+- 890 field checks (734 sampled, plus every WSTF value) compare the clean files back to the raw data, with 0 errors (`scripts/verify_all.py`).
 
 ## Files: what goes in, what comes out
 

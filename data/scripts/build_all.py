@@ -14,7 +14,7 @@ Lineage
       + Link et al. 2018 Table S1/S2 (typed in script)                          (+ bass2_and_wstf/..._1g_reference_v1.0.csv)
     bass2_and_wstf/BASS-II_PSI-25_clean_v0.1.csv      -> build_gas_response.py -> bass2_and_wstf/BASS-II_gas_response_v0.1.csv
     all of the above + WSTF workbook                  -> build_master.py       -> processed/Ignis_mu_unified_master_v1.0.csv
-    then verify_all.py (734 checks against the NASA extracts) and validate_processed.py (schema, physics bounds)
+    then verify_all.py (890 checks against the NASA extracts) and validate_processed.py (schema, physics bounds)
 Known gap: BASS-II_PSI-25_clean_v0.1.csv is a frozen intermediate; its NASA source workbook is not stored in the repo.
 """
 import argparse, filecmp, hashlib, shutil, subprocess, sys, tempfile

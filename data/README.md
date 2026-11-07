@@ -35,7 +35,7 @@ python run_pipeline.py --only etl validate    # both, from the repository root
 | `BASS-II_flame_spread_microgravity_v1.0.csv` | `build_bass2_final.py` | Link et al. 2018, *Sci Rep* 8:120, Table S1 + `bass2_and_wstf/BASS-II_PSI-25_clean_v0.1.csv` | 52 |
 | `Ignis_mu_unified_master_v1.0.csv` | `build_master.py` | all of the above + the WSTF 1 g workbook | 850 |
 
-`verify_all.py` re-checks 734 sampled values against the NASA extracts on every rebuild.
+`verify_all.py` re-checks 890 values against the NASA extracts on every rebuild (734 sampled values plus all 52 WSTF rows × MOC, ULOI and pressure).
 
 ## Data contract (`scripts/validate_processed.py`)
 
@@ -54,6 +54,7 @@ Leakage is checked where it can happen:
 
 ## Changelog
 
+- **v1.0.2 (Nov 7, 2026).** All 52 WSTF 1 g rows (Hirsch et al. 2011, NTRS 20110008636, Tables 2–9) were checked against the paper: every MOC, ULOI and test pressure matches. The transcription is kept as `raw_from_NASA/NTRS-20110008636_Hirsch2011_Tables2-9_transcribed.csv`, and `verify_all.py` now re-checks it on every rebuild. Row WSTF11-T8-02 is renamed **Delrin polyoxymethylene**: the paper's Table 1 lists Acetron GP only as a 1/8-in rod and Delrin as a 0.054-in plastic, so the 1/2-in sheet result is Delrin (Table 9's label). The two POM entries are different products, not duplicates. The rows' quality flag now reads "verified" instead of "verification pending". No model input changed.
 - **v1.0.1 (Nov 2026).** The new data contract found that SAME run 57 (lampwick, heater on, Rt/R0 = 1.25) was recorded at **0 °C**: NASA's sheet uses 0 as a blank there.
   - `build_same.py` now treats a 0 °C value on a heated sample as missing, and flags it.
   - Exactly one value changed in the SAME file and in the master table. File names keep `v1.0`.

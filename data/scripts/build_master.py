@@ -49,6 +49,10 @@ add(pd.DataFrame({"experiment_id": "BASS2-LOG-" + g.source_row.astype(str).str.z
 
 # 3. WSTF 1g ground reference (NASA-STD-6001B style, Hirsch et al. 2011)
 w = pd.read_excel(f"{E}/Ignis_mu_NASA_flammability_dataset_v0.1.xlsx", sheet_name="Master")
+# v1.0.2: Table 1 of the paper lists Acetron GP only as a 1/8-in rod (Quadrant) and Delrin as a 0.054-in plastic (A.L. Hyde),
+# so the 1/2-in sheet result in Table 8 is Delrin, as Table 9 labels it. All 52 rows were checked against the paper's Tables 2-9.
+w.loc[w.record_id == "WSTF11-T8-02", "material_name"] = "Delrin polyoxymethylene"
+w["verified_status"] = "verified against NTRS 20110008636 Tables 2-9 (2026-11-07)"
 add(pd.DataFrame({"experiment_id": w.record_id, "source_investigation": "WSTF 1g ground (Hirsch 2011)", "psi_id": "",
     "gravity_level": "1g (ground)", "platform": "NASA WSTF", "fuel_material": w.material_name, "material_class": "solid",
     "configuration": w.form_config.astype(str) + ", " + w.mounting.astype(str), "ignition_method": w.ignition_method,

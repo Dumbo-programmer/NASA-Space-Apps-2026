@@ -98,7 +98,7 @@ The models were chosen from the objective. The fire-risk envelope asks three thi
 | # | Model | Question | Final model | Score | Physics violations | v2 on same tests |
 |---|---|---|---|---|---|---|
 | 1 | `bass2_flame_spread` | How fast does flame spread over a PMMA rod? | PI-GP | R² 0.57, 90 % coverage 86.5 % | 0 % | R² 0.62 |
-| 2 | `flex_extinction` | Will a fuel-droplet flame go out? | PI-GP classifier | ROC-AUC **0.87**, Brier **0.082** | 2.4 % | AUC 0.83, Brier 0.090, 22 % violations |
+| 2 | `flex_extinction` | Will a fuel-droplet flame go out? | PI-GP classifier | ROC-AUC **0.87**, Brier **0.082**, balanced accuracy **0.78**, macro F1 0.70 | 2.4 % | AUC 0.83, Brier 0.090, 22 % violations |
 | 3 | `flex_burning_rate` | How fast does the droplet burn? | PI-GP | R² **0.71** (ceiling ≈ 0.72), coverage 89.7 % | 0 % | R² 0.71 |
 | 4 | `spice_smoke_point` | How sooty is a gas flame? | v2 ensemble | R² **0.89**, MAE 4.4 mm | 0 % | — |
 | 5 | `same_particle_size` | How large are smoke particles? | v2 ensemble | R² 0.43 | 43 % | — |
@@ -116,11 +116,16 @@ How I chose the models:
   - ISS-test groups kept.
   - Replicate-measured noise used as the prior.
 - **Physics stays in.** SPICE recovers the published scaling of Dotson et al. (2011): smoke-point length ∝ burner diameter^−0.76 × coflow velocity^0.41.
+- **Decision threshold for extinction.** 87 % of the ISS droplet tests ended in extinction, so accuracy alone is misleading (always answering "goes out" scores 0.87). The yes/no threshold is chosen by balanced accuracy on grouped out-of-fold predictions (0.67 in production). Scored with the threshold chosen inside each training set, 72 % of the rare "burns to completion" tests are caught (35 % at a 0.5 threshold).
 - **Honest limits.** v2 is slightly more accurate on flame spread (0.62 vs 0.57, overlapping CIs). Flame spread and burning rate sit near their replicate noise ceilings (≈ 0.68 and 0.72), so new experiments, not new models, would improve them.
 
 <p align="center">
   <img src="models/figures/fig_v3_safe_map_next_experiment.png" alt="Safe-cabin map and next experiment" width="760" />
 </p>
+
+**Where NASA should test next.** The models know where they are unsure. Combining that uncertainty with the distance from every existing test, they recommend the next ISS experiments: a 3 mm methanol droplet at **32 % O₂, 144 kPa** (the outcome there is a coin toss) and flame spread over a 6.4 mm rod at **21 % O₂, 7.5 cm/s** airflow (the largest uncertainty). This is a simple rule, not a full Bayesian experimental design.
+
+**The problem in numbers.** Of the 22 materials whose oxygen limits NASA measured (Hirsch et al. 2011), **20 would keep burning in the 34 % oxygen proposed for Moon habitats** (12 already do in Earth air). These limits come from Earth-gravity tests at 70–101 kPa, so this is a first estimate for 8.2 psia.
 
 <p align="center">
   <img src="models/figures/fig_v1_vs_v2.png" alt="v1 vs v2 held-out scores and noise ceilings" width="760" />
@@ -257,6 +262,7 @@ NASA-Space-Apps-2026/
 - **Dashboard:** the NASA Models tab shows the trained models. The Simulation, Risk Matrix, Explainability and Protocols tabs still use a client-side surrogate for the live scenario and say so in the footer.
 - **Hosting the API:** it must run on a Python host for free input combinations; a static deploy gets the precomputed answers only.
 - **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide (95 % CIs are in `models/reports/model_summary.json`). For flame spread and burning rate the remaining error is mostly run-to-run noise, so more ISS experiments, not more modelling, would improve them.
+- **High oxygen:** extinction errors rise above 21 % O₂, the conditions closest to the habitat air, because NASA ran few tests there (see the notebook's error analysis).
 - **1g data:** the WSTF ground reference is a comparison layer and is never used to train microgravity models.
 - **Missing outcomes:** the FLEX-2 and Cool Flames Investigation tables list test conditions only, so they are not modelled.
 

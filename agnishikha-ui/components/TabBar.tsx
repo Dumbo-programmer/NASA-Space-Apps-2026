@@ -8,10 +8,11 @@ import {
   FlaskConical,
   ShieldAlert,
   Table2,
+  Map as MapIcon,
   SlidersHorizontal,
 } from "lucide-react";
 
-export type TabKey = "simulation" | "risk" | "explain" | "models" | "protocols";
+export type TabKey = "simulation" | "risk" | "explain" | "models" | "habitat" | "protocols";
 
 export const TABS: readonly {
   key: TabKey;
@@ -33,6 +34,7 @@ export const TABS: readonly {
     icon: BrainCircuit,
   },
   { key: "models", label: "NASA Models", short: "Models", icon: FlaskConical },
+  { key: "habitat", label: "Habitat Map", short: "Map", icon: MapIcon },
   { key: "protocols", label: "Protocols", short: "Action", icon: ShieldAlert },
 ];
 

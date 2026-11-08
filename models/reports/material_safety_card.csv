@@ -1,0 +1,23 @@
+material,moc_pct,moc_min_pct,moc_max_pct,n_tests,tested_kpa,burns_at_21,burns_at_34,margin_at_34_pct_o2,note
+Delrin polyoxymethylene,11.0,11.0,11.0,1,[101.4],True,True,23.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Acetron GP polyoxymethylene,12.0,12.0,12.0,1,[101.4],True,True,22.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Polymethylmethacrylate, cast",14.0,14.0,14.0,1,[101.4],True,True,20.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Polypropylene,16.0,16.0,16.0,1,[101.4],True,True,18.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Nitrile rubber, Rubberite",16.1,16.1,16.1,2,[101.4],True,True,17.9,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Polymethylmethacrylate, extruded",18.5,18.0,19.0,2,[101.4],True,True,15.5,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Epoxy/fiberglass laminate NEMA G-11,19.5,16.0,23.0,2,[101.4],True,True,14.5,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Melinex 515 polyethylene terephthalate,20.0,15.0,21.0,6,"[70.3, 101.4]",True,True,14.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Nylon 101 polyamide,20.0,20.0,20.0,1,[101.4],True,True,14.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Silicone SSP-M823 polydimethylsiloxane,20.0,17.0,22.0,9,[101.4],True,True,14.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Silicone, Rubberite",20.5,20.0,21.0,2,[101.4],True,True,13.5,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Victrex polyether ether ketone,20.6,20.1,21.1,2,[101.4],True,True,13.4,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Ultem 1000 polyetherimide,22.0,21.0,24.0,6,"[70.3, 101.4]",False,True,12.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Zytel 42 polyamide,22.55,21.0,24.1,2,[101.4],False,True,11.4,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Silicone, Dow 27015-V, 50 durometer",24.0,24.0,24.0,1,[101.4],False,True,10.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Kapton HN polyimide,26.0,25.0,27.0,6,[101.4],False,True,8.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Silicone, Dow 27013-V, 30 durometer",26.0,26.0,26.0,1,[101.4],False,True,8.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Silicone, Dow 27014-V, 40 durometer",26.0,26.0,26.0,1,[101.4],False,True,8.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Silicone, Dow 27016-V, 60 durometer",26.0,26.0,26.0,1,[101.4],False,True,8.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"Silicone, Dow 27017-V, 70 durometer",29.0,29.0,29.0,1,[101.4],False,True,5.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+"PVC sheet, Boltaron",37.0,35.0,39.0,2,[101.4],False,False,-3.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated
+Polyvinylchloride,40.0,40.0,40.0,1,[101.4],False,False,-6.0,1g data at 70-101 kPa; 56.5 kPa is extrapolated

@@ -64,6 +64,12 @@ def main():
         (out / f"{n}.json").write_text(json.dumps(data, separators=(",", ":"), allow_nan=False))
         npts = sum(len(s["points"]) for c in data["cases"] for s in c["sweeps"].values())
         print(f"{n}: {len(data['cases'])} case(s), {npts} predictions, {time.time() - t:.0f}s")
+    try:
+        hm = A.habitat_map()
+        (out / "habitat_map.json").write_text(json.dumps(hm, separators=(",", ":"), allow_nan=False))
+        print("habitat_map.json written")
+    except FileNotFoundError:
+        print("habitat_map.json skipped (run models/habitat_map.py first)")
     print(f"written to {out}")
 
 

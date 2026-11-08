@@ -24,6 +24,7 @@ import { TabBar, type TabKey } from "@/components/TabBar";
 import { PanelFrame, Pill } from "@/components/PanelFrame";
 import { RiskMatrix } from "@/components/RiskMatrix";
 import { NasaModelPanel } from "@/components/NasaModelPanel";
+import { HabitatMapPanel } from "@/components/HabitatMapPanel";
 import { getMaterial } from "@/lib/materials";
 import { getExperiment } from "@/lib/experiments";
 import { buildMitigationPlan } from "@/lib/protocols";
@@ -420,6 +421,21 @@ export default function MissionControlPage() {
               </PanelFrame>
             ) : null}
 
+            {tab === "habitat" ? (
+              <PanelFrame
+                index="P7"
+                title="Habitat fire map"
+                subtitle="What NASA has tested, what the model says, where the habitat sits, what to test next"
+                icon={FlaskConical}
+                accent="amber"
+                className="min-h-0 xl:col-span-12"
+                bodyClassName="min-h-0 overflow-hidden"
+                actions={<Pill tone="cyan">Real FLEX model · WSTF limits</Pill>}
+              >
+                <HabitatMapPanel />
+              </PanelFrame>
+            ) : null}
+
             {tab === "protocols" ? (
               <PanelFrame
                 index="P5"
@@ -445,7 +461,7 @@ export default function MissionControlPage() {
         <footer className="shrink-0 border-t border-slate-800/80 bg-slate-950/70 backdrop-blur-sm">
           <div className="mx-auto flex w-full max-w-[1800px] flex-wrap items-center justify-between gap-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400 sm:px-4">
             <p>
-              Team Agnishikha · AstraFlame · NASA Space Apps 2026 · NASA Models tab:
+              Team Agnishikha · AstraFlame · NASA Space Apps 2026 · NASA Models and Habitat Map tabs:
               trained on NASA PSI data · other tabs: client-side surrogate
             </p>
             <a

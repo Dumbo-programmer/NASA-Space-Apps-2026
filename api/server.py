@@ -8,6 +8,8 @@ Endpoints (JSON in, JSON out):
     GET  /health                   status and model versions
     GET  /models                   every model: inputs with NASA-tested ranges, scores, source
     GET  /models/{name}            one model card
+    GET  /habitat                  habitat fire map: NASA coverage, extinction grid, material card, next tests
+    POST /habitat/locate           {"pressure_kpa": 80, "o2_pct": 21}  place a live (chamber) reading on that map
     POST /predict/{name}           {"fuel": "Methanol", "o2_pct": 21, ...}  (missing inputs take defaults;
                                    add "explain": false to skip the Shapley breakdown)
     POST /sweep/{name}             {"vary": "co2_pct", "inputs": {...}, "points": 21, "extend": 0.15}
@@ -95,6 +97,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, A.health())
             if parts == ["models"]:
                 return self._send(200, A.catalog())
+            if parts == ["habitat"]:
+                return self._send(200, A.habitat_map())
             if len(parts) == 2 and parts[0] == "models":
                 return self._send(200, A.model_card(parts[1]))
         except KeyError:
@@ -106,12 +110,14 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parts = self._route()
-        if len(parts) != 2 or parts[0] not in ("predict", "sweep"):
-            return self._error(404, "use POST /predict/{model} or POST /sweep/{model}")
+        if len(parts) != 2 or parts[0] not in ("predict", "sweep", "habitat") or (parts[0] == "habitat" and parts[1] != "locate"):
+            return self._error(404, "use POST /predict/{model}, POST /sweep/{model} or POST /habitat/locate")
         body, err = self._body()
         if err:
             return self._error(*err)
         try:
+            if parts[0] == "habitat":
+                return self._send(200, A.habitat_locate(body))
             fn = A.predict if parts[0] == "predict" else A.sweep
             return self._send(200, fn(parts[1], body))
         except KeyError:

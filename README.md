@@ -90,6 +90,19 @@ Full documentation is in `data/README.md` (layout, lineage, data contract, chang
 
 ---
 
+## Habitat fire map (novelty thread)
+
+NASA has run **no microgravity fire test at or below 70 kPa**; the proposed habitat is 56.5 kPa (8.2 psia, 34% O2).
+`models/habitat_map.py` builds one map: FLEX extinction model, every NASA microgravity test, the 22 WSTF material
+limits (20 of 22 burn at 34% O2 in 1g), the ISS and habitat points, and the next tests to run. API: `GET /habitat`,
+`POST /habitat/locate` (a live chamber reading placed on the map). Dashboard: **Habitat Map** tab.
+Layers differ (microgravity droplets vs 1g solids) and are labelled as such. Decision support, not certification.
+
+## Use of AI
+
+AI assistants (Claude) were used to help write code, tests and documentation. All data is NASA public-domain data;
+results were checked by the team against the NASA sources.
+
 ## Models
 
 The models were chosen from the objective. The fire-risk envelope asks three things: will a flame survive, how fast does it spread or burn, and how sure is the answer. For the three outputs that feed the safe-cabin map, I use a **physics-informed Gaussian process (PI-GP)**. The two smoke outputs keep the most accurate v2 ensemble. All scores come from nested grouped cross-validation on identical held-out ISS tests. Full method: [models/MODEL_SELECTION_v3.md](models/MODEL_SELECTION_v3.md).

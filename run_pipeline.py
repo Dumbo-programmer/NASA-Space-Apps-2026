@@ -35,6 +35,7 @@ def commands(full, rebuild):
         "noise": ([py, "noise_ceiling.py"], MODELS),
         "compare": ([py, "compare_v3.py"], MODELS),
         "final": ([py, "v3_final.py"] + ([] if full else ["--no-scaling"]), MODELS),
+        "habitat": ([py, "habitat_map.py"], MODELS),
         "figures": ([py, "make_figures_v2.py"], MODELS),
         "export": ([py, ROOT / "api" / "export_static.py"], ROOT),
         "tests": ([py, ROOT / "tests" / "run_tests.py"], ROOT),

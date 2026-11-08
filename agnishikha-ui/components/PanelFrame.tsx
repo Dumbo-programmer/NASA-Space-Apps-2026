@@ -45,7 +45,7 @@ export function PanelFrame({
 }: PanelFrameProps) {
   return (
     <section
-      className={`relative flex flex-col overflow-hidden rounded-xl border border-slate-800/80 bg-slate-900/40 shadow-lg shadow-black/30 ring-1 ring-white/[0.03] backdrop-blur-sm transition-colors duration-300 hover:border-slate-700/80 ${className}`}
+      className={`af-card relative flex flex-col overflow-hidden rounded-xl border border-slate-800/80 ring-1 ring-slate-800 backdrop-blur-sm transition-colors duration-300 hover:border-slate-700/80 ${className}`}
     >
       <span
         className={`pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r ${ACCENT_EDGE[accent]}`}
@@ -60,11 +60,11 @@ export function PanelFrame({
             <Icon className="size-3.5" aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <h2 className="flex items-center gap-1.5 text-[13px] font-semibold tracking-tight text-slate-100">
+            <h2 className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-slate-100">
               <span className="font-mono text-[10px] text-slate-400">{index}</span>
               {title}
             </h2>
-            <p className="truncate text-[11px] text-slate-400" title={subtitle}>
+            <p className="truncate text-xs text-slate-400" title={subtitle}>
               {subtitle}
             </p>
           </div>
@@ -88,7 +88,7 @@ export function SubCard({
 }) {
   return (
     <div
-      className={`rounded-lg border border-slate-800/80 bg-slate-950/40 ring-1 ring-white/[0.02] transition-colors duration-200 ${
+      className={`af-card rounded-xl border border-slate-800/80 bg-slate-950/40 ring-1 ring-slate-800 transition-colors duration-200 ${
         interactive ? "hover:border-slate-700/80 hover:bg-slate-900/60" : ""
       } ${className}`}
     >
@@ -117,7 +117,7 @@ export function Pill({
   };
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider ring-1 transition-colors ${tones[tone]} ${className}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded px-1.5 py-0.5 text-xs font-medium ring-1 transition-colors ${tones[tone]} ${className}`}
     >
       {children}
     </span>

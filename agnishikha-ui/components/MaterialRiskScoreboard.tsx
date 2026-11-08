@@ -110,7 +110,7 @@ export function MaterialRiskScoreboard({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-2">
-      <div className="flex shrink-0 items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+      <div className="flex shrink-0 items-center justify-between gap-2 text-xs text-slate-400">
         <span>Ranked registry · select a header to sort</span>
         <span className="text-slate-500">
           {sortedRows.length} specimens · PSI traceable
@@ -139,14 +139,14 @@ export function MaterialRiskScoreboard({
                           : "descending"
                         : "none"
                     }
-                    className={`border-b border-slate-800 pb-1.5 text-[10px] font-semibold uppercase tracking-wider ${
+                    className={`border-b border-slate-800 pb-1.5 text-xs font-semibold ${
                       column.align === "right" ? "text-right" : "text-left"
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => handleSort(column.key)}
-                      className={`inline-flex items-center gap-1 transition-colors hover:text-slate-200 ${
+                      className={`af-press inline-flex min-h-10 items-center gap-1 transition-colors hover:text-slate-200 ${
                         isActive ? "text-amber-400" : "text-slate-400"
                       } ${column.align === "right" ? "flex-row-reverse" : ""}`}
                     >
@@ -177,7 +177,7 @@ export function MaterialRiskScoreboard({
                       type="button"
                       onClick={() => onSelectMaterial(material.key)}
                       aria-pressed={isSelected}
-                      className="flex w-full items-center gap-2 rounded text-left"
+                      className="af-press flex min-h-10 w-full items-center gap-2 rounded text-left"
                     >
                       <span
                         className={`w-4 shrink-0 text-center font-mono text-[10px] ${
@@ -194,7 +194,7 @@ export function MaterialRiskScoreboard({
                         {material.name}
                       </span>
                       {isSelected ? (
-                        <span className="rounded bg-amber-400/20 px-1 py-0.5 font-mono text-[9px] uppercase tracking-widest text-amber-200">
+                        <span className="rounded bg-amber-400/20 px-1 py-0.5 text-xs text-amber-200">
                           Active
                         </span>
                       ) : null}
@@ -216,7 +216,7 @@ export function MaterialRiskScoreboard({
                   <td className="border-b border-slate-800/70 px-3 py-2">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span
-                        className={`inline-flex items-center rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider ring-1 ${HAZARD_TONE[material.smokeHazard]}`}
+                        className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold ring-1 ${HAZARD_TONE[material.smokeHazard]}`}
                       >
                         {material.smokeHazard}
                       </span>
@@ -237,7 +237,7 @@ export function MaterialRiskScoreboard({
                         rel="noopener noreferrer"
                         onClick={(event) => event.stopPropagation()}
                         title={`Open ${material.name} flammability record at psi.nasa.gov`}
-                        className="inline-flex items-center gap-1 rounded bg-cyan-500/10 px-1.5 py-0.5 font-mono text-[10px] font-medium text-cyan-300 ring-1 ring-cyan-500/30 transition-all hover:bg-cyan-500/20 active:scale-95"
+                        className="af-press inline-flex min-h-10 items-center gap-1 rounded bg-cyan-500/10 px-2 py-1 text-xs font-medium text-cyan-300 ring-1 ring-cyan-500/30 transition-colors hover:bg-cyan-500/20"
                       >
                         psi.nasa.gov
                         <ExternalLink className="size-2.5" aria-hidden="true" />

@@ -11,17 +11,20 @@ import {
 import { TRAINING_ENVELOPE } from "@/lib/axes";
 import { getMaterial } from "@/lib/materials";
 import type { EnvironmentState, SimulationState } from "@/lib/types";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export interface MissionHeaderProps {
   environment: EnvironmentState;
   simulation: SimulationState;
   onToggleVentilation: () => void;
+  onStartTour?: () => void;
 }
 
 export function MissionHeader({
   environment,
   simulation,
   onToggleVentilation,
+  onStartTour,
 }: MissionHeaderProps) {
   const material = getMaterial(environment.material);
   const isVentilationCut = simulation.isVentilationCut;
@@ -42,7 +45,10 @@ export function MissionHeader({
             <Flame className="animate-flicker relative size-4 text-orange-400" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <h1 className="flex items-center gap-1.5 truncate text-sm font-bold leading-tight tracking-tight text-slate-50">
+            <h1
+              data-tour="app-title"
+              className="flex items-center gap-1.5 truncate text-sm font-bold leading-tight tracking-tight text-slate-50"
+            >
               AstraFlame
               <span className="rounded bg-slate-800/80 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-cyan-300 ring-1 ring-cyan-500/30">
                 Agnishikha
@@ -75,7 +81,7 @@ export function MissionHeader({
             </p>
           </div>
 
-          <div className="hidden items-center gap-1.5 rounded-md border border-slate-800 bg-slate-900/60 px-2 py-1 md:flex">
+          <div className="hidden items-center gap-1.5 rounded-md border border-slate-800 bg-slate-900/60 px-2 py-1 lg:flex">
             <Cpu className="size-3 text-slate-500" aria-hidden="true" />
             <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
               KB2 · TEGEL · 30 Hz
@@ -90,6 +96,50 @@ export function MissionHeader({
               {material.name}
             </p>
           </div>
+
+          <details className="relative lg:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center rounded-full bg-slate-800 px-4 text-sm font-medium text-slate-300 ring-1 ring-slate-700 hover:bg-slate-700">
+              Details
+            </summary>
+            <div className="absolute right-0 top-12 z-20 flex w-64 flex-col gap-2 rounded-lg border border-slate-700 bg-slate-900 p-3 shadow-xl">
+              <div className="flex items-center gap-1.5 rounded-md border border-slate-800 bg-slate-950/60 px-2 py-1">
+                <span className="relative flex size-1.5">
+                  <span className="animate-ping-slow absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex size-1.5 rounded-full bg-emerald-400" />
+                </span>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">
+                  <Radio className="mr-1 inline size-2.5" aria-hidden="true" />
+                  Surrogate · offline
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-md border border-slate-800 bg-slate-950/60 px-2 py-1">
+                <Cpu className="size-3 text-slate-500" aria-hidden="true" />
+                <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+                  KB2 · TEGEL · 30 Hz
+                </p>
+              </div>
+              <div className="rounded-md border border-slate-800 bg-slate-950/60 px-2 py-1">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+                  Specimen
+                </p>
+                <p className="truncate font-mono text-[11px] font-semibold text-amber-300">
+                  {material.name}
+                </p>
+              </div>
+            </div>
+          </details>
+
+          <ThemeToggle />
+
+          {onStartTour ? (
+            <button
+              type="button"
+              onClick={onStartTour}
+              className="af-press min-h-10 rounded-full bg-violet-600 px-4 text-sm font-medium text-white hover:bg-violet-500"
+            >
+              Take the tour
+            </button>
+          ) : null}
 
           <button
             type="button"

@@ -1,0 +1,43 @@
+/* AstraFlame UI kit: append to the END of app/globals.css.
+   Dark is the existing look. Light is made by re-pointing Tailwind's colour variables,
+   so every existing slate-*, orange-*, cyan-* ... class re-themes with NO component edits. */
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-slate-50: #020617;  --color-slate-100: #0f172a; --color-slate-200: #1e293b;
+  --color-slate-300: #334155; --color-slate-400: #475569; --color-slate-500: #64748b;
+  --color-slate-600: #94a3b8; --color-slate-700: #cbd5e1; --color-slate-800: #e2e8f0;
+  --color-slate-900: #ffffff; --color-slate-950: #f4f6fb;
+  --color-orange-100: #9a3412; --color-orange-200: #c2410c; --color-orange-300: #c2410c; --color-orange-400: #ea580c;
+  --color-cyan-100: #155e75;   --color-cyan-200: #0e7490;   --color-cyan-300: #0e7490;   --color-cyan-400: #0891b2;
+  --color-violet-100: #5b21b6; --color-violet-200: #6d28d9; --color-violet-300: #6d28d9; --color-violet-400: #7c3aed;
+  --color-emerald-100: #065f46; --color-emerald-200: #047857; --color-emerald-300: #047857; --color-emerald-400: #059669;
+  --color-amber-100: #92400e;  --color-amber-200: #b45309;  --color-amber-300: #b45309;  --color-amber-400: #d97706;
+  --color-red-100: #991b1b;    --color-red-200: #b91c1c;    --color-red-300: #b91c1c;    --color-red-400: #dc2626;
+}
+
+/* --- motion primitives (used by the kit; all switched off for reduced motion) --- */
+@keyframes af-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes af-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.af-enter { animation: af-fade-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.af-stagger > * { animation: af-fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.af-stagger > *:nth-child(2) { animation-delay: 40ms; } .af-stagger > *:nth-child(3) { animation-delay: 80ms; }
+.af-stagger > *:nth-child(4) { animation-delay: 120ms; } .af-stagger > *:nth-child(5) { animation-delay: 160ms; }
+.af-stagger > *:nth-child(6) { animation-delay: 200ms; }
+.af-skeleton { background: linear-gradient(90deg, transparent, rgb(148 163 184 / 0.25), transparent) 0 0 / 200% 100%; animation: af-shimmer 1.4s linear infinite; border-radius: 12px; }
+.af-card { border-radius: 16px; background: var(--color-slate-900); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 8px 24px -12px rgb(0 0 0 / 0.25); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.af-press { transition: transform 0.12s ease, background-color 0.15s ease; }
+.af-press:hover { transform: translateY(-1px); } .af-press:active { transform: scale(0.98); }
+:focus-visible { outline: 2px solid var(--color-violet-400); outline-offset: 2px; }
+.af-spot { position: fixed; border-radius: 14px; pointer-events: none; z-index: 70; box-shadow: 0 0 0 9999px rgb(2 6 23 / 0.62), 0 0 0 3px var(--color-violet-400);
+  transition: top 0.3s cubic-bezier(0.22, 1, 0.36, 1), left 0.3s cubic-bezier(0.22, 1, 0.36, 1), width 0.3s cubic-bezier(0.22, 1, 0.36, 1), height 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.af-tourcard { position: fixed; z-index: 71; transition: top 0.3s cubic-bezier(0.22, 1, 0.36, 1), left 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+
+.af-dot { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .af-dot { transition: none !important; }
+  .af-enter, .af-stagger > *, .af-skeleton { animation: none !important; }
+  .af-card, .af-press, .af-spot, .af-tourcard { transition: none !important; }
+  .af-press:hover, .af-press:active { transform: none; }
+}

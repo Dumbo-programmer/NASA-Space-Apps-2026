@@ -32,3 +32,33 @@ Ideas 6–9 not done (see brief).
 - Next-test rule is uncertainty × distance, not Bayesian design; methanol only.
 - Do not physically enrich the chamber with O2; use sensing and the simulated slider.
 - Not touched: the old notebook rename, abstract date, video script (open tasks in the brief).
+
+## UI redesign
+
+- `agnishikha-ui/components/PanelFrame.tsx` — applied the shared `af-card` treatment and normal-case readable headings.
+- `agnishikha-ui/components/ScenarioControls.tsx` — restyled control groups, labels, selects, and sliders for the kit and 40px controls.
+- `agnishikha-ui/components/RiskMatrix.tsx` — removed the active-cell glow and added staggered card-grid presentation.
+- `agnishikha-ui/components/ShapExplainability.tsx` — added staggered entrance styling and readable non-numeric labels.
+- `agnishikha-ui/components/MitigationProtocols.tsx` — removed critical-card glow and normalized protocol cards and text.
+- `agnishikha-ui/components/NasaModelPanel.tsx` — replaced loading text with a skeleton, added offline Retry, restyled tabs/cards, and preserved model help tips.
+- `agnishikha-ui/components/MaterialRiskScoreboard.tsx` — added pressable 40px sort/select controls and normalized table labels.
+- `agnishikha-ui/components/TelemetryCards.tsx` — applied kit cards, staggered metric cards, and removed the alert glow.
+- `agnishikha-ui/UI_INVENTORY.md` — verified and checked every retained inventory item; updated the loading/error entry to match the skeleton and Retry behavior.
+- `CHANGES_NOVELTY.md` — recorded this integration pass.
+
+New dependencies: none.
+
+Prompt 2 checks:
+- (a) Tour opens on first load: pass.
+- (b) Next, Back, and Skip: pass.
+- (c) ArrowRight, ArrowLeft, and Escape: pass.
+- (d) Tab focus remains inside the tour card: pass.
+- (e) Steps 3–7 switch to Habitat Map and spotlight the requested blocks: pass.
+- (f) Take the tour restarts it: pass.
+- (g) Skipping prevents the tour reopening after reload: pass.
+- (h) At 360px the tour card docks to the bottom: pass.
+- (i) Reduced motion disables tour animation: pass.
+
+Inventory result: all items remain present and are checked in `agnishikha-ui/UI_INVENTORY.md`. The mobile Scenario drawer and controls remain available, with no horizontal overflow at 360px.
+
+Still open: no implementation blockers remain for this UI redesign. A full human visual review of every desktop tab remains recommended.

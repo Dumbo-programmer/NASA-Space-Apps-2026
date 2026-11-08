@@ -25,6 +25,7 @@ import { PanelFrame, Pill } from "@/components/PanelFrame";
 import { RiskMatrix } from "@/components/RiskMatrix";
 import { NasaModelPanel } from "@/components/NasaModelPanel";
 import { HabitatMapPanel } from "@/components/HabitatMapPanel";
+import { GuidedTour, useTour } from "@/components/GuidedTour";
 import { getMaterial } from "@/lib/materials";
 import { getExperiment } from "@/lib/experiments";
 import { buildMitigationPlan } from "@/lib/protocols";
@@ -51,6 +52,7 @@ const READINESS_STYLE = {
 } as const;
 
 export default function MissionControlPage() {
+  const tour = useTour();
   const [environment, setEnvironment] = useState<EnvironmentState>(
     NOMINAL_ENVIRONMENT,
   );
@@ -149,6 +151,7 @@ export default function MissionControlPage() {
           environment={environment}
           simulation={simulation}
           onToggleVentilation={handleToggleVentilation}
+          onStartTour={tour.start}
         />
 
         <TabBar
@@ -259,7 +262,7 @@ export default function MissionControlPage() {
             id={`panel-${tab}`}
             aria-labelledby={`tab-${tab}`}
             tabIndex={0}
-            className="animate-fade-in grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-2.5 overflow-y-auto xl:auto-rows-auto xl:grid-cols-12 xl:overflow-hidden"
+            className="animate-fade-in af-enter grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-2.5 overflow-y-auto xl:auto-rows-auto xl:grid-cols-12 xl:overflow-hidden"
           >
             {tab === "simulation" ? (
               <>
@@ -476,6 +479,7 @@ export default function MissionControlPage() {
             </a>
           </div>
         </footer>
+        <GuidedTour open={tour.open} onClose={tour.close} onSelectTab={setTab} />
       </div>
     </div>
   );

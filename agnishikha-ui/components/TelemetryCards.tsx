@@ -78,7 +78,7 @@ function MetricCard({
   const animatedFill = useAnimatedNumber(Math.min(1, Math.max(0, fill)), 3);
 
   return (
-    <article className="group relative flex flex-col gap-1 overflow-hidden rounded-lg border border-slate-800 bg-slate-900/50 p-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900/70">
+    <article className="af-card group relative flex flex-col gap-1 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 p-2.5 ring-1 ring-slate-800 transition-colors duration-200 hover:border-slate-700 hover:bg-slate-900/70">
       <div className="flex items-start justify-between gap-1.5">
         <span
           className={`flex size-5 shrink-0 items-center justify-center rounded ring-1 ${TONE_RING[tone]}`}
@@ -89,7 +89,7 @@ function MetricCard({
       </div>
 
       <div>
-        <p className="text-[10px] font-medium uppercase leading-tight tracking-wider text-slate-400">
+        <p className="text-xs font-medium leading-tight text-slate-400">
           {label}
         </p>
         <p className="mt-0.5 font-mono text-xl font-bold tabular-nums text-slate-50">
@@ -136,9 +136,9 @@ function ConfidenceMeter({ telemetry }: { telemetry: Telemetry }) {
         : "red";
 
   return (
-    <div className="rounded-lg border border-slate-800/80 bg-slate-900/50 p-2.5 ring-1 ring-white/[0.02] transition-colors duration-200 hover:border-slate-700/80">
+    <div className="af-card rounded-xl border border-slate-800/80 bg-slate-900/50 p-2.5 ring-1 ring-slate-800 transition-colors duration-200 hover:border-slate-700/80">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+        <span className="text-xs font-medium text-slate-400">
           Model confidence
         </span>
         <Pill tone={bandTone}>{telemetry.confidenceBand}</Pill>
@@ -170,9 +170,9 @@ function RiskMeter({ telemetry }: { telemetry: Telemetry }) {
   const label = risk > 0.66 ? "ELEVATED" : risk > 0.4 ? "GUARDED" : "NOMINAL";
 
   return (
-    <div className="rounded-lg border border-slate-800/80 bg-slate-900/50 p-2.5 ring-1 ring-white/[0.02] transition-colors duration-200 hover:border-slate-700/80">
+    <div className="af-card rounded-xl border border-slate-800/80 bg-slate-900/50 p-2.5 ring-1 ring-slate-800 transition-colors duration-200 hover:border-slate-700/80">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+        <span className="text-xs font-medium text-slate-400">
           Composite risk index
         </span>
         <Pill tone={tone}>{label}</Pill>
@@ -291,7 +291,7 @@ export function TelemetryCards({
     <div className="flex h-full flex-col gap-2">
       {telemetry.inDomain ? (
         <div className="flex animate-fade-in items-center justify-between gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5">
-          <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-widest text-emerald-300">
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-300">
             <ShieldCheck className="size-3.5" aria-hidden="true" />
             In-domain
           </span>
@@ -302,20 +302,20 @@ export function TelemetryCards({
       ) : (
         <div
           role="alert"
-          className="flex animate-fade-in items-start gap-2 rounded-lg border border-red-500/50 bg-red-500/10 px-2.5 py-1.5 shadow-[0_0_20px_rgba(239,68,68,0.18)]"
+          className="flex animate-fade-in items-start gap-2 rounded-xl border border-red-500/50 bg-red-500/10 px-2.5 py-1.5"
         >
           <TriangleAlert
             className="mt-0.5 size-3.5 shrink-0 animate-pulse text-red-400"
             aria-hidden="true"
           />
-          <p className="font-mono text-[10px] font-semibold uppercase leading-tight tracking-wider text-red-200">
+          <p className="text-xs font-semibold leading-tight text-red-200">
             Out of envelope — O₂ reads {oxygenPct.toFixed(1)} %, outside the 12–25 %
             surrogate domain. Treat every readout as low-confidence extrapolation.
           </p>
         </div>
       )}
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-y-auto pr-0.5 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+      <div className="af-stagger grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-y-auto pr-0.5 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
         {metrics.map((metric, index) => (
           <div
             key={metric.label}

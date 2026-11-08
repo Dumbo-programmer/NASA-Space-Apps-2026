@@ -18,24 +18,27 @@ export const TABS: readonly {
   key: TabKey;
   label: string;
   short: string;
+  badge: string;
   icon: LucideIcon;
 }[] = [
   {
     key: "simulation",
     label: "Simulation",
     short: "Flame",
+    badge: "Illustrative",
     icon: Flame,
   },
-  { key: "risk", label: "Risk Matrix", short: "Risk", icon: Table2 },
+  { key: "risk", label: "Risk Matrix", short: "Risk", badge: "Illustrative", icon: Table2 },
   {
     key: "explain",
     label: "Explainability",
     short: "Why",
+    badge: "Illustrative",
     icon: BrainCircuit,
   },
-  { key: "models", label: "NASA Models", short: "Models", icon: FlaskConical },
-  { key: "habitat", label: "Habitat Map", short: "Map", icon: MapIcon },
-  { key: "protocols", label: "Protocols", short: "Action", icon: ShieldAlert },
+  { key: "models", label: "NASA Models", short: "Models", badge: "Real NASA model", icon: FlaskConical },
+  { key: "habitat", label: "Habitat Map", short: "Map", badge: "Real NASA model", icon: MapIcon },
+  { key: "protocols", label: "Protocols", short: "Action", badge: "Illustrative", icon: ShieldAlert },
 ];
 
 export interface TabBarProps {
@@ -81,10 +84,11 @@ export function TabBar({
       <div
         ref={listRef}
         role="tablist"
+        data-tour="tabs"
         aria-label="Dashboard sections"
         className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
       >
-        {TABS.map(({ key, label, short, icon: Icon }) => {
+        {TABS.map(({ key, label, short, badge, icon: Icon }) => {
           const active = key === activeTab;
           return (
             <button
@@ -92,6 +96,7 @@ export function TabBar({
               type="button"
               role="tab"
               data-tab={key}
+              data-tour={key === "models" ? "tab-models" : undefined}
               id={`tab-${key}`}
               aria-selected={active}
               aria-controls={`panel-${key}`}
@@ -118,7 +123,12 @@ export function TabBar({
                 }`}
                 aria-hidden="true"
               />
-              <span className="hidden sm:inline">{label}</span>
+              <span className="hidden flex-col items-start leading-none sm:flex">
+                <span>{label}</span>
+                <span className="mt-1 text-[11px] font-sans normal-case tracking-normal text-slate-400">
+                  {badge}
+                </span>
+              </span>
               <span className="sm:hidden">{short}</span>
               <span
                 className={`absolute inset-x-1.5 -bottom-[7px] h-[2px] rounded-full bg-gradient-to-r from-orange-400 to-amber-300 transition-all duration-300 ${

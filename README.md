@@ -67,7 +67,6 @@ This repo is my copy of the project, kept here alongside my other work.
 | **Traceability** | Every prediction carries `value_type`, the NASA source and the model's validation scores |
 | **Model API** | `api/server.py`: JSON endpoints for every model (`/models`, `/predict/{model}`, `/sweep/{model}`), strict input validation, no extra dependencies |
 | **Mission-control dashboard** | Next.js dashboard with a microgravity flame visualizer, telemetry, risk matrix, explainability, crew protocols, and a **NASA Models** tab that shows the trained models' answers live |
-| **Beginner notebook** | A step-by-step notebook (with Bangla explanations) that rebuilds the flame-spread model from scratch |
 
 ---
 
@@ -251,7 +250,7 @@ NASA-Space-Apps-2026/
 ├── tests/                    # Data contract, reproducibility, leakage guards, prediction contract, physics behaviour, API
 ├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> export -> tests
 ├── requirements.txt          # Pinned versions
-├── notebooks/                # Colab notebook for model selection v2 + beginner flame-spread notebook
+├── notebooks/                # Full results notebook + Colab notebook for model selection v2
 └── docs/                     # ML design notes, abstract draft, data and ML audit
 ```
 

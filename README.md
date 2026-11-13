@@ -1,7 +1,7 @@
 <h1 align="center">AstraFlame — AI Fire-Safety Insights from NASA Microgravity Combustion Data</h1>
 
 <p align="center">
-  <strong>850 real NASA experiments. Five trained models. Every number traceable to its NASA source.</strong>
+  <strong>850 verified NASA records. Five trained models. One habitat fire map. Every number traceable to its NASA source.</strong>
 </p>
 
 <p align="center">
@@ -10,6 +10,7 @@
   <a href="#features">Features</a> •
   <a href="#nasa-data">NASA Data</a> •
   <a href="#models">Models</a> •
+  <a href="#habitat-fire-map">Habitat Fire Map</a> •
   <a href="#architecture">Architecture</a> •
   <a href="#quick-start">Quick Start</a> •
   <a href="#project-structure">Structure</a>
@@ -30,7 +31,9 @@ AstraFlame brings those experiments together. You give it a condition: oxygen le
 - how sooty or smoky it will be,
 - how large the smoke particles will be.
 
-Every answer comes with an error band, the NASA evidence behind it, and an honest warning when NASA never tested that condition.
+Every answer comes with an error band, the NASA evidence behind it, and a warning when the condition is outside the NASA data used here.
+
+It also draws a **habitat fire map**: where the NASA data has tests, where the model is estimating, where it is extrapolating, and which experiments would close the gap for the proposed Moon-habitat atmosphere (8.2 psia, 34 % O₂).
 
 ## My Role
 
@@ -49,9 +52,9 @@ I'm the **Data Science Lead** on Team Agnishikha.
 
 **Interface.** I wrote the single `predict()` interface, the model API in `api/` that serves it, and the dashboard's **NASA Models** tab that calls it.
 
-The dashboard UI in `agnishikha-ui/` was built by our UI & Software Lead, **Tawhid Bin Omar**.
+The dashboard UI in `agnishikha-ui/` was built by our UI & Software Lead, **Tawhid Bin Omar**. The Habitat Map tab, the guided tour, the theme switch and the Docker setup were added by the team on top of these models; the change notes are in [CHANGES_NOVELTY.md](CHANGES_NOVELTY.md).
 
-This repo is my copy of the project, kept here alongside my other work.
+This repository holds the full team project: data, models, API, dashboard and the habitat fire map.
 
 ---
 
@@ -59,14 +62,17 @@ This repo is my copy of the project, kept here alongside my other work.
 
 | Category | Details |
 |---|---|
-| **Verified NASA dataset** | 850 rows from 9 ISS/Cygnus investigations (798 microgravity runs) plus 52 rows of 1g ground reference. Every extract was checked against NASA's file, and 890 field-level checks found 0 errors |
+| **Verified NASA dataset** | 850 rows: 798 microgravity runs from 9 ISS/Cygnus investigations and 52 rows of 1g ground reference. Every extract was checked against NASA's file, and 890 field-level checks found 0 errors |
 | **Five trained models** | Flame spread, flame extinction, droplet burning rate, smoke point and smoke particle size, all trained on NASA ISS data |
 | **Honest validation** | Grouped cross-validation holds out whole test series or sessions, and every model is compared against a baseline |
 | **Explainability** | Exact Shapley values for every prediction: how much each input pushed the answer up or down |
-| **Domain check** | Warns when an input is outside what NASA tested, including per-fuel and per-material ranges and nearest-experiment distance |
+| **Domain check** | Warns when an input is outside the NASA data used, including per-fuel and per-material ranges and nearest-experiment distance |
 | **Traceability** | Every prediction carries `value_type`, the NASA source and the model's validation scores |
-| **Model API** | `api/server.py`: JSON endpoints for every model (`/models`, `/predict/{model}`, `/sweep/{model}`), strict input validation, no extra dependencies |
-| **Mission-control dashboard** | Next.js dashboard with a microgravity flame visualizer, telemetry, risk matrix, explainability, crew protocols, and a **NASA Models** tab that shows the trained models' answers live |
+| **Habitat fire map** | One map of oxygen against pressure: every NASA microgravity test in the data, the extinction model's estimate, the ISS and habitat points, a 22-material safety card and the five most useful next tests |
+| **Live chamber reading** | `POST /habitat/locate` places a live reading from the ESP32 chamber on the map and returns the model's answer, the distance to the nearest NASA test and whether the point is inside the data |
+| **Model API** | `api/server.py`: JSON endpoints for every model (`/models`, `/predict/{model}`, `/sweep/{model}`, `/habitat`, `/habitat/locate`), strict input validation, no extra dependencies |
+| **Mission-control dashboard** | Next.js dashboard with a **NASA Models** tab and a **Habitat Map** tab that show the trained models' answers live, a guided tour, light and dark themes, and illustrative tabs for the flame visualizer, telemetry, risk matrix, explainability and crew protocols |
+| **One-command run** | `docker compose up --build` starts the API and the dashboard together |
 
 ---
 
@@ -122,7 +128,7 @@ How I chose the models:
   <img src="models/figures/fig_v3_safe_map_next_experiment.png" alt="Safe-cabin map and next experiment" width="760" />
 </p>
 
-**Where NASA should test next.** The models know where they are unsure. Combining that uncertainty with the distance from every existing test, they recommend the next ISS experiments: a 3 mm methanol droplet at **32 % O₂, 144 kPa** (the outcome there is a coin toss) and flame spread over a 6.4 mm rod at **21 % O₂, 7.5 cm/s** airflow (the largest uncertainty). This is a simple rule, not a full Bayesian experimental design.
+**Where NASA should test next.** The models know where they are unsure. Combining that uncertainty with the distance from every existing test, they recommend the next ISS experiments. Searched over the whole tested range, the rule picks a 3 mm methanol droplet at **32 % O₂, 144 kPa** (the outcome there is a coin toss) and flame spread over a 6.4 mm rod at **21 % O₂, 7.5 cm/s** airflow (the largest uncertainty). Searched inside the habitat envelope only, it picks the five tests listed under [Habitat Fire Map](#habitat-fire-map). This is a simple rule, not a full Bayesian experimental design.
 
 **The problem in numbers.** Of the 22 materials whose oxygen limits NASA measured (Hirsch et al. 2011), **20 would keep burning in the 34 % oxygen proposed for Moon habitats** (12 already do in Earth air). These limits come from Earth-gravity tests at 70–101 kPa, so this is a first estimate for 8.2 psia.
 
@@ -132,24 +138,67 @@ How I chose the models:
 
 ---
 
+## Habitat Fire Map
+
+The proposed exploration atmosphere for Moon habitats is 8.2 psia (56.5 kPa) with 34 % O₂. The map answers one question: what does the NASA data say about fire in that air, and what should be tested next?
+
+**The gap in the data.** Of the 798 microgravity runs, 501 record both oxygen and pressure.
+
+- None is below 70.2 kPa, which is 13.7 kPa above the habitat pressure.
+- 24 runs reach 30 % O₂ or more, and all are FLEX droplets. Microgravity solids in the data stop at 22.7 % O₂.
+- No run falls in the box 30–36 % O₂ by 45–70 kPa.
+
+**What the map holds.** `models/habitat_map.py` writes `models/reports/habitat_map.json` with five layers:
+
+- the FLEX extinction model's probability that a 3 mm methanol droplet flame goes out, on a grid of 12–36 % O₂ by 40–320 kPa, with the distance to the nearest test;
+- the 501 NASA test points;
+- the ISS point (101.3 kPa, 21 % O₂) and the habitat point;
+- a safety card for the 22 WSTF materials: 12 burn at 21 % O₂ and 20 at 34 % O₂ in Earth gravity;
+- the five recommended next tests.
+
+At the habitat point the model gives a 0.18 probability that the flame goes out, and flags the answer as an extrapolation.
+
+**The five next tests.** Score = P(1 − P) × min(distance / 0.15, 1), searched over O₂ ≥ 21 % and 45–101.3 kPa, with picks kept apart so they are not near-duplicates.
+
+| Test | O₂ (%) | Pressure (kPa) | P(flame goes out) | Position against the data |
+|---|---|---|---|---|
+| A | 27.2 | 49.3 | 0.57 | Below the lowest pressure in the data: an extrapolation |
+| B | 27.2 | 86.7 | 0.68 | Inside the tested range |
+| C | 32.8 | 100.7 | 0.31 | Inside the tested range |
+| D | 36.0 | 100.7 | 0.22 | Above the highest oxygen in the data (34 %): an extrapolation |
+| E | 32.0 | 49.3 | 0.24 | Below the lowest pressure in the data: an extrapolation |
+
+**Where to see it.** API: `GET /habitat` and `POST /habitat/locate`. Dashboard: the **Habitat Map** tab, which can also place a live reading from the ESP32 chamber on the map (set `NEXT_PUBLIC_CHAMBER_URL` to the chamber's JSON feed). The chamber holds no flame and no added oxygen.
+
+**Limits of the map.**
+
+- **"No test" means no test in the data used here.** NASA has flown fire tests in reduced-pressure, oxygen-enriched air that are not in this dataset: Saffire V at about 71 kPa and 26 % O₂ ([Urban et al., ICES-2021-266](https://ntrs.nasa.gov/api/citations/20210011521/downloads/ICES%202021-266%200503-2021%20final.pdf)) and Saffire VI at about 54–55 kPa and 29–31 % O₂ ([ICES-2024-365](https://ntrs.nasa.gov/api/citations/20240002981/downloads/Saffire-ICES-2024-ICES-365-accepted%20final.pdf)). Adding those results is the first next step.
+- **The layers are different data.** The probability grid comes from methanol droplets in microgravity. The material card comes from solids in Earth gravity at 70–101 kPa. They share axes for context only.
+- **The next-test rule covers methanol droplets only.**
+- The map is decision support, not certification.
+
+---
+
 ## Architecture
 
 ```
- NASA PSI repository (CC0)                         ESP32 sensor rig (O2, pressure, airflow)
-          |                                                     |
-          v                                                     v
+ NASA PSI repository (CC0)
+          |
+          v
  data/scripts  ->  verified extracts  ->  unified master table (850 rows)
                                                  |
                        +-------------------------+--------------------------+
                        v                                                    v
-          models/ (5 trained models)                          evidence retrieval
-          predict(model_name, **inputs)                       (NASA record behind each answer)
+          models/ (5 trained models)                          models/habitat_map.py
+          predict(model_name, **inputs)                       (habitat fire map, next tests)
                        |                                                    |
                        +-------------> model API (api/server.py) <----------+
-                                                   |
+                                                   ^
+                                                   |  /predict, /sweep, /habitat, /habitat/locate
                                                    v
-                                 agnishikha-ui (Next.js dashboard, NASA Models tab)
-                                 offline fallback: agnishikha-ui/public/ignis/*.json
+          ESP32 chamber  ---------------->  agnishikha-ui (Next.js dashboard)
+          (live reading, optional)          NASA Models and Habitat Map tabs
+                                            offline fallback: agnishikha-ui/public/ignis/*.json
 ```
 
 ---
@@ -205,20 +254,48 @@ Open [`notebooks/Ignis_mu_Model_Selection_v2.ipynb`](notebooks/Ignis_mu_Model_Se
 
 It needs no login and takes about 30 minutes.
 
-### 3. Run the model API and the dashboard
+### 3. Run the API and the dashboard with Docker Compose
 
 ```bash
-python api/server.py                     # http://127.0.0.1:8000  (GET /models, POST /predict/{model})
+docker compose up --build
+```
+
+- Dashboard: http://localhost:3000 (open the **NASA Models** or **Habitat Map** tab)
+- Model API: http://localhost:8000 (`GET /health`, `GET /models`, `GET /habitat`)
+
+Ports and the API address can be changed by copying `.env.example` to `.env`. For live reloading during development:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+To run the tests inside the API container:
+
+```bash
+docker compose run --rm api python tests/run_tests.py
+```
+
+### 4. Or run them by hand
+
+```bash
+python api/server.py                     # http://127.0.0.1:8000  (GET /models, POST /predict/{model}, GET /habitat)
 curl -X POST localhost:8000/predict/flex_extinction -d '{"fuel": "Heptane", "co2_pct": 20}'
+curl -X POST localhost:8000/habitat/locate -d '{"pressure_kpa": 56.5, "o2_pct": 34}'
 
 cd agnishikha-ui
 npm install
-npm run dev                              # http://localhost:3000, open the "NASA Models" tab
+npm run dev                              # http://localhost:3000, open the "NASA Models" or "Habitat Map" tab
 ```
 
-The tab calls the API at `NEXT_PUBLIC_IGNIS_API_URL` (default `http://127.0.0.1:8000`). Without the API, for example on a static deploy, it uses `public/ignis/*.json`: answers precomputed by `api/export_static.py` from the same trained models, one input at a time around NASA reference conditions, and labelled as precomputed.
+The tabs call the API at `NEXT_PUBLIC_IGNIS_API_URL` (default `http://127.0.0.1:8000`). Without the API, for example on a static deploy, they use `public/ignis/*.json`: answers precomputed by `api/export_static.py` from the same trained models, one input at a time around NASA reference conditions, and labelled as precomputed.
 
-### 4. Rebuild and check the dataset from NASA's files
+To rebuild the habitat map after retraining:
+
+```bash
+cd models && python habitat_map.py       # writes models/reports/habitat_map.json and material_safety_card.csv
+```
+
+### 5. Rebuild and check the dataset from NASA's files
 
 ```bash
 python data/scripts/build_all.py --check      # rebuild every processed file and prove it is byte-for-byte identical
@@ -232,7 +309,9 @@ python data/scripts/validate_processed.py     # strict data contract: schema, ph
 ```
 NASA-Space-Apps-2026/
 ├── agnishikha-ui/            # Next.js mission-control dashboard (Tawhid Bin Omar); NASA Models tab (Prachya Biswas)
-├── api/                      # Model API: server.py, ignis_api.py (validation, sweeps), export_static.py
+│   ├── components/           # HabitatMapPanel, NasaModelPanel, GuidedTour, ThemeToggle and the illustrative tabs
+│   └── public/ignis/         # Precomputed answers and habitat_map.json for offline use
+├── api/                      # Model API: server.py, ignis_api.py (validation, sweeps, habitat), export_static.py, Dockerfile
 ├── data/                     # see data/README.md
 │   ├── raw_from_NASA/        # Verbatim NASA PSI extracts (never edited)
 │   ├── processed/            # Single source of truth: clean datasets, master table, Excel workbook
@@ -243,22 +322,27 @@ NASA-Space-Apps-2026/
 │   ├── ignis_models.py       # predict(): domain checks, exact Shapley, physics fallback
 │   ├── preprocess_v3.py, pigp.py, ml_selection.py
 │   ├── train_v2.py, compare_v3.py, v3_final.py, noise_ceiling.py
+│   ├── habitat_map.py        # Habitat fire map: coverage, extinction grid, material card, next tests
 │   ├── artifacts/            # Production model bundles (+ archive/v1, archive/v2)
-│   ├── reports/              # Scores, comparisons, logs, pipeline manifest
+│   ├── reports/              # Scores, comparisons, logs, pipeline manifest, habitat_map.json, material_safety_card.csv
 │   ├── figures/              # Figures
 │   └── MODEL_SELECTION_v3.md, MODEL_SELECTION_v2.md, README.md
 ├── tests/                    # Data contract, reproducibility, leakage guards, prediction contract, physics behaviour, API
-├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> export -> tests
+├── run_pipeline.py           # One command: ETL -> validation -> training -> evaluation -> habitat map -> export -> tests
+├── docker-compose.yml        # API + dashboard in one command (docker-compose.dev.yml for live reload, .env.example for ports)
 ├── requirements.txt          # Pinned versions
 ├── notebooks/                # Full results notebook + Colab notebook for model selection v2
-└── docs/                     # ML design notes, abstract draft, data and ML audit
+├── docs/                     # ML design notes, abstract draft, data and ML audit
+└── CHANGES_NOVELTY.md        # Change notes for the habitat map and the dashboard redesign
 ```
 
 ---
 
 ## Status and Limits
 
-- **Dashboard:** the NASA Models tab shows the trained models. The Simulation, Risk Matrix, Explainability and Protocols tabs still use a client-side surrogate for the live scenario and say so in the footer.
+- **Dashboard:** the NASA Models and Habitat Map tabs show the trained models. The Simulation, Risk Matrix, Explainability and Protocols tabs are illustrative: they use a client-side surrogate for the live scenario and say so in the footer and in the guided tour.
+- **Scope of "not tested":** every statement that a condition has no test refers to the NASA data used here. Saffire IV–VI results, including reduced-pressure and oxygen-enriched burns, are not in the dataset yet.
+- **Droplets, not cabin materials:** the extinction model and the habitat map's probability grid describe fuel-droplet flames. They are a first indicator for habitat air, not a prediction for solid cabin materials.
 - **Hosting the API:** it must run on a Python host for free input combinations; a static deploy gets the precomputed answers only.
 - **Data size:** 52–256 rows per model. The scores are honest held-out numbers, but the error bands are wide (95 % CIs are in `models/reports/model_summary.json`). For flame spread and burning rate the remaining error is mostly run-to-run noise, so more ISS experiments, not more modelling, would improve them.
 - **High oxygen:** extinction errors rise above 21 % O₂, the conditions closest to the habitat air, because NASA ran few tests there (see the notebook's error analysis).
@@ -277,6 +361,13 @@ NASA-Space-Apps-2026/
 | Purno | Physics & Technical Lead |
 | Tawhid Bin Omar | UI & Software Lead |
 | Mahib Al Mamun | Hardware & Embedded Lead |
+
+---
+
+## Use of AI
+
+AI assistants (Claude) were used to help write code, tests and documentation. All data is NASA public-domain data; results were checked by the team against the NASA sources. The project videos use AI-assisted animation and AI-generated music and sound effects, which are credited in the videos and on the project page.
+
 ---
 
 ## License

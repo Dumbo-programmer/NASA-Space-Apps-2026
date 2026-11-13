@@ -6,14 +6,14 @@
 
 <p align="center">
   <a href="#overview">Overview</a> •
-  <a href="#my-role">My Role</a> •
   <a href="#features">Features</a> •
   <a href="#nasa-data">NASA Data</a> •
   <a href="#models">Models</a> •
   <a href="#habitat-fire-map">Habitat Fire Map</a> •
   <a href="#architecture">Architecture</a> •
   <a href="#quick-start">Quick Start</a> •
-  <a href="#project-structure">Structure</a>
+  <a href="#project-structure">Structure</a> •
+  <a href="#team-agnishikha">Team</a>
 </p>
 
 ---
@@ -34,27 +34,6 @@ AstraFlame brings those experiments together. You give it a condition: oxygen le
 Every answer comes with an error band, the NASA evidence behind it, and a warning when the condition is outside the NASA data used here.
 
 It also draws a **habitat fire map**: where the NASA data has tests, where the model is estimating, where it is extrapolating, and which experiments would close the gap for the proposed Moon-habitat atmosphere (8.2 psia, 34 % O₂).
-
-## My Role
-
-I'm the **Data Science Lead** on Team Agnishikha.
-
-**Data.** I built the project's dataset from NASA's Physical Sciences Informatics (PSI) repository.
-- I found the files that hold the measured results, not just the test settings.
-- I verified every extract byte-for-byte against NASA's copy.
-- I cleaned and documented ten sources into one 850-row table.
-
-**Models.** I trained and validated the five machine-learning models in `models/`.
-- I chose each model from the project's objective (a fire-risk envelope with honest uncertainty), not by score alone.
-- I designed the preprocessing for the chosen model: physics space, logged cleaning, test groups and measured noise.
-- Every candidate was scored with **nested grouped cross-validation** on ISS tests it never saw.
-- Each model is checked against a simple baseline and a replicate-based noise ceiling.
-
-**Interface.** I wrote the single `predict()` interface, the model API in `api/` that serves it, and the dashboard's **NASA Models** tab that calls it.
-
-The dashboard UI in `agnishikha-ui/` was built by our UI & Software Lead, **Tawhid Bin Omar**. The Habitat Map tab, the guided tour, the theme switch and the Docker setup were added by the team on top of these models; the change notes are in [CHANGES_NOVELTY.md](CHANGES_NOVELTY.md).
-
-This repository holds the full team project: data, models, API, dashboard and the habitat fire map.
 
 ---
 
@@ -98,7 +77,7 @@ Full documentation is in `data/README.md` (layout, lineage, data contract, chang
 
 ## Models
 
-The models were chosen from the objective. The fire-risk envelope asks three things: will a flame survive, how fast does it spread or burn, and how sure is the answer. For the three outputs that feed the safe-cabin map, I use a **physics-informed Gaussian process (PI-GP)**. The two smoke outputs keep the most accurate v2 ensemble. All scores come from nested grouped cross-validation on identical held-out ISS tests. Full method: [models/MODEL_SELECTION_v3.md](models/MODEL_SELECTION_v3.md).
+The models were chosen from the objective. The fire-risk envelope asks three things: will a flame survive, how fast does it spread or burn, and how sure is the answer. For the three outputs that feed the safe-cabin map, the project uses a **physics-informed Gaussian process (PI-GP)**. The two smoke outputs keep the most accurate v2 ensemble. All scores come from nested grouped cross-validation on identical held-out ISS tests. Full method: [models/MODEL_SELECTION_v3.md](models/MODEL_SELECTION_v3.md).
 
 | # | Model | Question | Final model | Score | Physics violations | v2 on same tests |
 |---|---|---|---|---|---|---|
@@ -108,7 +87,7 @@ The models were chosen from the objective. The fire-risk envelope asks three thi
 | 4 | `spice_smoke_point` | How sooty is a gas flame? | v2 ensemble | R² **0.89**, MAE 4.4 mm | 0 % | — |
 | 5 | `same_particle_size` | How large are smoke particles? | v2 ensemble | R² 0.43 | 43 % | — |
 
-How I chose the models:
+How the models were chosen:
 
 - **Objective first.** Map outputs must be accurate, follow physics and give uncertainty that grows outside NASA's data. Smoke outputs are read inside the tested range, so accuracy decides there. This rule was set before the comparison.
 - **PI-GP = physics law + GP correction + ISS-test offset.**
@@ -332,8 +311,7 @@ NASA-Space-Apps-2026/
 ├── docker-compose.yml        # API + dashboard in one command (docker-compose.dev.yml for live reload, .env.example for ports)
 ├── requirements.txt          # Pinned versions
 ├── notebooks/                # Full results notebook + Colab notebook for model selection v2
-├── docs/                     # ML design notes, abstract draft, data and ML audit
-└── CHANGES_NOVELTY.md        # Change notes for the habitat map and the dashboard redesign
+└── docs/                     # ML design notes, abstract draft, data and ML audit, changelog
 ```
 
 ---
@@ -353,14 +331,18 @@ NASA-Space-Apps-2026/
 
 ## Team Agnishikha
 
-| Member | Role |
-|---|---|
-| Apurbo Kumar | Team Lead & Project Manager |
-| Prachya Biswas | Data Science Lead |
-| Samyo Pramanik | AI Lead |
-| Purno | Physics & Technical Lead |
-| Tawhid Bin Omar | UI & Software Lead |
-| Mahib Al Mamun | Hardware & Embedded Lead |
+AstraFlame is a team project. The table lists who built each part.
+
+| Member | Role | Contribution |
+|---|---|---|
+| Apurbo Kumar | Team Lead & Project Manager | Project planning, coordination and submission |
+| [Prachya Biswas](https://github.com/prachyabiswas) | Data Science Lead | NASA dataset: collection, verification against NASA's files and the 850-row master table. The five models and their validation. The `predict()` interface, the model API and the NASA Models tab. The results notebook |
+| [Samyo Pramanik](https://github.com/SamyoPramanik) | AI Lead | Docker setup for the API and the dashboard. Dashboard layout fixes |
+| Purno | Physics & Technical Lead | Physics review of the models and of the habitat-atmosphere claims |
+| [Tawhid Bin Omar](https://github.com/Dumbo-programmer) | UI & Software Lead | The dashboard in `agnishikha-ui/`. The habitat fire map: `models/habitat_map.py`, its API endpoints and the Habitat Map tab. The guided tour and themes |
+| Mahib Al Mamun | Hardware & Embedded Lead | The ESP32 chamber and its live sensor feed |
+
+Change notes for the habitat map and the dashboard redesign are in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ---
 
@@ -377,5 +359,5 @@ NASA source data is public domain (CC0-1.0) from NASA Physical Sciences Informat
 ---
 
 <p align="center">
-  Built by Team Agnishikha for NASA Space Apps Challenge 2026 — Data Science & ML: <a href="https://github.com/prachyabiswas">Prachya Biswas</a> · UI: <a href="https://github.com/Dumbo-programmer">Tawhid Bin Omar</a>
+  Built by Team Agnishikha for NASA Space Apps Challenge 2026 — <a href="https://github.com/prachyabiswas">Prachya Biswas</a> · <a href="https://github.com/Dumbo-programmer">Tawhid Bin Omar</a> · <a href="https://github.com/SamyoPramanik">Samyo Pramanik</a> · Apurbo Kumar · Purno · Mahib Al Mamun
 </p>

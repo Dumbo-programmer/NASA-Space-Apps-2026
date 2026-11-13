@@ -41,12 +41,12 @@ export function RiskMatrix({ telemetry }: RiskMatrixProps) {
   return (
     <div className="flex h-full flex-col gap-3">
       <div className="min-h-0 flex-1">
-        <div className="grid h-full grid-cols-[auto_repeat(5,minmax(0,1fr))] gap-1">
+        <div className="af-stagger grid h-full grid-cols-[auto_repeat(5,minmax(0,1fr))] gap-1">
           <div aria-hidden="true" />
           {CONSEQUENCE_LABELS.map((label) => (
             <div
               key={label}
-              className="flex items-end justify-center pb-1 text-center text-[10px] uppercase leading-tight tracking-wider text-slate-400"
+              className="flex items-end justify-center pb-1 text-center text-xs leading-tight text-slate-400"
             >
               {label}
             </div>
@@ -66,7 +66,7 @@ export function RiskMatrix({ telemetry }: RiskMatrixProps) {
                     key={`${lIdx}-${cIdx}`}
                     className={`relative min-h-[26px] rounded border border-slate-800/80 transition-all duration-300 ${
                       band.cell
-                    } ${active ? "scale-105 border-white/70 shadow-[0_0_14px_rgba(255,255,255,0.25)]" : ""}`}
+                    } ${active ? "scale-105 border-white/70" : ""}`}
                   >
                     {active ? (
                       <span
@@ -98,9 +98,9 @@ export function RiskMatrix({ telemetry }: RiskMatrixProps) {
           ].map(([label, value]) => (
             <div
               key={label}
-              className="rounded-md border border-slate-800/80 bg-slate-950/40 px-2 py-1.5 ring-1 ring-white/[0.02]"
+              className="af-card rounded-xl border border-slate-800/80 bg-slate-950/40 px-2 py-1.5 ring-1 ring-slate-800"
             >
-              <p className="text-[10px] uppercase tracking-wider text-slate-400">
+              <p className="text-xs text-slate-400">
                 {label}
               </p>
               <p
@@ -114,7 +114,7 @@ export function RiskMatrix({ telemetry }: RiskMatrixProps) {
           ))}
         </div>
 
-        <div className="flex items-center justify-between gap-2 font-mono text-[10px] text-slate-400">
+        <div className="flex items-center justify-between gap-2 text-xs text-slate-400">
           <span>Risk index</span>
           <div
             className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-800"
@@ -134,7 +134,7 @@ export function RiskMatrix({ telemetry }: RiskMatrixProps) {
           </span>
         </div>
 
-        <p className="text-[10px] leading-relaxed text-slate-400">
+        <p className="text-sm leading-relaxed text-slate-400">
           Cells bin the composite risk index against propagation front speed. This is a
           presentational mapping of the surrogate, not a calibrated FMEA scoring
           scheme.

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ExternalLink, Info, ShieldAlert } from "lucide-react";
 import { Pill, SubCard } from "@/components/PanelFrame";
+import { GLOSSARY, HelpTip } from "@/components/HelpTip";
 import {
   API_URL,
   loadCatalog,
@@ -81,11 +82,10 @@ export function NasaModelPanel() {
   const abortRef = useRef<AbortController | null>(null);
 
   // ---- catalog: live API first, precomputed files otherwise ----
-  useEffect(() => {
-    let alive = true;
-    loadCatalog()
-      .then(({ mode: m, models }) => {
-        if (!alive) return;
+  const loadCatalogData = useCallback(async () => {
+    setLoadError(null);
+    try {
+      const { mode: m, models } = await loadCatalog();
         const byName: Record<string, ModelCard> = {};
         for (const c of models) byName[c.name] = c;
         const start = {} as Record<ViewKey, Inputs>;
@@ -98,18 +98,23 @@ export function NasaModelPanel() {
         setCards(byName);
         setInputs(start);
         setMode(m);
-      })
-      .catch(() => {
-        if (alive) setLoadError("Model service and precomputed answers are both unavailable.");
-      });
-    return () => {
-      alive = false;
-    };
+    } catch (error) {
+      setLoadError(
+        error instanceof Error
+          ? `Model data could not be loaded: ${error.message}`
+          : "Model data could not be loaded.",
+      );
+    }
   }, []);
+
+  useEffect(() => {
+    void loadCatalogData();
+  }, [loadCatalogData]);
 
   const activeView = VIEWS.find((v) => v.key === view) ?? VIEWS[0];
   const primary = cards[activeView.models[0]];
   const current = inputs[view];
+  const firstKpaInput = primary?.inputs.find((spec) => spec.unit === "kPa");
 
   // ---- predictions: debounced, stale requests cancelled ----
   useEffect(() => {
@@ -179,16 +184,19 @@ export function NasaModelPanel() {
   if (loadError) {
     return (
       <SubCard className="p-4 text-[12px] text-red-300">
-        {loadError} Start it with <code className="font-mono">python api/server.py</code>.
+        {loadError} Start the API with <code className="font-mono">python api/server.py</code>, then retry.
+        <button type="button" onClick={() => void loadCatalogData()} className="af-press mt-3 min-h-10 rounded-full bg-violet-600 px-4 text-sm font-medium text-white hover:bg-violet-500">
+          Retry
+        </button>
       </SubCard>
     );
   }
   if (!mode || !primary) {
-    return <p className="p-4 font-mono text-[11px] text-slate-400">Loading NASA-trained models…</p>;
+    return <div className="af-skeleton h-24" aria-label="Loading NASA-trained models" />;
   }
 
   return (
-    <div className="grid h-full min-h-0 gap-3 overflow-y-auto lg:grid-cols-12">
+    <div className="af-stagger grid h-full min-h-0 gap-3 overflow-y-auto lg:grid-cols-12">
       {/* ---------- inputs ---------- */}
       <div className="flex min-h-0 flex-col gap-3 lg:col-span-4">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -211,14 +219,14 @@ export function NasaModelPanel() {
                 setView(v.key);
                 setChanged(null);
               }}
-              className={`rounded-md border px-2 py-1.5 text-left text-[11px] transition-colors ${
+              className={`af-press min-h-10 rounded-md border px-2 py-1.5 text-left text-sm transition-colors ${
                 v.key === view
                   ? "border-cyan-500/60 bg-cyan-500/10 text-cyan-200"
                   : "border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700"
               }`}
             >
               <span className="block font-semibold">{v.label}</span>
-              <span className="block font-mono text-[9px] uppercase tracking-wider text-slate-500">
+              <span className="block text-xs text-slate-500">
                 {v.data}
               </span>
             </button>
@@ -261,6 +269,7 @@ export function NasaModelPanel() {
                   <span>{spec.label}</span>
                   <span className={`font-mono ${outside ? "text-amber-300" : "text-slate-100"}`}>
                     {fmt(v)} {spec.unit}
+                    {spec === firstKpaInput ? <HelpTip text={GLOSSARY.kpa} /> : null}
                   </span>
                 </label>
                 <input
@@ -274,7 +283,7 @@ export function NasaModelPanel() {
                   aria-valuetext={`${fmt(v)} ${spec.unit ?? ""}`}
                   className="range-control w-full"
                 />
-                <p className={`font-mono text-[9px] uppercase tracking-wider ${outside ? "text-amber-300" : "text-slate-500"}`}>
+                <p className={`text-xs ${outside ? "text-amber-300" : "text-slate-500"}`}>
                   {range ? `NASA tested ${fmt(range[0])}–${fmt(range[1])} ${spec.unit ?? ""}` : "tested range unknown"}
                   {outside ? " · outside tested range" : ""}
                 </p>
@@ -282,11 +291,20 @@ export function NasaModelPanel() {
             );
           })}
           {mode === "precomputed" ? (
-            <p className="flex gap-1.5 text-[10px] leading-snug text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs leading-snug text-slate-400">
               <Info className="mt-0.5 size-3 shrink-0" aria-hidden="true" />
-              Offline answers move one input at a time from NASA reference conditions. Run the
-              model API for free combinations ({API_URL}).
-            </p>
+              <span>
+                Offline answers move one input at a time from NASA reference conditions. Run the
+                model API for free combinations ({API_URL}).
+              </span>
+              <button
+                type="button"
+                onClick={() => void loadCatalogData()}
+                className="af-press min-h-10 rounded-full bg-slate-800 px-3 text-xs font-medium text-slate-200 ring-1 ring-slate-700 transition-colors hover:bg-slate-700"
+              >
+                Retry
+              </button>
+            </div>
           ) : null}
         </SubCard>
       </div>
@@ -299,7 +317,7 @@ export function NasaModelPanel() {
           if (!card) return null;
           return (
             <SubCard key={m} className="p-3">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-slate-500">{card.target}</p>
+              <p className="text-xs text-slate-500">{card.target}</p>
               {!r ? (
                 <p className="mt-2 text-[12px] text-slate-400">…</p>
               ) : r.task === "classification" ? (
@@ -332,7 +350,8 @@ export function NasaModelPanel() {
                   </p>
                   {r.interval_90 ? (
                     <p className="mt-1 font-mono text-[11px] text-slate-300">
-                      90% range {fmt(r.interval_90[0])} – {fmt(r.interval_90[1])} {r.unit}
+                      90% range <HelpTip text={GLOSSARY.range90} /> {fmt(r.interval_90[0])} –{" "}
+                      {fmt(r.interval_90[1])} {r.unit}
                     </p>
                   ) : null}
                 </>
@@ -347,7 +366,7 @@ export function NasaModelPanel() {
                       type="button"
                       onClick={() => setExplainModel(m)}
                       aria-pressed={shownModel === m}
-                      className={`rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ring-1 ${
+                      className={`af-press min-h-10 rounded px-2 py-1 text-xs ring-1 ${
                         shownModel === m
                           ? "bg-violet-500/10 text-violet-200 ring-violet-500/40"
                           : "text-slate-400 ring-slate-700 hover:text-slate-200"
@@ -395,8 +414,8 @@ export function NasaModelPanel() {
       {/* ---------- why + evidence ---------- */}
       <div className="flex min-h-0 flex-col gap-3 lg:col-span-4">
         <SubCard className="p-3">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-slate-500">
-            Why this answer · exact Shapley values
+          <p className="text-xs text-slate-500">
+            Why this answer · exact Shapley <HelpTip text={GLOSSARY.shapley} /> values
           </p>
           <ShapleyBars result={explained} />
         </SubCard>
@@ -476,7 +495,7 @@ function ModelEvidence({ card }: { card: ModelCard | undefined }) {
   }
   return (
     <SubCard className="p-3 text-[11px] text-slate-300">
-      <p className="font-mono text-[9px] uppercase tracking-widest text-slate-500">Model card</p>
+      <p className="text-sm font-medium text-slate-500">Model card</p>
       <p className="mt-1 font-semibold text-slate-100">{card.model}</p>
       <p className="text-slate-400">
         Trained on {card.training_rows} NASA runs from {card.training_groups} independent tests; scored

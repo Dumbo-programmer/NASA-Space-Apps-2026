@@ -24,6 +24,8 @@ import { TabBar, type TabKey } from "@/components/TabBar";
 import { PanelFrame, Pill } from "@/components/PanelFrame";
 import { RiskMatrix } from "@/components/RiskMatrix";
 import { NasaModelPanel } from "@/components/NasaModelPanel";
+import { HabitatMapPanel } from "@/components/HabitatMapPanel";
+import { GuidedTour, useTour } from "@/components/GuidedTour";
 import { getMaterial } from "@/lib/materials";
 import { getExperiment } from "@/lib/experiments";
 import { buildMitigationPlan } from "@/lib/protocols";
@@ -50,6 +52,7 @@ const READINESS_STYLE = {
 } as const;
 
 export default function MissionControlPage() {
+  const tour = useTour();
   const [environment, setEnvironment] = useState<EnvironmentState>(
     NOMINAL_ENVIRONMENT,
   );
@@ -148,6 +151,7 @@ export default function MissionControlPage() {
           environment={environment}
           simulation={simulation}
           onToggleVentilation={handleToggleVentilation}
+          onStartTour={tour.start}
         />
 
         <TabBar
@@ -258,7 +262,7 @@ export default function MissionControlPage() {
             id={`panel-${tab}`}
             aria-labelledby={`tab-${tab}`}
             tabIndex={0}
-            className="animate-fade-in grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-2.5 overflow-y-auto xl:auto-rows-auto xl:grid-cols-12 xl:overflow-hidden"
+            className="animate-fade-in af-enter grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-2.5 overflow-y-auto xl:auto-rows-fr xl:grid-cols-12 xl:overflow-hidden"
           >
             {tab === "simulation" ? (
               <>
@@ -397,8 +401,8 @@ export default function MissionControlPage() {
                 subtitle="Feature contribution drivers · exact additive attribution"
                 icon={BrainCircuit}
                 accent="violet"
-                className="min-h-0 xl:col-span-12"
-                bodyClassName="min-h-0 overflow-hidden"
+                className="h-full min-h-0 xl:col-span-12"
+                bodyClassName="min-h-0 flex-1 overflow-hidden"
                 actions={<Pill tone="violet">{explanation.modelLabel}</Pill>}
               >
                 <ShapExplainability explanation={explanation} />
@@ -412,11 +416,26 @@ export default function MissionControlPage() {
                 subtitle="Real predictions with 90% ranges, tested-range warnings and exact Shapley values"
                 icon={FlaskConical}
                 accent="cyan"
-                className="min-h-0 xl:col-span-12"
-                bodyClassName="min-h-0 overflow-hidden"
+                className="h-full min-h-0 xl:col-span-12"
+                bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden p-0"
                 actions={<Pill tone="cyan">5 models · 4 ISS investigations</Pill>}
               >
                 <NasaModelPanel />
+              </PanelFrame>
+            ) : null}
+
+            {tab === "habitat" ? (
+              <PanelFrame
+                index="P7"
+                title="Habitat fire map"
+                subtitle="The NASA tests in our data, what the model says, where the habitat sits, what to test next"
+                icon={FlaskConical}
+                accent="amber"
+                className="h-full min-h-0 xl:col-span-12"
+                bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden p-0"
+                actions={<Pill tone="cyan">Real FLEX model · WSTF limits</Pill>}
+              >
+                <HabitatMapPanel />
               </PanelFrame>
             ) : null}
 
@@ -427,8 +446,8 @@ export default function MissionControlPage() {
                 subtitle="Actionable crew directives generated from the active case"
                 icon={ShieldAlert}
                 accent="emerald"
-                className="min-h-0 xl:col-span-12"
-                bodyClassName="min-h-0 overflow-hidden"
+                className="h-full min-h-0 xl:col-span-12"
+                bodyClassName="min-h-0 flex-1 overflow-hidden"
                 actions={<Pill tone="red">Crew-facing · advisory only</Pill>}
               >
                 <MitigationProtocols
@@ -445,7 +464,7 @@ export default function MissionControlPage() {
         <footer className="shrink-0 border-t border-slate-800/80 bg-slate-950/70 backdrop-blur-sm">
           <div className="mx-auto flex w-full max-w-[1800px] flex-wrap items-center justify-between gap-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400 sm:px-4">
             <p>
-              Team Agnishikha · AstraFlame · NASA Space Apps 2026 · NASA Models tab:
+              Team Agnishikha · AstraFlame · NASA Space Apps 2026 · NASA Models and Habitat Map tabs:
               trained on NASA PSI data · other tabs: client-side surrogate
             </p>
             <a
@@ -460,6 +479,7 @@ export default function MissionControlPage() {
             </a>
           </div>
         </footer>
+        <GuidedTour open={tour.open} onClose={tour.close} onSelectTab={setTab} />
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ const SEVERITY_LABEL: Record<ProtocolSeverity, string> = {
 const SEVERITY_BORDER: Record<ProtocolSeverity, string> = {
   info: "border-slate-800",
   caution: "border-amber-500/40",
-  critical: "border-red-500/50 shadow-[0_0_28px_rgba(239,68,68,0.12)]",
+  critical: "border-red-500/50",
 };
 
 interface ProtocolCardShellProps {
@@ -62,7 +62,7 @@ function Readout({
   const animated = useAnimatedNumber(value, value % 1 === 0 ? 0 : 1);
   return (
     <SubCard className="px-2 py-1.5">
-      <p className="text-[10px] font-medium uppercase leading-tight tracking-wider text-slate-400 2xl:text-[11px]">
+      <p className="text-xs font-medium leading-tight text-slate-400">
         {label}
       </p>
       <p
@@ -104,7 +104,7 @@ function ProtocolCardShell({
   const severity = protocol.severity;
   return (
     <article
-      className={`animate-rise-in flex min-h-0 flex-col gap-2 rounded-lg border bg-slate-900/50 p-2.5 transition-colors duration-300 ${SEVERITY_BORDER[severity]}`}
+      className={`af-card animate-rise-in flex min-h-0 flex-col gap-2 rounded-xl border bg-slate-900/50 p-2.5 ring-1 ring-slate-800 transition-colors duration-300 ${SEVERITY_BORDER[severity]}`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <header className="flex shrink-0 items-start justify-between gap-2">
@@ -115,7 +115,7 @@ function ProtocolCardShell({
             <Icon className="size-3" aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+            <p className="text-xs font-medium text-slate-400">
               Protocol {step}
             </p>
             <h3 className="truncate text-[12px] font-semibold text-slate-100 2xl:text-[13px]">
@@ -134,7 +134,7 @@ function ProtocolCardShell({
         </div>
       </header>
 
-      <p className="shrink-0 rounded border border-slate-800 bg-slate-950/60 px-2 py-1.5 font-mono text-[11px] font-semibold uppercase leading-relaxed tracking-wide text-slate-200 2xl:text-[12px]">
+      <p className="shrink-0 rounded-xl border border-slate-800 bg-slate-950/60 px-2 py-1.5 text-sm font-semibold leading-relaxed text-slate-200">
         {protocol.directive}
       </p>
 
@@ -151,7 +151,7 @@ export function MitigationProtocols({
   const residenceMinutes = smoke.residenceSeconds / 60;
 
   return (
-    <div className="grid h-full min-h-0 grid-cols-1 gap-2.5 lg:grid-cols-3">
+    <div className="af-stagger grid h-full min-h-0 grid-cols-1 gap-2.5 lg:grid-cols-3">
       <ProtocolCardShell
         icon={Fan}
         step="01"
@@ -168,7 +168,7 @@ export function MitigationProtocols({
           />
         </div>
         <p className="text-[10px] leading-snug text-slate-400 2xl:text-[11px]">{airflow.detail}</p>
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-slate-800 pt-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-slate-800 pt-1.5 text-xs text-slate-400">
           <Wind className="size-3 text-violet-400" aria-hidden="true" />
           <span>Fan reduction {airflow.reductionPct} %</span>
           <span className="text-slate-600">|</span>
@@ -199,7 +199,7 @@ export function MitigationProtocols({
         </div>
         <p className="text-[10px] leading-snug text-slate-400 2xl:text-[11px]">{suppressant.detail}</p>
         {suppressant.crewFloorBreach ? (
-          <p className="flex items-start gap-1.5 rounded border border-red-500/40 bg-red-500/10 px-2 py-1.5 font-mono text-[10px] leading-tight text-red-200">
+          <p className="flex items-start gap-1.5 rounded-xl border border-red-500/40 bg-red-500/10 px-2 py-1.5 text-xs leading-tight text-red-200">
             <TriangleAlert className="mt-px size-3 shrink-0" aria-hidden="true" />
             Target O₂ is below the crew egress floor — continuous oxygen masks required
             for the burn window.
@@ -243,7 +243,7 @@ export function MitigationProtocols({
           {smoke.wakeZones.map((zone) => (
             <li
               key={zone}
-              className="flex items-start gap-2 font-mono text-[10px] leading-tight text-slate-400"
+              className="flex items-start gap-2 text-xs leading-tight text-slate-400"
             >
               <span className="mt-1 size-1 shrink-0 rounded-full bg-amber-400" />
               {zone}

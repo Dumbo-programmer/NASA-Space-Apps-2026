@@ -1,0 +1,33 @@
+# Git & VCS
+.git/
+.github/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node / UI (UI has its own build context)
+agnishikha-ui/
+node_modules/
+.next/
+
+# Documentation and Notebooks
+docs/
+notebooks/
+
+# Environment and local files
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+

@@ -1,0 +1,64 @@
+name: astraflame
+
+services:
+  # ---------------------------------------------------------------------------
+  # Backend: AstraFlame Machine Learning Prediction API
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: astraflame-api:latest
+    container_name: astraflame-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - IGNIS_ALLOWED_ORIGINS=${IGNIS_ALLOWED_ORIGINS:-*}
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - astraflame-network
+
+  # ---------------------------------------------------------------------------
+  # Frontend: Agnishikha Mission Control Dashboard (Next.js)
+  # ---------------------------------------------------------------------------
+  ui:
+    build:
+      context: ./agnishikha-ui
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_IGNIS_API_URL: ${NEXT_PUBLIC_IGNIS_API_URL:-http://localhost:8000}
+    image: astraflame-ui:latest
+    container_name: astraflame-ui
+    restart: unless-stopped
+    ports:
+      - "${UI_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_IGNIS_API_URL=${NEXT_PUBLIC_IGNIS_API_URL:-http://localhost:8000}
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - astraflame-network
+
+networks:
+  astraflame-network:
+    driver: bridge
+

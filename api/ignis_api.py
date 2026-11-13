@@ -263,3 +263,44 @@ def sweep(name, body):
         points.append({vary: round(float(v), 6), **{k: r[k] for k in keep if k in r}})
     tested = _range_for(_bundle(name), vary, base)
     return {"model": name, "vary": vary, "inputs": jsonable(base), "tested_range": tested, "points": points}
+
+
+# ---------------------------------------------------------------------------------------------
+# Habitat fire map (models/habitat_map.py writes models/reports/habitat_map.json)
+# ---------------------------------------------------------------------------------------------
+@lru_cache(maxsize=1)
+def habitat_map():
+    """The habitat fire map: coverage numbers, extinction grid, NASA test dots, material card, next tests."""
+    import json
+    f = ROOT / "models" / "reports" / "habitat_map.json"
+    if not f.exists():
+        raise FileNotFoundError("run models/habitat_map.py first")
+    return json.loads(f.read_text())
+
+
+def habitat_locate(body):
+    """Place a live reading (for example from the ESP32 chamber) on the habitat map.
+
+    body = {"pressure_kpa": 80, "o2_pct": 21}  (optional "fuel", "d0_mm", "co2_pct", "he_pct")
+    Returns the real FLEX extinction answer at that point, how far the nearest NASA microgravity
+    test is, and whether the point is inside the tested data. Sensor input never touches a flame.
+    """
+    if not isinstance(body, dict):
+        raise InputError("request body must be a JSON object")
+    need = {k: body.get(k) for k in ("pressure_kpa", "o2_pct")}
+    if any(v is None for v in need.values()):
+        raise InputError("pressure_kpa and o2_pct are required")
+    inputs = {"fuel": body.get("fuel", "Methanol"), "d0_mm": body.get("d0_mm", 3.0),
+              "co2_pct": body.get("co2_pct", 0), "he_pct": body.get("he_pct", 0), **need}
+    pred = predict("flex_extinction", inputs, explain=False)
+    hm = habitat_map()
+    ax = hm["axes"]
+    o2r, pr = ax["o2"][1] - ax["o2"][0], ax["pressure_kpa"][1] - ax["pressure_kpa"][0]
+    p, o = float(inputs["pressure_kpa"]), float(inputs["o2_pct"])
+    dist = min(math.hypot((t["o2"] - o) / o2r, (t["p"] - p) / pr) for t in hm["tests"])
+    hab = hm["habitat"]
+    to_hab = math.hypot((hab["o2_pct"] - o) / o2r, (hab["pressure_kpa"] - p) / pr)
+    return {"inputs": jsonable({"pressure_kpa": p, "o2_pct": o}), "prediction": {
+                k: pred[k] for k in ("probability", "predicted_class", "in_domain", "confidence", "warnings") if k in pred},
+            "distance_to_nearest_nasa_test": round(dist, 3), "distance_to_habitat_point": round(to_hab, 3),
+            "status": "inside the range of the NASA data used" if pred.get("in_domain") else "outside the range of the NASA data used (extrapolation)"}

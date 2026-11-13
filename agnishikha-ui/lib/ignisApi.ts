@@ -213,3 +213,68 @@ export function testedRange(spec: InputSpec, card: ModelCard, inputs: Inputs) {
   }
   return spec.tested_range ?? null;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Habitat fire map (api: GET /habitat, POST /habitat/locate; static: /ignis/habitat_map.json)
+// ---------------------------------------------------------------------------------------------
+export interface HabitatMap {
+  habitat: { o2_pct: number; pressure_kpa: number; label: string };
+  iss: { o2_pct: number; pressure_kpa: number; label: string };
+  axes: { o2: [number, number]; pressure_kpa: [number, number] };
+  coverage: Record<string, number>;
+  habitat_point_prediction: { fuel: string; p_extinguish: number; status: string };
+  grid: { o2: number[]; pressure_kpa: number[]; p_extinguish: number[]; distance: number[] };
+  tests: { src: string; cls: string; mat: string; o2: number; p: number }[];
+  next_tests: { o2_pct: number; pressure_kpa: number; p_extinguish: number; distance_to_nearest_test: number; score: number }[];
+  materials: {
+    n: number;
+    burn_at_21: number;
+    burn_at_34: number;
+    caveat: string;
+    items: {
+      material: string;
+      moc_pct: number;
+      moc_min_pct: number;
+      moc_max_pct: number;
+      burns_at_21: boolean;
+      burns_at_34: boolean;
+      margin_at_34_pct_o2: number;
+    }[];
+  };
+  layers_note: string;
+}
+
+export interface LocateResult {
+  prediction: { probability?: number; predicted_class?: string; in_domain?: boolean; confidence?: string; warnings?: string[] };
+  distance_to_nearest_nasa_test: number;
+  distance_to_habitat_point: number;
+  status: string;
+}
+
+export async function loadHabitat(): Promise<{ mode: Mode; map: HabitatMap }> {
+  try {
+    return { mode: "live", map: await getJson<HabitatMap>(`${API_URL}/habitat`, undefined, 2500) };
+  } catch {
+    return { mode: "precomputed", map: await getJson<HabitatMap>(`${STATIC_BASE}/habitat_map.json`) };
+  }
+}
+
+export async function locateLive(pressure_kpa: number, o2_pct: number, signal?: AbortSignal): Promise<LocateResult> {
+  return getJson<LocateResult>(`${API_URL}/habitat/locate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pressure_kpa, o2_pct }),
+    signal,
+  });
+}
+
+/** Optional ESP32 chamber feed (NEXT_PUBLIC_CHAMBER_URL returns {"pressure_kpa": n, "o2_pct": n}). */
+export async function readChamber(): Promise<{ pressure_kpa: number; o2_pct: number } | null> {
+  const url = process.env.NEXT_PUBLIC_CHAMBER_URL;
+  if (!url) return null;
+  try {
+    return await getJson<{ pressure_kpa: number; o2_pct: number }>(url, undefined, 1500);
+  } catch {
+    return null;
+  }
+}

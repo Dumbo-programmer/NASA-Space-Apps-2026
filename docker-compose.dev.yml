@@ -1,0 +1,22 @@
+# Development override for live source reloading:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+services:
+  api:
+    volumes:
+      - ./api:/app/api:ro
+      - ./models:/app/models:ro
+      - ./data:/app/data:ro
+      - ./tests:/app/tests:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  ui:
+    command: ["npm", "run", "dev", "--", "-H", "0.0.0.0", "-p", "3000"]
+    volumes:
+      - ./agnishikha-ui:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+

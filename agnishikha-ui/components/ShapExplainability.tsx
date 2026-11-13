@@ -154,7 +154,7 @@ function ComparisonCell({ row }: { row: RegistryComparison }) {
 
   return (
     <SubCard className="rounded-md px-2 py-1.5">
-      <p className="text-[10px] uppercase tracking-wider text-slate-400 2xl:text-[11px]">
+      <p className="text-xs text-slate-400">
         {row.label}
       </p>
       <p className="font-mono text-[11px] font-semibold tabular-nums text-slate-200 2xl:text-xs">
@@ -199,11 +199,11 @@ export function ShapExplainability({ explanation }: ShapExplainabilityProps) {
   const atBaseline = Math.abs(shift) < 0.05;
 
   return (
-    <div className="grid h-full min-h-0 grid-cols-1 gap-2.5 lg:grid-cols-[1.05fr_1fr]">
+    <div className="af-stagger grid h-full min-h-0 grid-cols-1 gap-2.5 lg:grid-cols-[1.05fr_1fr]">
       <div className="flex min-h-0 flex-col gap-2.5">
         <div className="animate-rise-in flex shrink-0 items-center justify-between gap-2 rounded-lg border border-violet-500/25 bg-violet-500/5 px-2.5 py-2">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-violet-300">
+            <p className="text-xs font-medium text-violet-300">
               Additive explanation · f(x) = f(base) + Σφ
             </p>
             <p className="mt-0.5 font-mono text-[13px] font-semibold text-slate-100 2xl:text-sm">
@@ -212,7 +212,7 @@ export function ShapExplainability({ explanation }: ShapExplainabilityProps) {
             </p>
           </div>
           <div className="text-right">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+            <p className="text-xs font-medium text-slate-400">
               Σ|φ|
             </p>
             <p className="font-mono text-[13px] font-semibold tabular-nums text-slate-100 2xl:text-sm">
@@ -265,7 +265,7 @@ export function ShapExplainability({ explanation }: ShapExplainabilityProps) {
         >
           <div className="flex items-center gap-1.5">
             <FlaskConical className="size-3 text-cyan-400" aria-hidden="true" />
-            <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+            <p className="text-xs font-medium text-slate-400">
               Similar NASA campaigns
             </p>
           </div>
@@ -292,7 +292,7 @@ export function ShapExplainability({ explanation }: ShapExplainabilityProps) {
         >
           <div className="flex items-center gap-1.5">
             <Library className="size-3 text-violet-400" aria-hidden="true" />
-            <p className="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+            <p className="text-xs font-medium text-slate-400">
               Model vs registry mean
             </p>
           </div>
@@ -327,7 +327,7 @@ export function ShapExplainability({ explanation }: ShapExplainabilityProps) {
                 : ""}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2 border-t border-slate-800 pt-1.5 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-800 pt-1.5 text-xs text-slate-400">
             <span>{modelLabel}</span>
             <span className="text-slate-600">|</span>
             <span>Exact additive · ordered ablation</span>

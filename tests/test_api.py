@@ -108,6 +108,26 @@ def test_http_contract():
         srv.shutdown()
 
 
+def test_habitat_map_and_locate():
+    hm = A.habitat_map()
+    assert hm["coverage"]["rows_at_or_below_70kpa"] == 0           # the evidence gap the project claims
+    assert hm["materials"]["n"] == 22 and hm["materials"]["burn_at_34"] == 20
+    r = A.habitat_locate({"pressure_kpa": 56.5, "o2_pct": 34})
+    assert r["prediction"]["in_domain"] is False and "extrapolation" in r["status"]
+    r2 = A.habitat_locate({"pressure_kpa": 101.3, "o2_pct": 21})
+    assert r2["distance_to_nearest_nasa_test"] < r["distance_to_nearest_nasa_test"] + 0.2
+    assert "required" in _raises(A.habitat_locate, {"o2_pct": 21})
+    srv, base = _serve()
+    try:
+        code, _, body = _call(base + "/habitat")
+        assert code == 200 and "grid" in json.loads(body)
+        code, _, body = _call(base + "/habitat/locate", json.dumps({"pressure_kpa": 80, "o2_pct": 25}).encode())
+        assert code == 200 and "prediction" in json.loads(body)
+        assert _call(base + "/habitat/other", b"{}")[0] == 404
+    finally:
+        srv.shutdown()
+
+
 def test_static_export_matches_the_live_models():
     out = ROOT / "agnishikha-ui" / "public" / "ignis"
     cat = json.loads((out / "catalog.json").read_text())
